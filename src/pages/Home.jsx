@@ -5,6 +5,7 @@
  * @purpose This component renders the Home page of the portfolio.
  */
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 export default function Home() {
     return (
