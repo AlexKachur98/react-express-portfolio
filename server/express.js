@@ -3,14 +3,11 @@
  * @author Alex Kachur
  * @since 2025-10-27
  * @purpose Configures and exports the main Express application instance.
- * Sets up all necessary middleware and static file serving.
+ * Sets up all necessary middleware, mounts API routes, and serves the
+ * static React frontend for production.
  */
 
 import express from 'express';
-// Note: body-parser is in your dependencies, but modern Express (4.16+)
-// includes express.json() and express.urlencoded() which are identical.
-// We will use the modern built-in methods as seen in 'REST API-SUMMARY SLIDE.pdf'.
-// import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import compress from 'compression';
 import cors from 'cors';
@@ -18,37 +15,36 @@ import helmet from 'helmet';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-// --- Define __dirname for ES Modules ---
+// --- Import All API Routes ---
+import userRoutes from './routes/user.routes.js';
+import projectRoutes from './routes/project.routes.js';
+import contactRoutes from './routes/contact.routes.js';
+import educationRoutes from './routes/education.routes.js';
+
+// Define __dirname for ES Modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-// Define the path to the *built* client folder for production
-// It goes up two directories (from server/ to MyPortfolio/) then into client/dist
 const clientBuildPath = path.join(__dirname, '../../client/dist');
 
-// Initialize Express app
 const app = express();
 
 // --- Middleware Pipeline (as seen in course examples) ---
-// Parse JSON request bodies
-app.use(express.json());
-// Parse URL-encoded request bodies (form submissions)
-app.use(express.urlencoded({ extended: true }));
-// Parse Cookie header and populate req.cookies
-app.use(cookieParser());
-// Compress response bodies for better performance
-app.use(compress());
-// Secure Express app by setting various HTTP headers
-app.use(helmet());
-// Enable Cross-Origin Resource Sharing (CORS)
-app.use(cors());
+app.use(express.json()); // Built-in JSON parser
+app.use(express.urlencoded({ extended: true })); // Built-in URL-encoded parser
+app.use(cookieParser());   // Parse Cookie header
+app.use(compress());       // Compress response bodies
+app.use(helmet());         // Set security HTTP headers
+app.use(cors());           // Enable Cross-Origin Resource Sharing
 
-// --- API Routes (To be added in Step 7) ---
-// import userRoutes from './routes/user.routes.js';
-// app.use('/api', userRoutes);
-// ...
+// --- Mount API Routes ---
+// All API routes are mounted under the '/api' prefix
+app.use('/api', userRoutes);
+app.use('/api', projectRoutes);
+app.use('/api', contactRoutes);
+app.use('/api', educationRoutes);
 
 // --- Static File Serving (for Production) ---
-// Serve the static files (JS, CSS, images) from the React build folder
+// Serve static files (JS, CSS, images) from the React build folder
 app.use(express.static(clientBuildPath));
 
 // --- SPA Fallback Route (for Production) ---
@@ -57,11 +53,9 @@ app.use(express.static(clientBuildPath));
 app.get('*', (req, res) => {
     res.sendFile(path.join(clientBuildPath, 'index.html'), (err) => {
         if (err) {
-            // If the file isn't found (e.g., client not built), send 404
             if (err.status === 404) {
-                 res.status(404).send('Client application not found. Run `npm run build:client`.');
+                 res.status(404).send('Client application not found. Run `npm run build:client` to build the frontend.');
             } else {
-                 // For other errors, send a 500
                  res.status(500).send('An error occurred while serving the application.');
             }
         }
@@ -69,15 +63,14 @@ app.get('*', (req, res) => {
 });
 
 // --- General Error Handling Middleware ---
-// This middleware catches errors thrown from other parts of the application
+// This catches errors, including 'UnauthorizedError' from express-jwt
 app.use((err, req, res, next) => {
-    // Handle specific 'UnauthorizedError' from express-jwt (for Step 3)
     if (err.name === 'UnauthorizedError') {
+        // This error is thrown by express-jwt when a token is invalid
         return res.status(401).json({ "error": "Unauthorized: " + err.message });
     } else if (err) {
-        // Log the full error to the console for debugging
-        console.error("[Server Error]", err.stack);
-        // Send a generic error response
+        // Handle other general errors
+        console.error("[Server Error]", err.stack); // Log the full error
         return res.status(err.status || 400).json({ "error": err.message || "An error occurred." });
     }
     // If no error, proceed
