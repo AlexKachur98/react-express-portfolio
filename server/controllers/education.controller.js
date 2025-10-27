@@ -39,7 +39,6 @@ const update = async (req, res) => {
     try {
         let education = req.education;
         education = _.extend(education, req.body);
-        education.updated = Date.now();
         await education.save();
         res.json(education);
     } catch (err) {

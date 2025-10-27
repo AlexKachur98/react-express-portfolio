@@ -36,3 +36,8 @@ mongoose.connect(config.mongoUri)
     console.error(`[Database Error] Could not connect to MongoDB. Exiting...`, err);
     process.exit(1); // Exit if DB connection fails
   });
+
+// Listen for connection errors after the initial attempt
+mongoose.connection.on('error', (err) => {
+  console.error(`[Database Error] A connection error occurred: ${err}`);
+});

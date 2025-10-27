@@ -57,7 +57,6 @@ const update = async (req, res) => {
     try {
         let project = req.project; // Get project from middleware
         project = _.extend(project, req.body); // Merge changes
-        project.updated = Date.now(); // Set updated timestamp
         await project.save();
         res.json(project); // Return updated project
     } catch (err) {

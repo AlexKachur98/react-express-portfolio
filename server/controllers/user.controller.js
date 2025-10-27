@@ -115,7 +115,6 @@ const update = async (req, res) => {
         let user = req.profile; // Get user from middleware
         // Use lodash 'extend' to merge properties from req.body onto the user object
         user = _.extend(user, req.body);
-        user.updated = Date.now(); // Manually set updated timestamp
         
         // If password is being updated, the model's virtual setter will handle hashing
         if (req.body.password) {
