@@ -8,26 +8,26 @@ import mongoose from 'mongoose';
 
 // Note: This model is based on the 'qualifications' table in Assignment 2.pdf
 const EducationSchema = new mongoose.Schema({
-    institution: { 
-        type: String, 
-        trim: true, 
-        required: 'Institution is required' 
+    institution: {
+        type: String,
+        trim: true,
+        required: 'Institution is required'
     },
-    degree: { 
-        type: String, 
-        trim: true, 
-        required: 'Degree/Program is required' 
+    degree: {
+        type: String,
+        trim: true,
+        required: 'Degree/Program is required'
     },
-    startDate: { 
-        type: Date, 
-        required: 'Start date is required' 
+    startDate: {
+        type: Date,
+        required: 'Start date is required'
     },
-    endDate: { 
+    endDate: {
         type: Date // Can be null if currently attending
     },
-    description: { 
-        type: String, 
-        trim: true 
+    description: {
+        type: String,
+        trim: true
     }
 }, { timestamps: true }); // Automatically adds createdAt and updatedAt
 

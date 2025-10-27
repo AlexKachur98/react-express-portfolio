@@ -13,7 +13,8 @@ const router = express.Router();
 // Collection routes
 router.route('/projects')
     .get(projectCtrl.list) // Public: Anyone can list projects
-    .post(requireSignin, projectCtrl.create); // Protected: Only signed-in users can create
+    .post(requireSignin, projectCtrl.create) // Protected: Only signed-in users can create
+    .delete(requireSignin, projectCtrl.removeAll); // Protected: remove all projects
 
 // Document routes (for a specific project)
 router.route('/projects/:projectId')

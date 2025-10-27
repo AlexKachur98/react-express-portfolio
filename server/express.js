@@ -54,9 +54,9 @@ app.get('*', (req, res) => {
     res.sendFile(path.join(clientBuildPath, 'index.html'), (err) => {
         if (err) {
             if (err.status === 404) {
-                 res.status(404).send('Client application not found. Run `npm run build:client` to build the frontend.');
+                res.status(404).send('Client application not found. Run `npm run build:client` to build the frontend.');
             } else {
-                 res.status(500).send('An error occurred while serving the application.');
+                res.status(500).send('An error occurred while serving the application.');
             }
         }
     });

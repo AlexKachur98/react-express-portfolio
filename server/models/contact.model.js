@@ -8,26 +8,26 @@ import mongoose from 'mongoose';
 
 // Note: This model is based on the 'contact' form fields from Assignment 1
 const ContactSchema = new mongoose.Schema({
-    firstName: { 
-        type: String, 
-        trim: true, 
-        required: 'First name is required' 
+    firstName: {
+        type: String,
+        trim: true,
+        required: 'First name is required'
     },
-    lastName: { 
-        type: String, 
-        trim: true, 
-        required: 'Last name is required' 
+    lastName: {
+        type: String,
+        trim: true,
+        required: 'Last name is required'
     },
-    email: { 
-        type: String, 
-        trim: true, 
-        match: [/.+\@.+\..+/, 'Valid email required'], 
-        required: 'Email is required' 
+    email: {
+        type: String,
+        trim: true,
+        match: [/.+\@.+\..+/, 'Valid email required'],
+        required: 'Email is required'
     },
-    message: { 
-        type: String, 
-        trim: true, 
-        required: 'Message is required' 
+    message: {
+        type: String,
+        trim: true,
+        required: 'Message is required'
     }
 }, { timestamps: true }); // Automatically adds createdAt and updatedAt
 

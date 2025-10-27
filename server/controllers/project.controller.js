@@ -80,6 +80,25 @@ const remove = async (req, res) => {
 };
 
 /**
+ * @purpose Deletes ALL projects. (As required by Assignment 2 PDF)
+ * @route DELETE /api/projects
+ * @access Protected (Requires Signin)
+ */
+const removeAll = async (req, res) => {
+    try {
+        await Project.deleteMany({}); // Empty filter deletes all
+        return res.status(200).json({
+            message: "All projects have been deleted."
+        });
+    } catch (err) {
+        return res.status(400).json({
+            error: errorHandler.getErrorMessage(err)
+        });
+    }
+};
+
+
+/**
  * @purpose Param middleware for project routes. Finds project by ID.
  * @param {string} id - The project ID from the route parameter.
  */
@@ -94,4 +113,4 @@ const projectByID = async (req, res, next, id) => {
     }
 };
 
-export default { create, projectByID, read, list, remove, update };
+export default { create, projectByID, read, list, remove, update, removeAll };

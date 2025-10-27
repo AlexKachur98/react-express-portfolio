@@ -20,7 +20,7 @@ const signin = async (req, res) => {
     try {
         // Find the user by their email address
         let user = await User.findOne({ email: req.body.email });
-        
+
         // If user not found, or password doesn't match, return 401
         if (!user || !user.authenticate(req.body.password)) {
             return res.status(401).json({ error: "Email and password do not match." });
@@ -115,10 +115,10 @@ const update = async (req, res) => {
         let user = req.profile; // Get user from middleware
         // Use lodash 'extend' to merge properties from req.body onto the user object
         user = _.extend(user, req.body);
-        
+
         // If password is being updated, the model's virtual setter will handle hashing
         if (req.body.password) {
-          user.password = req.body.password;
+            user.password = req.body.password;
         }
 
         await user.save();
@@ -155,12 +155,12 @@ const remove = async (req, res) => {
 const removeAll = async (req, res) => {
     try {
         await User.deleteMany({}); // Empty filter deletes all documents
-        return res.status(200).json({ 
-            message: "All users have been deleted." 
+        return res.status(200).json({
+            message: "All users have been deleted."
         });
     } catch (err) {
-        return res.status(400).json({ 
-            error: errorHandler.getErrorMessage(err) 
+        return res.status(400).json({
+            error: errorHandler.getErrorMessage(err)
         });
     }
 };
@@ -180,7 +180,7 @@ const userByID = async (req, res, next, id) => {
             return res.status(400).json({ error: "User not found" });
         }
         // Attach user object to the request for later use
-        req.profile = user; 
+        req.profile = user;
         next(); // Proceed to the next handler
     } catch (err) {
         return res.status(400).json({ error: "Could not retrieve user" });

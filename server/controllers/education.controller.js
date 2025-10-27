@@ -65,12 +65,12 @@ const remove = async (req, res) => {
 const removeAll = async (req, res) => {
     try {
         await Education.deleteMany({}); // Empty filter deletes all
-        return res.status(200).json({ 
-            message: "All education entries have been deleted." 
+        return res.status(200).json({
+            message: "All education entries have been deleted."
         });
     } catch (err) {
-        return res.status(400).json({ 
-            error: errorHandler.getErrorMessage(err) 
+        return res.status(400).json({
+            error: errorHandler.getErrorMessage(err)
         });
     }
 };

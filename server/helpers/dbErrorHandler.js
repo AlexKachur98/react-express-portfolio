@@ -16,7 +16,7 @@ const getUniqueErrorMessage = (err) => {
         // Attempt to extract the field name using regex or string parsing
         // This looks for the text between 'index: ' and '_1'
         let fieldName = err.message.match(/index: (.*)_1/)[1] ||
-                        err.message.substring(err.message.lastIndexOf('.$') + 2, err.message.lastIndexOf('_1'));
+            err.message.substring(err.message.lastIndexOf('.$') + 2, err.message.lastIndexOf('_1'));
         output = fieldName.charAt(0).toUpperCase() + fieldName.slice(1) + ' already exists';
     } catch (ex) {
         output = 'Unique field already exists';
@@ -31,7 +31,7 @@ const getUniqueErrorMessage = (err) => {
  */
 const getErrorMessage = (err) => {
     let message = '';
-    
+
     // Handle MongoDB native driver error codes
     if (err.code) {
         switch (err.code) {

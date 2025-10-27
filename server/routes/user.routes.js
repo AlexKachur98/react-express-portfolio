@@ -21,7 +21,7 @@ router.route('/users')
     .post(userCtrl.create)  // POST /api/users (Register new user - public)
     // DELETE /api/users (Remove all users - protected)
     // As per Assignment 2 PDF, this route is required.
-    .delete(requireSignin, userCtrl.removeAll); 
+    .delete(requireSignin, userCtrl.removeAll);
 
 // --- Protected User Routes ---
 // These routes handle operations for a specific user, identified by :userId
@@ -29,11 +29,11 @@ router.route('/users/:userId')
     // GET /api/users/:userId (Read a specific user's profile)
     // Protected: User must be signed in to view any profile
     .get(requireSignin, userCtrl.read)
-    
+
     // PUT /api/users/:userId (Update a user's profile)
     // Protected: User must be signed in AND must be the correct user
     .put(requireSignin, hasAuthorization, userCtrl.update)
-    
+
     // DELETE /api/users/:userId (Delete a user's profile)
     // Protected: User must be signed in AND must be the correct user
     .delete(requireSignin, hasAuthorization, userCtrl.remove);
