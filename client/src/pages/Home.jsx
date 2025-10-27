@@ -9,7 +9,7 @@ import { Link } from 'react-router-dom';
 
 export default function Home() {
     return (
-        <div>
+        <div className="page">
             <h1>Welcome to My Personal Portfolio</h1>
             <p>
                 <strong>Mission Statement:</strong> To leverage my passion for technology and problem-solving to build clean,

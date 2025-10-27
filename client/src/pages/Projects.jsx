@@ -30,36 +30,28 @@ const myProjects = [
 
 export default function Projects() {
     return (
-        <div>
+        <div className="page">
             <h1>My Projects</h1>
             <p>Here are a few projects I wish to highlight.</p>
 
             {myProjects.map((project) => (
-                <div key={project.title} className="card">
+                <article key={project.title} className="card">
                     <img
                         src={project.imageUrl}
                         alt={`Screenshot of the ${project.title} project`}
-                        style={{ width: '100%', height: 'auto', borderRadius: '4px', marginBottom: '1rem' }}
+                        className="card-image"
                     />
                     <h3>{project.title}</h3>
                     <p>{project.description}</p>
 
-                    <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
+                    <div className="tag-list">
                         {project.tags.map((tag, i) => (
-                            <span
-                                key={i}
-                                style={{
-                                    backgroundColor: '#333',
-                                    padding: '0.25rem 0.5rem',
-                                    borderRadius: '4px',
-                                    fontSize: '0.8rem',
-                                }}
-                            >
+                            <span key={i} className="tag">
                                 {tag}
                             </span>
                         ))}
                     </div>
-                </div>
+                </article>
             ))}
         </div>
     );

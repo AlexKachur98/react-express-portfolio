@@ -10,25 +10,27 @@ import { Link, Outlet } from 'react-router-dom';
 
 export default function Layout() {
     return (
-        <>
+        <div className="app-shell">
             {/* The header section contains the logo and navigation */}
-            <header>
-                <h1>Alex Kachur's Portfolio Logo</h1> {/* Placeholder for your custom logo */}
-                <nav>
-                    <Link to="/">Home</Link> |
-                    <Link to="/about">About</Link> |
-                    <Link to="/projects">Projects</Link> |
-                    <Link to="/education">Education</Link> |
-                    <Link to="/services">Services</Link> |
+            <header className="app-header">
+                <div className="brand">
+                    <h1>Alex Kachur</h1>
+                    <p className="tagline">Software Engineering Technology Student</p>
+                </div>
+                <nav className="app-nav" aria-label="Primary navigation">
+                    <Link to="/">Home</Link>
+                    <Link to="/about">About</Link>
+                    <Link to="/projects">Projects</Link>
+                    <Link to="/education">Education</Link>
+                    <Link to="/services">Services</Link>
                     <Link to="/contact">Contact</Link>
                 </nav>
             </header>
-            <hr />
 
             {/* The main content area where the active page component will be rendered */}
-            <main>
+            <main className="app-main">
                 <Outlet />
             </main>
-        </>
+        </div>
     );
 }

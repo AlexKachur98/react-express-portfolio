@@ -8,7 +8,7 @@ import React from 'react';
 
 export default function Services() {
     return (
-        <div>
+        <div className="page">
             <h1>Services I Offer</h1>
             <ul>
                 <li><strong>General Programming:</strong> C#, Java, Python — clean, readable problem solving.</li>

@@ -8,7 +8,7 @@ import React from 'react';
 
 export default function About() {
     return (
-        <div>
+        <div className="page">
             <h1>About Me</h1>
             <img
                 src="/assets/headshot.webp"

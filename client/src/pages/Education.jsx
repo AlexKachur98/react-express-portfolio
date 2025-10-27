@@ -8,7 +8,7 @@ import React from 'react';
 
 export default function Education() {
     return (
-        <div>
+        <div className="page">
             <h1>Education</h1>
             <h3>Centennial College — Software Engineering Technology (Co-op)</h3>
             <p><strong>2025 — Present • GPA: 4.39 / 4.5</strong></p>
