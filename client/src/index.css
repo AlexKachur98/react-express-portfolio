@@ -150,6 +150,7 @@ a {
     display: flex;
     flex-direction: column;
     gap: 28px;
+    scroll-margin-top: 140px;
 }
 
 .section--glass {
