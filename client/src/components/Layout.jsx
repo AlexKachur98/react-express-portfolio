@@ -20,6 +20,7 @@ const NAV_LINKS = [
 
 export default function Layout() {
     const [scrolled, setScrolled] = useState(false);
+    const [menuOpen, setMenuOpen] = useState(false);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -30,6 +31,17 @@ export default function Layout() {
         window.addEventListener('scroll', handleScroll);
 
         return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
+    useEffect(() => {
+        const handleResize = () => {
+            if (window.innerWidth > 640) {
+                setMenuOpen(false);
+            }
+        };
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
     }, []);
 
     const handleNavClick = useCallback((href) => {
@@ -43,6 +55,11 @@ export default function Layout() {
             target.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
     }, []);
+
+    const handleNavSelection = (href) => {
+        handleNavClick(href);
+        setMenuOpen(false);
+    };
 
     return (
         <div className="app-shell">
@@ -63,13 +80,30 @@ export default function Layout() {
                         </span>
                     </button>
 
-                    <nav className="floating-nav__links" aria-label="Primary navigation">
+                    <button
+                        type="button"
+                        className={`floating-nav__toggle ${menuOpen ? 'floating-nav__toggle--open' : ''}`}
+                        onClick={() => setMenuOpen((prev) => !prev)}
+                        aria-expanded={menuOpen}
+                        aria-controls="primary-navigation"
+                    >
+                        <span className="floating-nav__toggle-line" />
+                        <span className="floating-nav__toggle-line" />
+                        <span className="floating-nav__toggle-line" />
+                        <span className="floating-nav__toggle-label">{menuOpen ? 'Close' : 'Menu'}</span>
+                    </button>
+
+                    <nav
+                        id="primary-navigation"
+                        className={`floating-nav__links ${menuOpen ? 'floating-nav__links--open' : ''}`}
+                        aria-label="Primary navigation"
+                    >
                         {NAV_LINKS.map((item) => (
                             <button
                                 key={item.name}
                                 type="button"
                                 className="floating-nav__link"
-                                onClick={() => handleNavClick(item.href)}
+                                onClick={() => handleNavSelection(item.href)}
                             >
                                 {item.name}
                             </button>
