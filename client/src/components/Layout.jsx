@@ -35,7 +35,7 @@ export default function Layout() {
 
     useEffect(() => {
         const handleResize = () => {
-            if (window.innerWidth > 640) {
+            if (window.innerWidth > 900) {
                 setMenuOpen(false);
             }
         };
