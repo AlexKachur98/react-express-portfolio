@@ -86,11 +86,11 @@ export default function Layout() {
                         onClick={() => setMenuOpen((prev) => !prev)}
                         aria-expanded={menuOpen}
                         aria-controls="primary-navigation"
-                        aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'}
                     >
                         <span className="floating-nav__toggle-line" />
                         <span className="floating-nav__toggle-line" />
                         <span className="floating-nav__toggle-line" />
+                        <span className="floating-nav__toggle-label">{menuOpen ? 'Close' : 'Menu'}</span>
                     </button>
 
                     <nav
