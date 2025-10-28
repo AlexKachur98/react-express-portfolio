@@ -8,7 +8,7 @@
 import User from '../models/user.model.js';
 import _ from 'lodash'; // Utility for merging objects
 import errorHandler from '../helpers/dbErrorHandler.js';
-import { generateToken } from '../utils/jwt.js';
+import jwtUtil from '../utils/jwt.js';
 
 // --- Authentication Controllers ---
 
@@ -28,7 +28,7 @@ const signin = async (req, res) => {
 
         // If authentication is successful, generate a JWT
         // The payload contains the user's ID
-        const token = generateToken({ _id: user._id });
+        const token = jwtUtil.generateToken({ _id: user._id });
 
         // Set the token in an HTTP-only cookie for web clients
         res.cookie('t', token, { expire: new Date() + 9999, httpOnly: true });

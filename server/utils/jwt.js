@@ -18,4 +18,4 @@ const generateToken = (payload) => {
     return jwt.sign(payload, config.jwtSecret, { expiresIn: '1h' }); // Expires in 1 hour
 };
 
-export { generateToken };
+export default { generateToken };
