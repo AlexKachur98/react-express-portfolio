@@ -34,6 +34,8 @@ export default function Layout() {
     }, []);
 
     useEffect(() => {
+        // Collapse the tray when returning to desktop widths so the layout
+        // doesn't leave the mobile menu hanging open after a resize.
         const handleResize = () => {
             if (window.innerWidth > 900) {
                 setMenuOpen(false);

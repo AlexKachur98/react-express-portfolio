@@ -2,6 +2,8 @@
 
 This Vite + React application powers the UI for [alexkachur.dev](https://alexkachur.dev). It renders the single-page experience (hero, about, education, projects, services, contact) with glassmorphism styling, reveal animations, and responsive navigation.
 
+Every section now lives inside `Home.jsx`, and the floating navigation collapses into a mobile-style tray for any viewport below 900 px.
+
 ## Quick Start
 
 ```bash
@@ -29,5 +31,6 @@ The Express server at the repo root serves this build in production.
 - Custom CSS (glassmorphism, animations, responsive grid)
 - Vanta.js background, IntersectionObserver scroll reveals
 - React Router for in-page anchor navigation
+- Single `MainRouter` + `Layout` composition that keeps nav state consistent across breakpoints
 
 For backend/API details, see the root [README](../README.md).
