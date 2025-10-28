@@ -26,3 +26,6 @@ lerna-debug.log*
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# Local reference exports
+/www.ciangoon.dev
