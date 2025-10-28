@@ -5,7 +5,13 @@
  * @purpose This component renders the Home page of the portfolio.
  */
 import React, { useEffect, useState } from 'react';
-import Typewriter from '../components/Typewriter.jsx';
+import HeroSection from '../components/sections/HeroSection.jsx';
+import AboutSection from '../components/sections/AboutSection.jsx';
+import EducationSection from '../components/sections/EducationSection.jsx';
+import ProjectsSection from '../components/sections/ProjectsSection.jsx';
+import ServicesSection from '../components/sections/ServicesSection.jsx';
+import ContactSection from '../components/sections/ContactSection.jsx';
+import { postContact } from '../utils/api.js';
 
 const heroLines = [
     'Software Engineering Technology Student.',
@@ -93,18 +99,9 @@ export default function Home() {
         };
 
         try {
-            let response = await fetch('/api/contacts', {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(contact)
-            });
+            const data = await postContact(contact);
 
-            const data = await response.json();
-
-            if (response.ok) {
+            if (!data.error) {
                 setIsSubmitted(true);
                 setValues({
                     firstName: '',
@@ -144,226 +141,12 @@ export default function Home() {
 
     return (
         <div className="landing">
-            <section id="home" className="section hero">
-                <div className="hero__tag">Welcome, I&apos;m Alex.</div>
-                <h1 className="hero__title">I build thoughtful digital experiences.</h1>
-                <Typewriter phrases={heroLines} />
-                <p className="hero__subtitle">
-                    My mission is to leverage technology and clean, maintainable code to solve real problems and support the people around me.
-                </p>
-                <div className="hero__actions">
-                    <a
-                        className="btn btn--primary"
-                        href="#projects"
-                        onClick={(event) => {
-                            event.preventDefault();
-                            document.querySelector('#projects')?.scrollIntoView({ behavior: 'smooth' });
-                        }}
-                    >
-                        View Projects
-                    </a>
-                    <a
-                        className="btn btn--ghost"
-                        href="#contact"
-                        onClick={(event) => {
-                            event.preventDefault();
-                            document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' });
-                        }}
-                    >
-                        Let&apos;s Talk
-                    </a>
-                </div>
-            </section>
-
-            <section id="about" className="section section--glass">
-                <div className="section__grid">
-                    <div>
-                        <span className="section__eyebrow">About</span>
-                        <h2 className="section__heading">Curious by nature. Builder by choice.</h2>
-                        <p>
-                            Hi, I’m Alex — a Software Engineering Technology student at Centennial College with a passion for building
-                            modern web applications and exploring emerging technologies.
-                        </p>
-                        <p>
-                            I was the kid taking apart radios and DVD players to understand how every part worked. During lockdown, a free HTML
-                            course reignited that curiosity and led me to pursue software engineering. Today, I’m building games in C#, architecting
-                            React applications, and designing maintainable systems with clear documentation.
-                        </p>
-                        <p>
-                            Outside of development, you’ll find me gaming, following the NBA, NFL, and MMA, or building custom PCs. I share life
-                            with my cats Moura and Simba, and my dream is to one day open an animal rescue ranch.
-                        </p>
-                        <a href="/assets/resume.pdf" className="btn btn--secondary" target="_blank" rel="noopener noreferrer">
-                            View Resume
-                        </a>
-                    </div>
-                    <div className="about__media">
-                        <div className="about__card">
-                            <img
-                                src="/assets/headshot.webp"
-                                alt="Headshot of Alex Kachur"
-                                loading="lazy"
-                            />
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <section id="education" className="section">
-                <span className="section__eyebrow">Education</span>
-                <h2 className="section__heading">The coursework shaping my craft</h2>
-                <div className="accordion">
-                    {educationItems.map((item, index) => {
-                        const open = openEducation === index;
-                        return (
-                            <article key={item.program} className={`accordion__item ${open ? 'accordion__item--open' : ''}`}>
-                                <button type="button" className="accordion__trigger" onClick={() => handleToggle(index)}>
-                                    <div>
-                                        <h3>{item.program}</h3>
-                                        <p>{item.school} • {item.period}</p>
-                                    </div>
-                                    <span aria-hidden="true" className="accordion__icon">{open ? '−' : '+'}</span>
-                                </button>
-                                <div className="accordion__content">
-                                    <ul>
-                                        {item.details.map((detail) => (
-                                            <li key={detail}>{detail}</li>
-                                        ))}
-                                    </ul>
-                                    <div className="accordion__meta">{item.location}</div>
-                                </div>
-                            </article>
-                        );
-                    })}
-                </div>
-            </section>
-
-            <section id="projects" className="section section--glass">
-                <span className="section__eyebrow">Projects</span>
-                <h2 className="section__heading">Selected work I&apos;m proud of</h2>
-                <div className="card-grid">
-                    {projectCards.map((project) => (
-                        <article key={project.title} className="project-card">
-                            <div className="project-card__media">
-                                <img src={project.image} alt={project.title} loading="lazy" />
-                            </div>
-                            <div className="project-card__body">
-                                <h3>{project.title}</h3>
-                                <p>{project.description}</p>
-                                <div className="project-card__tags">
-                                    {project.tags.map((tag) => (
-                                        <span key={tag}>{tag}</span>
-                                    ))}
-                                </div>
-                                <div className="project-card__links">
-                                    <a className="btn btn--ghost" href={project.github} target="_blank" rel="noopener noreferrer">
-                                        View GitHub
-                                    </a>
-                                    {project.live && (
-                                        <a className="btn btn--primary" href={project.live} target="_blank" rel="noopener noreferrer">
-                                            View Live
-                                        </a>
-                                    )}
-                                </div>
-                            </div>
-                        </article>
-                    ))}
-                </div>
-            </section>
-
-            <section id="services" className="section">
-                <span className="section__eyebrow">Services</span>
-                <h2 className="section__heading">How I can help</h2>
-                <div className="service-grid">
-                    {serviceCards.map((service) => (
-                        <article key={service.title} className="service-card">
-                            <h3>{service.title}</h3>
-                            <p>{service.description}</p>
-                        </article>
-                    ))}
-                </div>
-            </section>
-
-            <section id="contact" className="section section--glass">
-                <span className="section__eyebrow">Contact</span>
-                <h2 className="section__heading">Let&apos;s build something together</h2>
-                <div className="contact-grid">
-                    <div className="contact-grid__info">
-                        <p>
-                            Whether you’re looking to collaborate, discuss a project, or just say hi — feel free to reach out!
-                        </p>
-                        <div className="contact-grid__card">
-                            <p><strong>Email:</strong> akachur@my.centennialcollege.ca</p>
-                            <p><strong>Phone:</strong> 647-510-5343</p>
-                            <p><strong>Location:</strong> Toronto • Canada</p>
-                        </div>
-                    </div>
-
-                    <div className="contact-grid__form">
-                        {isSubmitted ? (
-                            <div className="contact__success">
-                                <h3>Thank you!</h3>
-                                <p>Your message has been sent successfully. I&apos;ll get back to you shortly.</p>
-                            </div>
-                        ) : (
-                            <form className="contact-form" onSubmit={handleSubmit} aria-label="Contact form">
-                                <div className="contact-form__row">
-                                    <label htmlFor="firstName">
-                                        First Name
-                                        <input
-                                            type="text"
-                                            id="firstName"
-                                            name="firstName"
-                                            required
-                                            value={values.firstName}
-                                            onChange={handleChange('firstName')}
-                                        />
-                                    </label>
-                                    <label htmlFor="lastName">
-                                        Last Name
-                                        <input
-                                            type="text"
-                                            id="lastName"
-                                            name="lastName"
-                                            required
-                                            value={values.lastName}
-                                            onChange={handleChange('lastName')}
-                                        />
-                                    </label>
-                                </div>
-                                <label htmlFor="email">
-                                    Email Address
-                                    <input
-                                        type="email"
-                                        id="email"
-                                        name="email"
-                                        required
-                                        value={values.email}
-                                        onChange={handleChange('email')}
-                                    />
-                                </label>
-                                <label htmlFor="message">
-                                    Message
-                                    <textarea
-                                        id="message"
-                                        name="message"
-                                        required
-                                        rows="4"
-                                        value={values.message}
-                                        onChange={handleChange('message')}
-                                    ></textarea>
-                                </label>
-
-                                {values.error && (<p className="contact-form__error">{values.error}</p>)}
-
-                                <button type="submit" className="btn btn--primary">
-                                    Send Message
-                                </button>
-                            </form>
-                        )}
-                    </div>
-                </div>
-            </section>
+            <HeroSection heroLines={heroLines} />
+            <AboutSection />
+            <EducationSection items={educationItems} openIndex={openEducation} onToggle={handleToggle} />
+            <ProjectsSection projects={projectCards} />
+            <ServicesSection services={serviceCards} />
+            <ContactSection values={values} isSubmitted={isSubmitted} onChange={handleChange} onSubmit={handleSubmit} />
 
             <footer className="footer">
                 <p>© {new Date().getFullYear()} Alex Kachur. Built with passion, curiosity, and plenty of coffee.</p>
