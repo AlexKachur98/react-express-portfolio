@@ -13,30 +13,19 @@ const heroLines = [
     'Problem solver. Team player. Lifelong learner.',
 ];
 
-const experienceItems = [
+const educationItems = [
     {
-        role: 'Software Engineering Technology Co-op Student',
-        company: 'Centennial College',
+        program: 'Software Engineering Technology (Co-op)',
+        school: 'Centennial College',
         period: '2025 — Present',
         location: 'Toronto, Canada',
         details: [
-            'Maintaining a GPA of 4.39 / 4.5 while studying modern web development using React and Node.js.',
-            'Building console games in C# to reinforce solid object-oriented programming foundations.',
-            'Delivering full-stack coursework projects with maintainable code, UML documentation, and SRS deliverables.',
-            'Designing relational databases with SQL, ERDs, and normalized schemas focused on performance.',
-            'Thriving in Agile teams, balancing leadership, collaboration, and code quality.',
-        ],
-    },
-    {
-        role: 'Freelance Developer & PC Consultant',
-        company: 'Self-Directed',
-        period: '2018 — Present',
-        location: 'Toronto & Remote',
-        details: [
-            'Developing responsive web experiences using HTML, CSS, JavaScript, React, and Node.js.',
-            'Building custom PCs—from budget rigs to water-cooled showcases—optimised for thermal performance.',
-            'Supporting peers with code reviews, debugging sessions, and study plans to accelerate learning.',
-            'Providing programming support in C#, Java, and Python with a focus on maintainable solutions.',
+            'GPA 4.39 / 4.5 while building modern web applications using React and Node.js.',
+            'Developed console-based games in C# applying object-oriented programming principles.',
+            'Designed and implemented relational databases with SQL, ERDs, and normalized schemas.',
+            'Created UML diagrams, Software Requirements Specifications, and detailed system models.',
+            'Collaborated on Agile team projects, pairing clean code with strong documentation.',
+            'Strengthened foundations in QA, version control, and DevOps concepts for real projects.',
         ],
     },
 ];
@@ -90,7 +79,7 @@ const serviceCards = [
 ];
 
 export default function Home() {
-    const [openExperience, setOpenExperience] = useState(0);
+    const [openEducation, setOpenEducation] = useState(0);
     const [values, setValues] = useState({
         firstName: '',
         lastName: '',
@@ -101,7 +90,7 @@ export default function Home() {
     const [isSubmitted, setIsSubmitted] = useState(false);
 
     const handleToggle = (index) => {
-        setOpenExperience((prev) => (prev === index ? -1 : index));
+        setOpenEducation((prev) => (prev === index ? -1 : index));
     };
 
     const handleChange = (name) => (event) => {
@@ -219,18 +208,18 @@ export default function Home() {
                 </div>
             </section>
 
-            <section id="experience" className="section">
-                <span className="section__eyebrow">Experience</span>
-                <h2 className="section__heading">Highlights from my journey so far</h2>
+            <section id="education" className="section">
+                <span className="section__eyebrow">Education</span>
+                <h2 className="section__heading">The coursework shaping my craft</h2>
                 <div className="accordion">
-                    {experienceItems.map((item, index) => {
-                        const open = openExperience === index;
+                    {educationItems.map((item, index) => {
+                        const open = openEducation === index;
                         return (
-                            <article key={item.role} className={`accordion__item ${open ? 'accordion__item--open' : ''}`}>
+                            <article key={item.program} className={`accordion__item ${open ? 'accordion__item--open' : ''}`}>
                                 <button type="button" className="accordion__trigger" onClick={() => handleToggle(index)}>
                                     <div>
-                                        <h3>{item.role}</h3>
-                                        <p>{item.company} • {item.period}</p>
+                                        <h3>{item.program}</h3>
+                                        <p>{item.school} • {item.period}</p>
                                     </div>
                                     <span aria-hidden="true" className="accordion__icon">{open ? '−' : '+'}</span>
                                 </button>
