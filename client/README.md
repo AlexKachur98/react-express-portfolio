@@ -1,16 +1,33 @@
-# React + Vite
+# Alex Kachur Portfolio • Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This Vite + React application powers the UI for [alexkachur.dev](https://alexkachur.dev). It renders the single-page experience (hero, about, education, projects, services, contact) with glassmorphism styling, reveal animations, and responsive navigation.
 
-Currently, two official plugins are available:
+## Quick Start
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+```bash
+# From the project root
+npm install
+npm run client      # Runs Vite dev server on http://localhost:5173
 
-## React Compiler
+# Or work directly inside /client
+cd client
+npm install
+npm run dev
+```
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Build
 
-## Expanding the ESLint configuration
+```bash
+npm run build   # Outputs production bundle to client/dist
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+The Express server at the repo root serves this build in production.
+
+## Key Tech
+
+- React 19 + Vite
+- Custom CSS (glassmorphism, animations, responsive grid)
+- Vanta.js background, IntersectionObserver scroll reveals
+- React Router for in-page anchor navigation
+
+For backend/API details, see the root [README](../README.md).

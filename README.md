@@ -8,6 +8,12 @@ Modern MERN-based personal site showcasing my work, background, and contact touc
 
 ---
 
+## 🔗 Live Site
+
+Hosted on Google Cloud at **[alexkachur.dev](https://alexkachur.dev)**.
+
+---
+
 ## ✨ Highlights
 
 - **Immersive UI/UX** – Floating navigation, Vanta waves background, typed hero intro, and smooth reveal animations build an engaging first impression.
