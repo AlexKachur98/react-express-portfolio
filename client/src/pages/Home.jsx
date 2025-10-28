@@ -129,10 +129,13 @@ export default function Home() {
             entries.forEach((entry) => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('reveal-active');
-                    observer.unobserve(entry.target);
+                    entry.target.classList.remove('reveal-exit');
+                } else {
+                    entry.target.classList.add('reveal-exit');
+                    entry.target.classList.remove('reveal-active');
                 }
             });
-        }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+        }, { threshold: 0.2, rootMargin: '0px 0px -40px 0px' });
 
         sections.forEach((section) => observer.observe(section));
 
