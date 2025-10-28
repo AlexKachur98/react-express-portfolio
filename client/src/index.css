@@ -135,12 +135,6 @@ a {
     transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
-.floating-nav__toggle-label {
-    font-size: 0.85rem;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-}
-
 .floating-nav__toggle--open .floating-nav__toggle-line:nth-child(1) {
     transform: translateY(6px) rotate(45deg);
 }
