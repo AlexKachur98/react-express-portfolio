@@ -51,24 +51,6 @@ const projectCards = [
     },
 ];
 
-const skillTags = [
-    'C#',
-    'Java',
-    'Python',
-    'JavaScript',
-    'React',
-    'Node.js',
-    'SQL & ERDs',
-    'REST APIs',
-    'Git & GitHub',
-    'Agile & Scrum',
-    'UML & SRS',
-    'Custom PC Builds',
-    'Peer Mentorship',
-    'Accessible UX',
-    'Animal Advocate',
-];
-
 const serviceCards = [
     { title: 'General Programming', description: 'Clean, readable problem solving across C#, Java, and Python.' },
     { title: 'Web Development', description: 'Building responsive, accessible UIs with React, Node.js, and JavaScript.' },
@@ -260,14 +242,9 @@ export default function Home() {
                 </div>
             </section>
 
-            <section id="skills" className="section">
-                <span className="section__eyebrow">Skills</span>
-                <h2 className="section__heading">Tools, languages, and passions</h2>
-                <div className="badge-grid">
-                    {skillTags.map((skill) => (
-                        <span key={skill} className="badge">{skill}</span>
-                    ))}
-                </div>
+            <section id="services" className="section">
+                <span className="section__eyebrow">Services</span>
+                <h2 className="section__heading">How I can help</h2>
                 <div className="service-grid">
                     {serviceCards.map((service) => (
                         <article key={service.title} className="service-card">
