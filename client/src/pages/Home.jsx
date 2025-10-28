@@ -4,7 +4,7 @@
  * @since 2025-10-16
  * @purpose This component renders the Home page of the portfolio.
  */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Typewriter from '../components/Typewriter.jsx';
 
 const heroLines = [
@@ -121,6 +121,23 @@ export default function Home() {
             setValues({ ...values, error: 'Could not send message. Please try again later.' });
         }
     };
+
+    useEffect(() => {
+        const sections = document.querySelectorAll('.section');
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('reveal-active');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+        sections.forEach((section) => observer.observe(section));
+
+        return () => observer.disconnect();
+    }, []);
 
     return (
         <div className="landing">
