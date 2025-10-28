@@ -627,6 +627,7 @@ a {
 
     .floating-nav__links {
         justify-content: center;
+        gap: 8px;
     }
 
     .section--glass {
@@ -641,9 +642,24 @@ a {
 @media (max-width: 640px) {
     .floating-nav {
         width: min(100%, calc(100% - 20px));
+        top: 24px;
     }
 
     .floating-nav__inner {
+        padding: 12px 16px;
+        gap: 12px;
+    }
+
+    .floating-nav__brand {
+        justify-content: center;
+    }
+
+    .floating-nav__links {
+        width: 100%;
+    }
+
+    .floating-nav__link {
+        width: 100%;
         padding: 12px 16px;
     }
 
@@ -651,15 +667,137 @@ a {
         padding: 40px 24px;
     }
 
+    .section {
+        gap: 24px;
+    }
+
     .hero__title {
         font-size: clamp(2.6rem, 8vw, 3.4rem);
+    }
+
+    .hero__subtitle {
+        font-size: 1rem;
+    }
+
+    .hero__actions {
+        flex-direction: column;
+        gap: 12px;
+        width: 100%;
+    }
+
+    .hero__actions .btn {
+        width: 100%;
     }
 
     .about__card img {
         width: clamp(220px, 65vw, 280px);
     }
 
-    .btn {
+    .accordion__trigger {
+        padding: 22px 20px;
+    }
+
+    .project-card__body {
+        padding: 20px;
+    }
+
+    .contact-grid__form {
+        padding: 24px;
+    }
+
+    .contact-form__row {
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    .footer {
+        padding: 40px 0 18px;
+    }
+}
+
+@media (max-width: 480px) {
+    .floating-nav {
+        top: 20px;
+    }
+
+    .floating-nav__brandmark {
+        width: 34px;
+        height: 34px;
+        font-size: 0.9rem;
+    }
+
+    .floating-nav__brandtext {
+        font-size: 0.85rem;
+    }
+
+    .floating-nav__links {
+        gap: 6px;
+    }
+
+    .floating-nav__link {
+        padding: 10px 14px;
+        font-size: 0.9rem;
+    }
+
+    .section--glass {
+        padding: 32px 20px;
+        border-radius: 22px;
+    }
+
+    .section {
+        gap: 20px;
+    }
+
+    .section__heading {
+        font-size: clamp(1.8rem, 7vw, 2.4rem);
+    }
+
+    .project-card {
+        border-radius: 20px;
+    }
+
+    .project-card__media img {
+        height: 160px;
+    }
+
+    .project-card__links {
+        gap: 8px;
+    }
+
+    .project-card__links .btn {
         width: 100%;
+    }
+
+    .service-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .service-card {
+        padding: 20px;
+        border-radius: 18px;
+    }
+
+    .contact-grid__card {
+        padding: 18px;
+    }
+
+    .contact-grid__form {
+        padding: 22px;
+        border-radius: 20px;
+    }
+
+    .contact-form label {
+        font-size: 0.9rem;
+    }
+
+    .contact-form input,
+    .contact-form textarea {
+        padding: 11px 14px;
+    }
+
+    .footer {
+        padding: 36px 0 16px;
+        font-size: 0.85rem;
     }
 }
