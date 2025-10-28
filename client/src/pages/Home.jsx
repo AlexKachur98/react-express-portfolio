@@ -204,10 +204,6 @@ export default function Home() {
                                 alt="Headshot of Alex Kachur"
                                 loading="lazy"
                             />
-                            <div className="about__note">
-                                <span>Software Engineering Technology</span>
-                                <strong>Centennial College</strong>
-                            </div>
                         </div>
                     </div>
                 </div>
