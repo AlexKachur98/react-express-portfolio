@@ -55,6 +55,7 @@ export default function ContactSection({ values, isSubmitted, onChange, onSubmit
                                     type="email"
                                     id="email"
                                     name="email"
+                                    autoComplete="email"
                                     required
                                     value={values.email}
                                     onChange={onChange('email')}
