@@ -36,12 +36,15 @@ const projectCards = [
         description: 'A console-based word guessing game built in C# applying OOP basics.',
         tags: ['C#', 'OOP', 'Game'],
         image: '/assets/project-hangman.webp',
+        github: 'https://github.com/AlexKachur98/csharp-hangman-game',
     },
     {
         title: 'Prestige Exotics Website',
         description: 'Luxury car showcase using HTML, CSS, JavaScript and jQuery animations.',
         tags: ['HTML', 'CSS', 'JavaScript', 'jQuery'],
         image: '/assets/project-exotics.webp',
+        github: 'https://github.com/AlexKachur98/comp125-dealership-website',
+        live: 'https://studentweb.cencol.ca/akachur/COMP125%20Assignment%2006/home.html',
     },
     {
         title: 'UniLabBooker SRS',
@@ -235,6 +238,16 @@ export default function Home() {
                                     {project.tags.map((tag) => (
                                         <span key={tag}>{tag}</span>
                                     ))}
+                                </div>
+                                <div className="project-card__links">
+                                    <a className="btn btn--ghost" href={project.github} target="_blank" rel="noopener noreferrer">
+                                        View GitHub
+                                    </a>
+                                    {project.live && (
+                                        <a className="btn btn--primary" href={project.live} target="_blank" rel="noopener noreferrer">
+                                            View Live
+                                        </a>
+                                    )}
                                 </div>
                             </div>
                         </article>

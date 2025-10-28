@@ -461,6 +461,18 @@ a {
     color: rgba(191, 219, 254, 0.95);
 }
 
+.project-card__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 16px;
+}
+
+.project-card__links .btn {
+    padding: 10px 22px;
+    font-size: 0.9rem;
+}
+
 .service-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
