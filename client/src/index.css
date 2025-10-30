@@ -1107,11 +1107,6 @@ a {
     text-align: center;
 }
 
-.cat-gallery__modal-meta p {
-    margin: 0;
-    color: rgba(226, 232, 240, 0.85);
-}
-
 .cat-gallery__modal-favourite {
     border: none;
     border-radius: 999px;

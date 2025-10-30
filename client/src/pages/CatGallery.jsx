@@ -324,7 +324,6 @@ export default function CatGallery() {
                             </button>
                         </div>
                         <div className="cat-gallery__modal-meta">
-                            <p>{modalImage.alt}</p>
                             <button
                                 type="button"
                                 className="cat-gallery__modal-favourite"
