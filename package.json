@@ -1,6 +1,6 @@
 {
   "name": "my-portfolio-backend",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "COMP229 Assignment 2 - MERN Portfolio Backend",
   "author": "Alex Kachur",
   "main": "server.js",
