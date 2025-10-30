@@ -1,3 +1,9 @@
+/**
+ * @file EducationSection.jsx
+ * @author Alex Kachur
+ * @since 2025-10-28
+ * @purpose Accordion detailing program highlights while keeping the section compact.
+ */
 import React from 'react';
 
 export default function EducationSection({ items, openIndex, onToggle }) {
@@ -10,6 +16,7 @@ export default function EducationSection({ items, openIndex, onToggle }) {
                     const open = openIndex === index;
                     return (
                         <article key={item.program} className={`accordion__item ${open ? 'accordion__item--open' : ''}`}>
+                            {/* Button keeps the accordion accessible and delegates state back to the parent hook. */}
                             <button type="button" className="accordion__trigger" onClick={() => onToggle(index)}>
                                 <div>
                                     <h3>{item.program}</h3>

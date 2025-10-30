@@ -1,3 +1,9 @@
+/**
+ * @file AboutSection.jsx
+ * @author Alex Kachur
+ * @since 2025-10-28
+ * @purpose Snapshot of personal background, pairing a narrative with quick links to key profiles.
+ */
 import React from 'react';
 import ResumeIcon from '../icons/ResumeIcon.jsx';
 import LinkedInIcon from '../icons/LinkedInIcon.jsx';
@@ -32,6 +38,7 @@ export default function AboutSection() {
                             loading="lazy"
                         />
                     </div>
+                    {/* Icon-only links get explicit labels to stay screen-reader friendly. */}
                     <div className="about__links" aria-label="Personal links">
                         <a
                             href="/assets/resume.pdf"

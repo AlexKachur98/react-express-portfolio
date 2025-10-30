@@ -1,3 +1,9 @@
+/**
+ * @file HeroSection.jsx
+ * @author Alex Kachur
+ * @since 2025-10-28
+ * @purpose Landing hero introducing the portfolio voice, CTA, and animated typewriter lead-in.
+ */
 import React from 'react';
 import Typewriter from '../Typewriter.jsx';
 
@@ -11,6 +17,7 @@ export default function HeroSection({ heroLines }) {
                 My mission is to leverage technology and clean, maintainable code to solve real problems and support the people around me.
             </p>
             <div className="hero__actions">
+                {/* Smooth-scroll buttons stay within the SPA while keeping anchor semantics. */}
                 <a
                     className="btn btn--primary"
                     href="#projects"

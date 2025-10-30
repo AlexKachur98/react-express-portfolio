@@ -1,3 +1,9 @@
+/**
+ * @file ServicesSection.jsx
+ * @author Alex Kachur
+ * @since 2025-10-28
+ * @purpose Communicate service offerings with concise summaries and optional illustrative icons.
+ */
 import React from 'react';
 
 export default function ServicesSection({ services }) {
@@ -12,6 +18,7 @@ export default function ServicesSection({ services }) {
                             <h3>{service.title}</h3>
                             <p>{service.description}</p>
                         </div>
+                        {/* Icons are optional per card, so guard the render and keep alt text configurable. */}
                         {service.icon && (
                             <img
                                 src={service.icon}

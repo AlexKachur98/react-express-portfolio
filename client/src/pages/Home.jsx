@@ -102,6 +102,7 @@ const serviceCards = [
 ];
 
 export default function Home() {
+    // Track accordion progress plus form state so the contact CTA feels responsive.
     const [openEducation, setOpenEducation] = useState(0);
     const [values, setValues] = useState({
         firstName: '',
@@ -124,6 +125,7 @@ export default function Home() {
     const handleSubmit = async (event) => {
         event.preventDefault();
 
+        // Bail early if a request is already inflight so we do not spam the API.
         if (isSubmitting) {
             return;
         }
@@ -161,6 +163,7 @@ export default function Home() {
     };
 
     useEffect(() => {
+        // Trigger reveal animations as sections scroll into view for progressive storytelling.
         const sections = document.querySelectorAll('.section');
 
         const observer = new IntersectionObserver((entries) => {

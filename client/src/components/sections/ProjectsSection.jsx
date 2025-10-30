@@ -1,3 +1,9 @@
+/**
+ * @file ProjectsSection.jsx
+ * @author Alex Kachur
+ * @since 2025-10-28
+ * @purpose Highlight recent work with quick access to code and live demos.
+ */
 import React from 'react';
 import ExternalLinkIcon from '../icons/ExternalLinkIcon.jsx';
 
@@ -25,6 +31,7 @@ export default function ProjectsSection({ projects }) {
                                     <ExternalLinkIcon className="btn__icon" />
                                     <span className="btn__label">GitHub</span>
                                 </a>
+                                {/* Only render the live CTA when we have a hosted URL to avoid dead links. */}
                                 {project.live && (
                                     <a className="btn btn--primary btn--with-icon" href={project.live} target="_blank" rel="noopener noreferrer">
                                         <ExternalLinkIcon className="btn__icon" />

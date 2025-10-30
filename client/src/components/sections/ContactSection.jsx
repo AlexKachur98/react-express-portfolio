@@ -1,3 +1,9 @@
+/**
+ * @file ContactSection.jsx
+ * @author Alex Kachur
+ * @since 2025-10-28
+ * @purpose Contact CTA with success state and a reusable form driven by container props.
+ */
 import React from 'react';
 
 export default function ContactSection({ values, isSubmitted, isSubmitting, onChange, onSubmit }) {
@@ -73,6 +79,7 @@ export default function ContactSection({ values, isSubmitted, isSubmitting, onCh
                                 ></textarea>
                             </label>
 
+                            {/* Surface backend validation errors inline so the user knows what went wrong. */}
                             {values.error && (<p className="contact-form__error">{values.error}</p>)}
 
                             <button

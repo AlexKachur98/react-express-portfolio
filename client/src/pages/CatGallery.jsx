@@ -1,7 +1,14 @@
+/**
+ * @file CatGallery.jsx
+ * @author Alex Kachur
+ * @since 2025-10-29
+ * @purpose Curated gallery experience for cat photos with filtering, favourites, and modal viewing.
+ */
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 const COOKIE_KEY = 'cat_gallery_favourites';
 
+// Raw image metadata used to compose render-ready data structures.
 const RAW_IMAGES = [
     { id: 'img_0122', src: '/assets/IMG_0122.jpeg', alt: 'Cat lounging on a blanket' },
     { id: 'img_0146', src: '/assets/IMG_0146.jpeg', alt: 'Curious cat looking at the camera' },
@@ -38,6 +45,7 @@ const RAW_IMAGES = [
     { id: 'img_9545', src: '/assets/IMG_9545.jpeg', alt: 'Cat resting on a sofa' },
 ];
 
+// Quick lookup sets to tag images without repeatedly scanning the RAW_IMAGES array.
 const MOURA_IDS = new Set(['img_0122', 'img_4576', 'img_6063', 'img_6436', 'img_6823', 'img_7129', 'img_7875', 'img_8285', 'img_8996', 'img_9240', 'img_9461']);
 const TOGETHER_IDS = new Set(['img_0374', 'img_0375', 'img_8628', 'img_8992', 'img_9058', 'img_9400', 'img_9412']);
 
@@ -60,9 +68,11 @@ const TAG_OPTIONS = [
     { value: 'together', label: 'Together' },
 ];
 
+// Shared tag filter keeps business rules centralised for list + modal sequences.
 const filterByTag = (images, tag) => (tag === 'all' ? images : images.filter((image) => image.tags.includes(tag)));
 
 const favouriteCookie = {
+    // Gracefully handle missing or malformed cookie values.
     read() {
         if (typeof document === 'undefined') return [];
         const match = document.cookie.split('; ').find((row) => row.startsWith(`${COOKIE_KEY}=`));
@@ -85,6 +95,7 @@ const favouriteCookie = {
 };
 
 export default function CatGallery() {
+    // Feature toggles and derived state for filters, favourites, and modal rendering.
     const [favoriteIds, setFavoriteIds] = useState(() => favouriteCookie.read());
     const [showFavouritesOnly, setShowFavouritesOnly] = useState(false);
     const [activeTag, setActiveTag] = useState('all');
@@ -100,6 +111,7 @@ export default function CatGallery() {
     const tagFiltered = useMemo(() => filterByTag(CAT_IMAGES, activeTag), [activeTag]);
     const favouriteTagSequence = useMemo(() => filterByTag(favouriteSequence, activeTag), [favouriteSequence, activeTag]);
     const visibleImages = showFavouritesOnly ? favouriteTagSequence : tagFiltered;
+    // Modal leverages either favourites or the full list, filtered by the active tag.
     const modalSequence = useMemo(() => {
         const base = modalSource.source === 'favourites' ? favouriteSequence : CAT_IMAGES;
         return filterByTag(base, modalSource.tag);
@@ -118,10 +130,12 @@ export default function CatGallery() {
     }, [modalLength]);
 
     useEffect(() => {
+        // Persist favourites whenever the selection changes.
         favouriteCookie.write(favoriteIds);
     }, [favoriteIds]);
 
     useEffect(() => {
+        // Lock body scroll when the modal is open to avoid background jitter.
         if (isFullscreen) {
             const previousOverflow = document.body.style.overflow;
             document.body.style.overflow = 'hidden';
