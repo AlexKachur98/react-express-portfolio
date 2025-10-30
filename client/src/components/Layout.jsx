@@ -135,7 +135,7 @@ export default function Layout() {
                 </header>
             )}
 
-            <main className="app-main">
+            <main className={`app-main ${isCatGallery ? 'app-main--cat' : ''}`}>
                 <Outlet />
             </main>
         </div>
