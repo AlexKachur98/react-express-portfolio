@@ -21,10 +21,6 @@ export default function AboutSection() {
                         Outside of development, you’ll find me gaming, following the NBA, NFL, and MMA, or building custom PCs. I share life
                         with my cats Moura and Simba, and my dream is to one day open an animal rescue ranch.
                     </p>
-                    <a href="/assets/resume.pdf" className="btn btn--secondary btn--with-icon" target="_blank" rel="noopener noreferrer">
-                        <ExternalLinkIcon className="btn__icon" />
-                        <span className="btn__label">Resume</span>
-                    </a>
                 </div>
                 <div className="about__media">
                     <div className="about__card">
@@ -34,6 +30,15 @@ export default function AboutSection() {
                             loading="lazy"
                         />
                     </div>
+                    <a
+                        href="/assets/resume.pdf"
+                        className="btn btn--secondary btn--with-icon about__resume"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        <ExternalLinkIcon className="btn__icon" />
+                        <span className="btn__label">Resume</span>
+                    </a>
                 </div>
             </div>
         </section>
