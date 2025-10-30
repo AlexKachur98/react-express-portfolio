@@ -1,5 +1,7 @@
 import React from 'react';
-import ExternalLinkIcon from '../icons/ExternalLinkIcon.jsx';
+import ResumeIcon from '../icons/ResumeIcon.jsx';
+import LinkedInIcon from '../icons/LinkedInIcon.jsx';
+import GithubIcon from '../icons/GithubIcon.jsx';
 
 export default function AboutSection() {
     return (
@@ -30,15 +32,35 @@ export default function AboutSection() {
                             loading="lazy"
                         />
                     </div>
-                    <a
-                        href="/assets/resume.pdf"
-                        className="btn btn--secondary btn--with-icon about__resume"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        <ExternalLinkIcon className="btn__icon" />
-                        <span className="btn__label">Resume</span>
-                    </a>
+                    <div className="about__links" aria-label="Personal links">
+                        <a
+                            href="/assets/resume.pdf"
+                            className="about__link"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label="Open resume PDF"
+                        >
+                            <ResumeIcon className="about__link-icon" />
+                        </a>
+                        <a
+                            href="https://www.linkedin.com/in/alex-kachur"
+                            className="about__link"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label="Visit Alex's LinkedIn profile"
+                        >
+                            <LinkedInIcon className="about__link-icon" />
+                        </a>
+                        <a
+                            href="https://github.com/AlexKachur98"
+                            className="about__link"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label="Visit Alex's GitHub profile"
+                        >
+                            <GithubIcon className="about__link-icon" />
+                        </a>
+                    </div>
                 </div>
             </div>
         </section>
