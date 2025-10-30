@@ -53,10 +53,12 @@ const projectCards = [
         live: 'https://studentweb.cencol.ca/akachur/COMP125%20Assignment%2006/home.html',
     },
     {
-        title: 'UniLabBooker SRS',
-        description: 'Software Requirements Specification for a lab-booking system.',
-        tags: ['SRS', 'UML', 'Requirements'],
-        image: '/assets/project-srs.webp',
+        title: 'React + Express Portfolio',
+        description: 'This site – a full-stack portfolio with animated sections, contact form, and CMS-ready backend.',
+        tags: ['React', 'Express', 'Node.js'],
+        image: '/assets/portfolio.webp',
+        github: 'https://github.com/AlexKachur98/react-express-portfolio',
+        live: 'https://AlexKachur.dev',
     },
 ];
 
