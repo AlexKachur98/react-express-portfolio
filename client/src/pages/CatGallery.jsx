@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 const COOKIE_KEY = 'cat_gallery_favourites';
 
-const CAT_IMAGES = [
+const RAW_IMAGES = [
     { id: 'img_0122', src: '/assets/IMG_0122.jpeg', alt: 'Cat lounging on a blanket' },
     { id: 'img_0146', src: '/assets/IMG_0146.jpeg', alt: 'Curious cat looking at the camera' },
     { id: 'img_0373', src: '/assets/IMG_0373.JPG', alt: 'Cat playing with a toy' },
@@ -38,6 +38,30 @@ const CAT_IMAGES = [
     { id: 'img_9545', src: '/assets/IMG_9545.jpeg', alt: 'Cat resting on a sofa' },
 ];
 
+const MOURA_IDS = new Set(['img_0122', 'img_4576', 'img_6063', 'img_6436', 'img_6823', 'img_7129', 'img_7875', 'img_8285', 'img_8996', 'img_9240', 'img_9461']);
+const TOGETHER_IDS = new Set(['img_0374', 'img_0375', 'img_8628', 'img_8992', 'img_9058', 'img_9400', 'img_9412']);
+
+const CAT_IMAGES = RAW_IMAGES.map((image) => {
+    let tags;
+    if (TOGETHER_IDS.has(image.id)) {
+        tags = ['together'];
+    } else if (MOURA_IDS.has(image.id)) {
+        tags = ['moura'];
+    } else {
+        tags = ['simba'];
+    }
+    return { ...image, tags };
+});
+
+const TAG_OPTIONS = [
+    { value: 'all', label: 'All cats' },
+    { value: 'simba', label: 'Simba' },
+    { value: 'moura', label: 'Moura' },
+    { value: 'together', label: 'Together' },
+];
+
+const filterByTag = (images, tag) => (tag === 'all' ? images : images.filter((image) => image.tags.includes(tag)));
+
 const favouriteCookie = {
     read() {
         if (typeof document === 'undefined') return [];
@@ -63,15 +87,21 @@ const favouriteCookie = {
 export default function CatGallery() {
     const [favoriteIds, setFavoriteIds] = useState(() => favouriteCookie.read());
     const [showFavouritesOnly, setShowFavouritesOnly] = useState(false);
+    const [activeTag, setActiveTag] = useState('all');
     const [isFullscreen, setIsFullscreen] = useState(false);
-    const [modalContext, setModalContext] = useState('all');
+    const [modalSource, setModalSource] = useState({ source: 'all', tag: 'all' });
     const [modalIndex, setModalIndex] = useState(0);
     const carouselRef = useRef(null);
 
     const favouriteSet = useMemo(() => new Set(favoriteIds), [favoriteIds]);
     const favouriteSequence = useMemo(() => CAT_IMAGES.filter((image) => favouriteSet.has(image.id)), [favouriteSet]);
-    const visibleImages = showFavouritesOnly ? favouriteSequence : CAT_IMAGES;
-    const modalSequence = modalContext === 'favourites' ? favouriteSequence : CAT_IMAGES;
+    const tagFiltered = useMemo(() => filterByTag(CAT_IMAGES, activeTag), [activeTag]);
+    const favouriteTagSequence = useMemo(() => filterByTag(favouriteSequence, activeTag), [favouriteSequence, activeTag]);
+    const visibleImages = showFavouritesOnly ? favouriteTagSequence : tagFiltered;
+    const modalSequence = useMemo(() => {
+        const base = modalSource.source === 'favourites' ? favouriteSequence : CAT_IMAGES;
+        return filterByTag(base, modalSource.tag);
+    }, [modalSource, favouriteSequence]);
     const modalLength = modalSequence.length;
     const modalImage = modalSequence[modalIndex];
 
@@ -145,16 +175,15 @@ export default function CatGallery() {
         });
     };
 
-    const openFullscreen = (imageId, context) => {
-        const sequence = context === 'favourites' ? favouriteSequence : CAT_IMAGES;
+    const openFullscreen = (imageId) => {
+        const source = showFavouritesOnly ? 'favourites' : 'all';
+        const tag = activeTag;
+        const sequence = showFavouritesOnly ? favouriteTagSequence : tagFiltered;
         const index = sequence.findIndex((image) => image.id === imageId);
         if (index === -1) {
-            setModalContext('all');
-            setModalIndex(0);
-            setIsFullscreen(true);
             return;
         }
-        setModalContext(context);
+        setModalSource({ source, tag });
         setModalIndex(index);
         setIsFullscreen(true);
     };
@@ -197,6 +226,19 @@ export default function CatGallery() {
                             Favourites ({favouriteSequence.length})
                         </button>
                     </div>
+                    <div className="cat-gallery__filters" role="group" aria-label="Filter photos by cat">
+                        {TAG_OPTIONS.map((option) => (
+                            <button
+                                key={option.value}
+                                type="button"
+                                className={`cat-gallery__filter ${activeTag === option.value ? 'cat-gallery__filter--active' : ''}`}
+                                aria-pressed={activeTag === option.value}
+                                onClick={() => setActiveTag(option.value)}
+                            >
+                                {option.label}
+                            </button>
+                        ))}
+                    </div>
                 </header>
 
                 <div className="cat-gallery__carousel-wrap">
@@ -217,12 +259,11 @@ export default function CatGallery() {
                         ) : (
                             visibleImages.map((image) => {
                                 const isFavourite = favouriteSet.has(image.id);
-                                const context = showFavouritesOnly ? 'favourites' : 'all';
                                 return (
                                     <figure
                                         key={image.id}
                                         className={`cat-card ${isFavourite ? 'cat-card--favourite' : ''}`}
-                                        onClick={() => openFullscreen(image.id, context)}
+                                        onClick={() => openFullscreen(image.id)}
                                     >
                                         <img src={image.src} alt={image.alt} loading="lazy" />
                                         <button
