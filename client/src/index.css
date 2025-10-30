@@ -58,14 +58,18 @@ a {
     gap: 20px;
     padding: 14px 20px;
     border-radius: 999px;
-    backdrop-filter: blur(18px);
-    background: rgba(15, 23, 42, 0.48);
-    border: 1px solid rgba(148, 163, 184, 0.35);
-    box-shadow: 0 26px 48px rgba(2, 6, 23, 0.45);
+    border: 1px solid transparent;
+    background: transparent;
+    box-shadow: none;
+    backdrop-filter: none;
+    transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, backdrop-filter 0.3s ease;
 }
 
 .floating-nav--scrolled .floating-nav__inner {
     background: rgba(15, 23, 42, 0.75);
+    border-color: rgba(148, 163, 184, 0.35);
+    box-shadow: 0 26px 48px rgba(2, 6, 23, 0.45);
+    backdrop-filter: blur(18px);
 }
 
 .floating-nav__brand {

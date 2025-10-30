@@ -46,9 +46,30 @@ export default function Layout() {
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
+    useEffect(() => {
+        let previousRestoration;
+        if ('scrollRestoration' in window.history) {
+            previousRestoration = window.history.scrollRestoration;
+            window.history.scrollRestoration = 'manual';
+        }
+
+        window.scrollTo(0, 0);
+
+        return () => {
+            if (previousRestoration) {
+                window.history.scrollRestoration = previousRestoration;
+            }
+        };
+    }, []);
+
     const handleNavClick = useCallback((href) => {
         if (!href.startsWith('#')) {
             window.location.href = href;
+            return;
+        }
+
+        if (href === '#home') {
+            window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
             return;
         }
 
