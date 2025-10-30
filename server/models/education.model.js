@@ -8,22 +8,30 @@ import mongoose from 'mongoose';
 
 // Note: This model is based on the 'qualifications' table in Assignment 2.pdf
 const EducationSchema = new mongoose.Schema({
-    institution: {
+    title: {
         type: String,
         trim: true,
-        required: 'Institution is required'
+        required: 'Title is required'
     },
-    degree: {
+    firstName: {
         type: String,
         trim: true,
-        required: 'Degree/Program is required'
+        required: 'First name is required'
     },
-    startDate: {
+    lastName: {
+        type: String,
+        trim: true,
+        required: 'Last name is required'
+    },
+    email: {
+        type: String,
+        trim: true,
+        match: [/.+\@.+\..+/, 'Please provide a valid email address'],
+        required: 'Email is required'
+    },
+    completion: {
         type: Date,
-        required: 'Start date is required'
-    },
-    endDate: {
-        type: Date // Can be null if currently attending
+        required: 'Completion date is required'
     },
     description: {
         type: String,

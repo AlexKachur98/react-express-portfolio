@@ -12,6 +12,26 @@ const ProjectSchema = new mongoose.Schema({
         trim: true,
         required: 'Title is required'
     },
+    firstName: {
+        type: String,
+        trim: true,
+        required: 'First name is required'
+    },
+    lastName: {
+        type: String,
+        trim: true,
+        required: 'Last name is required'
+    },
+    email: {
+        type: String,
+        trim: true,
+        match: [/.+\@.+\..+/, 'Please provide a valid email address'],
+        required: 'Email is required'
+    },
+    completion: {
+        type: Date,
+        required: 'Completion date is required'
+    },
     description: {
         type: String,
         trim: true,
