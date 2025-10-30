@@ -21,7 +21,7 @@ export default function AboutSection() {
                         with my cats Moura and Simba, and my dream is to one day open an animal rescue ranch.
                     </p>
                     <a href="/assets/resume.pdf" className="btn btn--secondary" target="_blank" rel="noopener noreferrer">
-                        View Resume
+                        Resume
                     </a>
                 </div>
                 <div className="about__media">
