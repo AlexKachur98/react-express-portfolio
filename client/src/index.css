@@ -805,7 +805,14 @@ a {
 
 .cat-gallery__intro-track {
     position: relative;
-    width: min(90vw, 900px);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: min(90vw, 1100px);
+    gap: 60px;
+}
+
+.cat-gallery__intro-lane {
+    position: relative;
     height: 140px;
     overflow: visible;
 }
@@ -817,11 +824,18 @@ a {
     animation: cat-gallery-intro-run 2.2s ease forwards;
 }
 
-.cat-gallery__intro-paw--0 { top: 16px; left: -15%; animation-delay: 0s; }
-.cat-gallery__intro-paw--1 { top: 60px; left: -25%; animation-delay: 0.2s; transform: rotate(12deg); }
-.cat-gallery__intro-paw--2 { top: -4px; left: -35%; animation-delay: 0.4s; transform: rotate(-10deg); }
-.cat-gallery__intro-paw--3 { top: 70px; left: -45%; animation-delay: 0.6s; transform: rotate(8deg); }
-.cat-gallery__intro-paw--4 { top: 12px; left: -55%; animation-delay: 0.8s; transform: rotate(-6deg); }
+.cat-gallery__intro-lane--left .cat-gallery__intro-paw--0 { top: 16px; left: -15%; animation-delay: 0s; }
+.cat-gallery__intro-lane--left .cat-gallery__intro-paw--1 { top: 60px; left: -25%; animation-delay: 0.2s; transform: rotate(12deg); }
+.cat-gallery__intro-lane--left .cat-gallery__intro-paw--2 { top: -4px; left: -35%; animation-delay: 0.4s; transform: rotate(-10deg); }
+.cat-gallery__intro-lane--left .cat-gallery__intro-paw--3 { top: 70px; left: -45%; animation-delay: 0.6s; transform: rotate(8deg); }
+.cat-gallery__intro-lane--left .cat-gallery__intro-paw--4 { top: 12px; left: -55%; animation-delay: 0.8s; transform: rotate(-6deg); }
+
+.cat-gallery__intro-lane--right .cat-gallery__intro-paw { animation-name: cat-gallery-intro-run-right; }
+.cat-gallery__intro-lane--right .cat-gallery__intro-paw--0 { top: 18px; right: -15%; animation-delay: 0.1s; }
+.cat-gallery__intro-lane--right .cat-gallery__intro-paw--1 { top: 62px; right: -25%; animation-delay: 0.3s; transform: rotate(-10deg); }
+.cat-gallery__intro-lane--right .cat-gallery__intro-paw--2 { top: -6px; right: -35%; animation-delay: 0.5s; transform: rotate(9deg); }
+.cat-gallery__intro-lane--right .cat-gallery__intro-paw--3 { top: 72px; right: -45%; animation-delay: 0.7s; transform: rotate(-7deg); }
+.cat-gallery__intro-lane--right .cat-gallery__intro-paw--4 { top: 14px; right: -55%; animation-delay: 0.9s; transform: rotate(5deg); }
 
 .cat-gallery__paw {
     position: absolute;
@@ -1205,6 +1219,23 @@ a {
     100% {
         opacity: 0;
         transform: translateX(160%) scale(1.05);
+    }
+}
+
+@keyframes cat-gallery-intro-run-right {
+    0% {
+        opacity: 0;
+        transform: translateX(0) scale(0.95);
+    }
+    20% {
+        opacity: 1;
+    }
+    70% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        transform: translateX(-160%) scale(1.05);
     }
 }
 

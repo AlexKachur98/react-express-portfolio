@@ -209,11 +209,20 @@ export default function CatGallery() {
             {!introComplete && (
                 <div className="cat-gallery__intro" role="presentation">
                     <div className="cat-gallery__intro-track">
-                        {Array.from({ length: 5 }).map((_, index) => (
-                            <span key={index} className={`cat-gallery__intro-paw cat-gallery__intro-paw--${index}`}>
-                                🐾
-                            </span>
-                        ))}
+                        <div className="cat-gallery__intro-lane cat-gallery__intro-lane--left">
+                            {Array.from({ length: 5 }).map((_, index) => (
+                                <span key={`left-${index}`} className={`cat-gallery__intro-paw cat-gallery__intro-paw--${index}`}>
+                                    🐾
+                                </span>
+                            ))}
+                        </div>
+                        <div className="cat-gallery__intro-lane cat-gallery__intro-lane--right">
+                            {Array.from({ length: 5 }).map((_, index) => (
+                                <span key={`right-${index}`} className={`cat-gallery__intro-paw cat-gallery__intro-paw--${index}`}>
+                                    🐾
+                                </span>
+                            ))}
+                        </div>
                     </div>
                 </div>
             )}
