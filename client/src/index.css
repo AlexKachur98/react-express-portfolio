@@ -131,7 +131,7 @@ a {
 }
 
 .app-main--cat {
-    padding-top: 100px;
+    padding-top: 70px;
 }
 
 .landing {
@@ -727,13 +727,13 @@ a {
 
 .cat-gallery {
     position: relative;
-    min-height: 100vh;
+    min-height: calc(100vh - 100px);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 40px;
-    padding: 120px 0 120px;
+    padding: 80px 0 40px;
     overflow: hidden;
 }
 
@@ -1493,7 +1493,8 @@ a {
     }
 
     .cat-gallery {
-        padding: 140px 0 100px;
+        padding: 110px 0 80px;
+        min-height: auto;
     }
 
     .cat-gallery__back {
@@ -1563,7 +1564,7 @@ a {
     }
 
     .cat-gallery {
-        padding: 120px 0 80px;
+        padding: 100px 0 60px;
     }
 
     .cat-gallery__back {
