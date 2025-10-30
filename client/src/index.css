@@ -745,6 +745,11 @@ a {
     transform: none;
 }
 
+.cat-gallery--filtering .cat-gallery__carousel {
+    opacity: 0.7;
+    transform: translateY(6px) scale(0.985);
+}
+
 .cat-gallery__bg {
     position: fixed;
     inset: 0;
@@ -1011,6 +1016,7 @@ a {
     background: rgba(15, 23, 42, 0.55);
     border: 1px solid rgba(148, 163, 184, 0.25);
     box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.12);
+    transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
 .cat-gallery__carousel::-webkit-scrollbar {
@@ -1034,6 +1040,10 @@ a {
     gap: 12px;
     cursor: pointer;
     transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+    opacity: 0;
+    transform: translateY(18px);
+    animation: cat-gallery-card-in 0.38s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+    animation-delay: var(--card-delay, 0s);
 }
 
 .cat-card img {
@@ -1088,6 +1098,7 @@ a {
     display: grid;
     place-items: center;
     z-index: 20;
+    animation: cat-gallery-modal-fade 0.32s ease;
 }
 
 .cat-gallery__modal-backdrop {
@@ -1110,6 +1121,7 @@ a {
     flex-direction: column;
     gap: 20px;
     padding: 32px 32px 28px;
+    animation: cat-gallery-modal-pop 0.32s ease;
 }
 
 .cat-gallery__modal-close {
@@ -1249,6 +1261,37 @@ a {
     100% {
         opacity: 0;
         visibility: hidden;
+    }
+}
+
+@keyframes cat-gallery-card-in {
+    0% {
+        opacity: 0;
+        transform: translateY(24px) scale(0.96);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes cat-gallery-modal-fade {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes cat-gallery-modal-pop {
+    0% {
+        opacity: 0;
+        transform: translateY(20px) scale(0.95);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
     }
 }
 

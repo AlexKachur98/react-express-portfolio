@@ -92,6 +92,7 @@ export default function CatGallery() {
     const [modalSource, setModalSource] = useState({ source: 'all', tag: 'all' });
     const [modalIndex, setModalIndex] = useState(0);
     const [introComplete, setIntroComplete] = useState(false);
+    const [isFiltering, setIsFiltering] = useState(false);
     const carouselRef = useRef(null);
 
     const favouriteSet = useMemo(() => new Set(favoriteIds), [favoriteIds]);
@@ -165,6 +166,12 @@ export default function CatGallery() {
         return () => window.clearTimeout(timer);
     }, []);
 
+    useEffect(() => {
+        setIsFiltering(true);
+        const timer = window.setTimeout(() => setIsFiltering(false), 350);
+        return () => window.clearTimeout(timer);
+    }, [showFavouritesOnly, activeTag]);
+
     const scrollBy = (direction) => {
         const node = carouselRef.current;
         if (!node) return;
@@ -199,7 +206,7 @@ export default function CatGallery() {
     };
 
     return (
-        <div className={`cat-gallery ${introComplete ? 'cat-gallery--ready' : ''}`}>
+        <div className={`cat-gallery ${introComplete ? 'cat-gallery--ready' : ''} ${isFiltering ? 'cat-gallery--filtering' : ''}`}>
             <div className="cat-gallery__bg" aria-hidden="true"></div>
             <div className="cat-gallery__paws" aria-hidden="true">
                 {Array.from({ length: 8 }).map((_, index) => (
@@ -283,13 +290,14 @@ export default function CatGallery() {
                                 <p>No favourites yet. Tap the little hearts to save your favourite poses!</p>
                             </div>
                         ) : (
-                            visibleImages.map((image) => {
+                            visibleImages.map((image, index) => {
                                 const isFavourite = favouriteSet.has(image.id);
                                 return (
                                     <figure
                                         key={image.id}
                                         className={`cat-card ${isFavourite ? 'cat-card--favourite' : ''}`}
                                         onClick={() => openFullscreen(image.id)}
+                                        style={{ '--card-delay': `${Math.min(index, 8) * 60}ms` }}
                                     >
                                         <img src={image.src} alt={image.alt} loading="lazy" />
                                         <button
