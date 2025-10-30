@@ -91,6 +91,7 @@ export default function CatGallery() {
     const [isFullscreen, setIsFullscreen] = useState(false);
     const [modalSource, setModalSource] = useState({ source: 'all', tag: 'all' });
     const [modalIndex, setModalIndex] = useState(0);
+    const [introComplete, setIntroComplete] = useState(false);
     const carouselRef = useRef(null);
 
     const favouriteSet = useMemo(() => new Set(favoriteIds), [favoriteIds]);
@@ -159,6 +160,11 @@ export default function CatGallery() {
         return () => window.removeEventListener('keydown', handleKey);
     }, [isFullscreen, handleModalShift]);
 
+    useEffect(() => {
+        const timer = window.setTimeout(() => setIntroComplete(true), 2600);
+        return () => window.clearTimeout(timer);
+    }, []);
+
     const scrollBy = (direction) => {
         const node = carouselRef.current;
         if (!node) return;
@@ -193,15 +199,26 @@ export default function CatGallery() {
     };
 
     return (
-        <div className="cat-gallery">
+        <div className={`cat-gallery ${introComplete ? 'cat-gallery--ready' : ''}`}>
             <div className="cat-gallery__bg" aria-hidden="true"></div>
             <div className="cat-gallery__paws" aria-hidden="true">
                 {Array.from({ length: 8 }).map((_, index) => (
                     <span key={index} className={`cat-gallery__paw cat-gallery__paw--${index}`}>🐾</span>
                 ))}
             </div>
+            {!introComplete && (
+                <div className="cat-gallery__intro" role="presentation">
+                    <div className="cat-gallery__intro-track">
+                        {Array.from({ length: 5 }).map((_, index) => (
+                            <span key={index} className={`cat-gallery__intro-paw cat-gallery__intro-paw--${index}`}>
+                                🐾
+                            </span>
+                        ))}
+                    </div>
+                </div>
+            )}
 
-            <section className="cat-gallery__content">
+            <section className={`cat-gallery__content ${introComplete ? 'cat-gallery__content--show' : ''}`}>
                 <header className="cat-gallery__header">
                     <span className="cat-gallery__eyebrow">Cat Gallery</span>
                     <h1 className="cat-gallery__title">Meet the fluffy roommates</h1>
