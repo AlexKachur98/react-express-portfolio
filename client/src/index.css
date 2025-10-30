@@ -905,24 +905,33 @@ a {
 }
 
 .cat-gallery__scroll {
-    border: none;
-    border-radius: 50%;
-    width: 46px;
-    height: 46px;
-    display: grid;
-    place-items: center;
-    font-size: 1.8rem;
-    color: #f8fafc;
+    border: 1px solid rgba(148, 163, 184, 0.3);
+    border-radius: 14px;
+    padding: 0 18px;
+    min-width: 52px;
+    height: 48px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 1.1rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: rgba(226, 232, 240, 0.9);
     background: rgba(15, 23, 42, 0.6);
-    border: 1px solid rgba(148, 163, 184, 0.35);
     cursor: pointer;
-    transition: transform 0.2s ease, background 0.2s ease;
+    transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+}
+
+.cat-gallery__scroll span {
+    font-size: 1.4rem;
 }
 
 .cat-gallery__scroll:hover,
 .cat-gallery__scroll:focus-visible {
     transform: translateY(-2px);
-    background: rgba(244, 219, 255, 0.35);
+    background: rgba(244, 219, 255, 0.28);
+    border-color: rgba(244, 219, 255, 0.55);
     outline: none;
 }
 
