@@ -63,12 +63,42 @@ const projectCards = [
 ];
 
 const serviceCards = [
-    { title: 'General Programming', description: 'Clean, readable problem solving across C#, Java, and Python.' },
-    { title: 'Web Development', description: 'Building responsive, accessible UIs with React, Node.js, and JavaScript.' },
-    { title: 'Databases & SQL', description: 'Designing relational schemas, ERDs, and performant SQL queries.' },
-    { title: 'Version Control', description: 'Git & GitHub workflows, branching strategies, and collaboration support.' },
-    { title: 'Custom PCs', description: 'Parts selection, builds, and optimisation from budget to water-cooled systems.' },
-    { title: 'Peer Mentorship', description: 'Code reviews, debugging support, and study plans that accelerate learning.' },
+    {
+        title: 'General Programming',
+        description: 'Clean, readable problem solving across C#, Java, and Python.',
+        icon: '/assets/python-svgrepo-com.svg',
+        iconLabel: 'Python icon',
+    },
+    {
+        title: 'Web Development',
+        description: 'Building responsive, accessible UIs with React, Node.js, and JavaScript.',
+        icon: '/assets/react-svgrepo-com.svg',
+        iconLabel: 'React logo',
+    },
+    {
+        title: 'Databases & SQL',
+        description: 'Designing relational schemas, ERDs, and performant SQL queries.',
+        icon: '/assets/sql-database-generic-svgrepo-com.svg',
+        iconLabel: 'Database icon',
+    },
+    {
+        title: 'Version Control',
+        description: 'Git & GitHub workflows, branching strategies, and collaboration support.',
+        icon: '/assets/github-142-svgrepo-com.svg',
+        iconLabel: 'GitHub mark',
+    },
+    {
+        title: 'Custom PCs',
+        description: 'Parts selection, builds, and optimisation from budget to water-cooled systems.',
+        icon: '/assets/pc-creator-svgrepo-com.svg',
+        iconLabel: 'PC builder icon',
+    },
+    {
+        title: 'Peer Mentorship',
+        description: 'Code reviews, debugging support, and study plans that accelerate learning.',
+        icon: '/assets/team-svgrepo-com.svg',
+        iconLabel: 'Team collaboration icon',
+    },
 ];
 
 export default function Home() {
