@@ -9,6 +9,7 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout.jsx';
 import Home from './pages/Home.jsx';
+import CatGallery from './pages/CatGallery.jsx';
 
 const MainRouter = () => {
     return (
@@ -17,6 +18,7 @@ const MainRouter = () => {
             <Route path="/" element={<Layout />}>
                 {/* The index route renders the Home component at the root URL */}
                 <Route index element={<Home />} />
+                <Route path="cats" element={<CatGallery />} />
             </Route>
         </Routes>
     );

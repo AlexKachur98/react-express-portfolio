@@ -6,21 +6,23 @@
  * including the navigation bar and the area for rendering page content.
  */
 import React, { useCallback, useEffect, useState } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 import VantaBackground from './VantaBackground.jsx';
 
 const NAV_LINKS = [
-    { name: 'Home', href: '#home' },
-    { name: 'About', href: '#about' },
-    { name: 'Education', href: '#education' },
-    { name: 'Projects', href: '#projects' },
-    { name: 'Services', href: '#services' },
-    { name: 'Contact', href: '#contact' },
+    { name: 'Home', href: '#home', type: 'anchor' },
+    { name: 'About', href: '#about', type: 'anchor' },
+    { name: 'Education', href: '#education', type: 'anchor' },
+    { name: 'Projects', href: '#projects', type: 'anchor' },
+    { name: 'Services', href: '#services', type: 'anchor' },
+    { name: 'Contact', href: '#contact', type: 'anchor' },
+    { name: 'Cat Gallery', href: '/cats', type: 'route' },
 ];
 
 export default function Layout() {
     const [scrolled, setScrolled] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const handleScroll = () => {
@@ -62,9 +64,9 @@ export default function Layout() {
         };
     }, []);
 
-    const handleNavClick = useCallback((href) => {
-        if (!href.startsWith('#')) {
-            window.location.href = href;
+    const handleNavClick = useCallback((href, type) => {
+        if (type === 'route') {
+            navigate(href);
             return;
         }
 
@@ -77,10 +79,10 @@ export default function Layout() {
         if (target) {
             target.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
-    }, []);
+    }, [navigate]);
 
-    const handleNavSelection = (href) => {
-        handleNavClick(href);
+    const handleNavSelection = (href, type) => {
+        handleNavClick(href, type);
         setMenuOpen(false);
     };
 
@@ -114,7 +116,7 @@ export default function Layout() {
                                 key={item.name}
                                 type="button"
                                 className="floating-nav__link"
-                                onClick={() => handleNavSelection(item.href)}
+                                onClick={() => handleNavSelection(item.href, item.type)}
                             >
                                 {item.name}
                             </button>
