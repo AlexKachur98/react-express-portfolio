@@ -6,7 +6,7 @@
  * including the navigation bar and the area for rendering page content.
  */
 import React, { useCallback, useEffect, useState } from 'react';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import VantaBackground from './VantaBackground.jsx';
 
 const NAV_LINKS = [
@@ -23,6 +23,8 @@ export default function Layout() {
     const [scrolled, setScrolled] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
     const navigate = useNavigate();
+    const location = useLocation();
+    const isCatGallery = location.pathname.startsWith('/cats');
 
     useEffect(() => {
         const handleScroll = () => {
@@ -90,42 +92,49 @@ export default function Layout() {
         <div className="app-shell">
             <VantaBackground />
 
-            {/* Floating navigation tray */}
-            <header className={`floating-nav ${scrolled ? 'floating-nav--scrolled' : ''}`}>
-                <div className="floating-nav__inner">
-                    <button
-                        type="button"
-                        className={`floating-nav__toggle ${menuOpen ? 'floating-nav__toggle--open' : ''}`}
-                        onClick={() => setMenuOpen((prev) => !prev)}
-                        aria-expanded={menuOpen}
-                        aria-controls="primary-navigation"
-                        aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'}
-                    >
-                        <span className="floating-nav__toggle-label">
-                            {menuOpen ? 'Close' : 'Menu'}
-                        </span>
+            {isCatGallery ? (
+                <div className="cat-gallery__back">
+                    <button type="button" onClick={() => navigate('/')} aria-label="Back to portfolio">
+                        <span aria-hidden="true">←</span>
+                        <span>Back to Portfolio</span>
                     </button>
-
-                    <nav
-                        id="primary-navigation"
-                        className={`floating-nav__links ${menuOpen ? 'floating-nav__links--open' : ''}`}
-                        aria-label="Primary navigation"
-                    >
-                        {NAV_LINKS.map((item) => (
-                            <button
-                                key={item.name}
-                                type="button"
-                                className="floating-nav__link"
-                                onClick={() => handleNavSelection(item.href, item.type)}
-                            >
-                                {item.name}
-                            </button>
-                        ))}
-                    </nav>
                 </div>
-            </header>
+            ) : (
+                <header className={`floating-nav ${scrolled ? 'floating-nav--scrolled' : ''}`}>
+                    <div className="floating-nav__inner">
+                        <button
+                            type="button"
+                            className={`floating-nav__toggle ${menuOpen ? 'floating-nav__toggle--open' : ''}`}
+                            onClick={() => setMenuOpen((prev) => !prev)}
+                            aria-expanded={menuOpen}
+                            aria-controls="primary-navigation"
+                            aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+                        >
+                            <span className="floating-nav__toggle-label">
+                                {menuOpen ? 'Close' : 'Menu'}
+                            </span>
+                        </button>
 
-            {/* The main content area where the active page component will be rendered */}
+                        <nav
+                            id="primary-navigation"
+                            className={`floating-nav__links ${menuOpen ? 'floating-nav__links--open' : ''}`}
+                            aria-label="Primary navigation"
+                        >
+                            {NAV_LINKS.map((item) => (
+                                <button
+                                    key={item.name}
+                                    type="button"
+                                    className="floating-nav__link"
+                                    onClick={() => handleNavSelection(item.href, item.type)}
+                                >
+                                    {item.name}
+                                </button>
+                            ))}
+                        </nav>
+                    </div>
+                </header>
+            )}
+
             <main className="app-main">
                 <Outlet />
             </main>
