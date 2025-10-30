@@ -44,8 +44,22 @@ app.use('/api', contactRoutes);
 app.use('/api', educationRoutes);
 
 // --- Static File Serving (for Production) ---
-// Serve static files (JS, CSS, images) from the React build folder
-app.use(express.static(clientBuildPath));
+// Serve static files (JS, CSS, images) from the React build folder with long-lived caching for assets.
+const ONE_YEAR_MS = 1000 * 60 * 60 * 24 * 365;
+app.use(express.static(clientBuildPath, {
+    maxAge: ONE_YEAR_MS,
+    immutable: true,
+    setHeaders: (res, resourcePath) => {
+        // Prevent aggressive caching of the entry HTML while keeping assets cached for a year.
+        if (resourcePath.endsWith('.html')) {
+            res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate');
+        } else {
+            res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+        }
+        res.setHeader('X-Content-Type-Options', 'nosniff');
+        res.removeHeader('Expires');
+    }
+}));
 
 // --- SPA Fallback Route (for Production) ---
 // For any GET request that doesn't match an API route or static file,
