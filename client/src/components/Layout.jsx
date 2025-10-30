@@ -93,18 +93,6 @@ export default function Layout() {
                 <div className="floating-nav__inner">
                     <button
                         type="button"
-                        className="floating-nav__brand"
-                        onClick={() => handleNavClick('#home')}
-                    >
-                        <span className="floating-nav__brandmark">AK</span>
-                        <span className="floating-nav__brandtext">
-                            Alex Kachur
-                            <small>Software Engineering Technology Student</small>
-                        </span>
-                    </button>
-
-                    <button
-                        type="button"
                         className={`floating-nav__toggle ${menuOpen ? 'floating-nav__toggle--open' : ''}`}
                         onClick={() => setMenuOpen((prev) => !prev)}
                         aria-expanded={menuOpen}

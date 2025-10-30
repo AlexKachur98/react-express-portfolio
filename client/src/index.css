@@ -46,7 +46,8 @@ a {
     top: 28px;
     left: 50%;
     transform: translateX(-50%);
-    width: min(960px, calc(100% - 32px));
+    width: auto;
+    max-width: calc(100% - 32px);
     z-index: 10;
     transition: opacity 0.3s ease, transform 0.3s ease;
 }
@@ -54,9 +55,9 @@ a {
 .floating-nav__inner {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 20px;
-    padding: 14px 20px;
+    justify-content: center;
+    gap: 16px;
+    padding: 14px 28px;
     border-radius: 999px;
     border: 1px solid transparent;
     background: transparent;
@@ -72,47 +73,10 @@ a {
     backdrop-filter: blur(18px);
 }
 
-.floating-nav__brand {
-    display: inline-flex;
-    align-items: center;
-    gap: 12px;
-    padding: 0;
-    border: none;
-    background: transparent;
-    color: #f8fafc;
-    cursor: pointer;
-    font-size: 0.95rem;
-    font-weight: 600;
-}
-
-.floating-nav__brandmark {
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    display: grid;
-    place-items: center;
-    font-weight: 700;
-    font-size: 1rem;
-    color: #f8fafc;
-    background: linear-gradient(135deg, rgba(96, 165, 250, 0.45), rgba(34, 197, 94, 0.45));
-    border: 1px solid rgba(148, 163, 184, 0.4);
-}
-
-.floating-nav__brandtext {
-    display: flex;
-    flex-direction: column;
-    line-height: 1.2;
-}
-
-.floating-nav__brandtext small {
-    font-size: 0.72rem;
-    color: rgba(203, 213, 225, 0.85);
-    font-weight: 500;
-}
-
 .floating-nav__links {
     display: flex;
     flex-wrap: wrap;
+    justify-content: center;
     gap: 10px;
     transition: max-height 0.3s ease, opacity 0.3s ease;
 }
@@ -766,6 +730,7 @@ a {
     .floating-nav__inner {
         padding: 0;
         gap: 0;
+        flex-direction: row;
         background: transparent;
         border: none;
         box-shadow: none;
@@ -797,16 +762,6 @@ a {
     .floating-nav__toggle--open {
         background: transparent;
         color: rgba(147, 197, 253, 0.9);
-    }
-
-    .floating-nav__brand {
-        justify-content: flex-start;
-        gap: 0;
-        padding: 0;
-    }
-
-    .floating-nav__brandtext {
-        display: none;
     }
 
     .floating-nav__links {
@@ -913,16 +868,6 @@ a {
 @media (max-width: 480px) {
     .floating-nav {
         top: 20px;
-    }
-
-    .floating-nav__brandmark {
-        width: 34px;
-        height: 34px;
-        font-size: 0.9rem;
-    }
-
-    .floating-nav__brandtext {
-        font-size: 0.85rem;
     }
 
     .floating-nav__links {
