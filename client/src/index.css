@@ -814,6 +814,10 @@ a {
         padding: 22px 20px;
     }
 
+    .accordion__item--open .accordion__content {
+        max-height: 900px;
+    }
+
     .project-card__body {
         padding: 20px;
     }
