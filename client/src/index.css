@@ -621,6 +621,45 @@ a {
     font-size: 0.9rem;
 }
 
+.contact-form__submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 48px;
+}
+
+.contact-form__submit[disabled] {
+    cursor: not-allowed;
+    opacity: 0.8;
+}
+
+.contact-form__spinner {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 3px solid rgba(248, 250, 252, 0.35);
+    border-top-color: #f8fafc;
+    animation: contact-form-spin 0.75s linear infinite;
+}
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
+
+@keyframes contact-form-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
 .contact__success {
     text-align: center;
     padding: 48px 24px;

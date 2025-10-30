@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function ContactSection({ values, isSubmitted, onChange, onSubmit }) {
+export default function ContactSection({ values, isSubmitted, isSubmitting, onChange, onSubmit }) {
     return (
         <section id="contact" className="section section--glass">
             <span className="section__eyebrow">Contact</span>
@@ -75,8 +75,20 @@ export default function ContactSection({ values, isSubmitted, onChange, onSubmit
 
                             {values.error && (<p className="contact-form__error">{values.error}</p>)}
 
-                            <button type="submit" className="btn btn--primary">
-                                Send Message
+                            <button
+                                type="submit"
+                                className="btn btn--primary contact-form__submit"
+                                disabled={isSubmitting}
+                                aria-busy={isSubmitting}
+                            >
+                                {isSubmitting ? (
+                                    <>
+                                        <span className="contact-form__spinner" aria-hidden="true"></span>
+                                        <span className="visually-hidden" role="status">Sending...</span>
+                                    </>
+                                ) : (
+                                    'Send Message'
+                                )}
                             </button>
                         </form>
                     )}

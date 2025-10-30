@@ -79,6 +79,7 @@ export default function Home() {
         error: '',
     });
     const [isSubmitted, setIsSubmitted] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleToggle = (index) => {
         setOpenEducation((prev) => (prev === index ? -1 : index));
@@ -91,6 +92,10 @@ export default function Home() {
     const handleSubmit = async (event) => {
         event.preventDefault();
 
+        if (isSubmitting) {
+            return;
+        }
+
         const contact = {
             firstName: values.firstName || undefined,
             lastName: values.lastName || undefined,
@@ -99,6 +104,8 @@ export default function Home() {
         };
 
         try {
+            setValues({ ...values, error: '' });
+            setIsSubmitting(true);
             const data = await postContact(contact);
 
             if (!data.error) {
@@ -116,6 +123,8 @@ export default function Home() {
         } catch (err) {
             console.error('Submission failed:', err);
             setValues({ ...values, error: 'Could not send message. Please try again later.' });
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -146,7 +155,7 @@ export default function Home() {
             <EducationSection items={educationItems} openIndex={openEducation} onToggle={handleToggle} />
             <ProjectsSection projects={projectCards} />
             <ServicesSection services={serviceCards} />
-            <ContactSection values={values} isSubmitted={isSubmitted} onChange={handleChange} onSubmit={handleSubmit} />
+            <ContactSection values={values} isSubmitted={isSubmitted} isSubmitting={isSubmitting} onChange={handleChange} onSubmit={handleSubmit} />
 
             <footer className="footer">
                 <p>© {new Date().getFullYear()} Alex Kachur. Built with passion, curiosity, and plenty of coffee.</p>
