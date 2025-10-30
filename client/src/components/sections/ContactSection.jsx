@@ -2,7 +2,7 @@ import React from 'react';
 
 export default function ContactSection({ values, isSubmitted, isSubmitting, onChange, onSubmit }) {
     return (
-        <section id="contact" className="section section--glass">
+        <section id="contact" className="section">
             <span className="section__eyebrow">Contact</span>
             <h2 className="section__heading">Let&apos;s build something together</h2>
             <div className="contact-grid">

@@ -2,7 +2,7 @@ import React from 'react';
 
 export default function AboutSection() {
     return (
-        <section id="about" className="section section--glass">
+        <section id="about" className="section">
             <div className="section__grid">
                 <div>
                     <span className="section__eyebrow">About</span>

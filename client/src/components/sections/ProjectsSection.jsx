@@ -2,7 +2,7 @@ import React from 'react';
 
 export default function ProjectsSection({ projects }) {
     return (
-        <section id="projects" className="section section--glass">
+        <section id="projects" className="section">
             <span className="section__eyebrow">Projects</span>
             <h2 className="section__heading">Selected work I&apos;m proud of</h2>
             <div className="card-grid">
