@@ -289,6 +289,20 @@ a {
     transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
+.btn--with-icon {
+    gap: 10px;
+}
+
+.btn__icon {
+    width: 1.1rem;
+    height: 1.1rem;
+}
+
+.btn__label {
+    display: inline-flex;
+    align-items: center;
+}
+
 .btn--primary {
     background: linear-gradient(135deg, rgba(59, 130, 246, 0.95), rgba(129, 140, 248, 0.95));
     color: #f8fafc;
@@ -451,6 +465,7 @@ a {
 .project-card {
     display: flex;
     flex-direction: column;
+    height: 100%;
     border-radius: 24px;
     background: rgba(15, 23, 42, 0.6);
     border: 1px solid rgba(148, 163, 184, 0.25);
@@ -474,7 +489,8 @@ a {
     padding: 24px;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 16px;
+    flex: 1;
 }
 
 .project-card__body h3 {
@@ -506,13 +522,15 @@ a {
 .project-card__links {
     display: flex;
     flex-wrap: wrap;
+    align-items: center;
     gap: 10px;
-    margin-top: 16px;
+    margin-top: auto;
 }
 
 .project-card__links .btn {
     padding: 10px 22px;
     font-size: 0.9rem;
+    min-width: 120px;
 }
 
 .service-grid {

@@ -1,4 +1,5 @@
 import React from 'react';
+import ExternalLinkIcon from '../icons/ExternalLinkIcon.jsx';
 
 export default function AboutSection() {
     return (
@@ -20,8 +21,9 @@ export default function AboutSection() {
                         Outside of development, you’ll find me gaming, following the NBA, NFL, and MMA, or building custom PCs. I share life
                         with my cats Moura and Simba, and my dream is to one day open an animal rescue ranch.
                     </p>
-                    <a href="/assets/resume.pdf" className="btn btn--secondary" target="_blank" rel="noopener noreferrer">
-                        Resume
+                    <a href="/assets/resume.pdf" className="btn btn--secondary btn--with-icon" target="_blank" rel="noopener noreferrer">
+                        <ExternalLinkIcon className="btn__icon" />
+                        <span className="btn__label">Resume</span>
                     </a>
                 </div>
                 <div className="about__media">
