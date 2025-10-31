@@ -39,8 +39,7 @@ const ProjectSchema = new mongoose.Schema({
     },
     category: {
         type: String,
-        trim: true,
-        required: 'Category is required'
+        trim: true
     },
     imageUrl: {
         type: String,
