@@ -57,14 +57,14 @@ export default function Layout() {
             window.history.scrollRestoration = 'manual';
         }
 
-        window.scrollTo(0, 0);
+        window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
 
         return () => {
             if (previousRestoration) {
                 window.history.scrollRestoration = previousRestoration;
             }
         };
-    }, []);
+    }, [location.pathname]);
 
     const handleNavClick = useCallback((href, type) => {
         if (type === 'route') {
@@ -90,7 +90,7 @@ export default function Layout() {
 
     return (
         <div className="app-shell">
-            <VantaBackground />
+            {!isCatGallery && <VantaBackground />}
 
             {isCatGallery ? (
                 <div className="cat-gallery__back">
