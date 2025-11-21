@@ -4,12 +4,11 @@ import { useAuth } from '../auth/AuthContext.jsx';
 import { createQualification, deleteQualification, getQualifications, updateQualification } from '../utils/api.js';
 
 const emptyForm = {
-    title: '',
-    firstName: '',
-    lastName: '',
-    email: '',
-    completion: '',
-    description: ''
+    program: '',
+    school: '',
+    period: '',
+    location: '',
+    detailsText: ''
 };
 
 export default function AdminEducation() {
@@ -39,12 +38,25 @@ export default function AdminEducation() {
         setForm((prev) => ({ ...prev, [field]: event.target.value }));
     };
 
+    const buildPayload = () => {
+        const details = form.detailsText
+            ? form.detailsText.split('\n').map((line) => line.trim()).filter(Boolean)
+            : [];
+        return {
+            program: form.program,
+            school: form.school,
+            period: form.period,
+            location: form.location,
+            details
+        };
+    };
+
     const handleSubmit = async (event) => {
         event.preventDefault();
         setError('');
         setLoading(true);
 
-        const payload = { ...form };
+        const payload = buildPayload();
 
         const res = editingId
             ? await updateQualification(editingId, payload, token)
@@ -76,12 +88,11 @@ export default function AdminEducation() {
     const handleEdit = (item) => {
         setEditingId(item._id);
         setForm({
-            title: item.title || '',
-            firstName: item.firstName || '',
-            lastName: item.lastName || '',
-            email: item.email || '',
-            completion: item.completion ? item.completion.substring(0, 10) : '',
-            description: item.description || ''
+            program: item.program || '',
+            school: item.school || '',
+            period: item.period || '',
+            location: item.location || '',
+            detailsText: Array.isArray(item.details) ? item.details.join('\n') : ''
         });
     };
 
@@ -100,35 +111,31 @@ export default function AdminEducation() {
             <form className="contact-form" onSubmit={handleSubmit} style={{ marginBottom: '24px' }}>
                 <div className="contact-form__row">
                     <label>
-                        Title
-                        <input type="text" value={form.title} onChange={handleChange('title')} required />
+                        Program
+                        <input type="text" value={form.program} onChange={handleChange('program')} required />
                     </label>
                     <label>
-                        Completion Date
-                        <input type="date" value={form.completion} onChange={handleChange('completion')} required />
+                        School
+                        <input type="text" value={form.school} onChange={handleChange('school')} required />
                     </label>
                 </div>
                 <div className="contact-form__row">
                     <label>
-                        First Name
-                        <input type="text" value={form.firstName} onChange={handleChange('firstName')} required />
+                        Period
+                        <input type="text" value={form.period} onChange={handleChange('period')} required />
                     </label>
                     <label>
-                        Last Name
-                        <input type="text" value={form.lastName} onChange={handleChange('lastName')} required />
-                    </label>
-                    <label>
-                        Email
-                        <input type="email" value={form.email} onChange={handleChange('email')} required />
+                        Location
+                        <input type="text" value={form.location} onChange={handleChange('location')} required />
                     </label>
                 </div>
                 <label>
-                    Description
-                    <textarea value={form.description} onChange={handleChange('description')} rows={3} required />
+                    Details (one per line)
+                    <textarea value={form.detailsText} onChange={handleChange('detailsText')} rows={5} />
                 </label>
                 {error && <p className="contact-form__error">{error}</p>}
                 <button className="btn contact-form__submit" type="submit" disabled={loading}>
-                    {loading ? 'Saving...' : editingId ? 'Update Qualification' : 'Create Qualification'}
+                    {loading ? 'Saving...' : editingId ? 'Update Education' : 'Create Education'}
                 </button>
             </form>
 
@@ -137,7 +144,7 @@ export default function AdminEducation() {
                 {items.length === 0 && <p>No entries yet.</p>}
                 {items.map((item) => (
                     <div key={item._id} style={{ borderBottom: '1px solid rgba(148,163,184,0.2)', padding: '10px 0' }}>
-                        <strong>{item.title}</strong> — {item.firstName} {item.lastName} ({item.email}) · {item.completion?.substring(0,10)}
+                        <strong>{item.program}</strong> — {item.school} • {item.period} • {item.location}
                         <div style={{ marginTop: '8px', display: 'flex', gap: '8px' }}>
                             <button type="button" className="btn btn--ghost" onClick={() => handleEdit(item)}>Edit</button>
                             <button type="button" className="btn btn--ghost" onClick={() => handleDelete(item._id)}>Delete</button>

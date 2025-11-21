@@ -1,41 +1,33 @@
 /**
  * @file education.model.js
- * @author Alex Kachur
- * @since 2025-10-27
  * @purpose Defines the Mongoose schema for the Education/Qualification collection.
  */
 import mongoose from 'mongoose';
 
-// Note: This model is based on the 'qualifications' table in Assignment 2.pdf
 const EducationSchema = new mongoose.Schema({
-    title: {
+    program: {
         type: String,
         trim: true,
-        required: 'Title is required'
+        required: 'Program is required'
     },
-    firstName: {
+    school: {
         type: String,
         trim: true,
-        required: 'First name is required'
+        required: 'School is required'
     },
-    lastName: {
+    period: {
         type: String,
         trim: true,
-        required: 'Last name is required'
+        required: 'Period is required'
     },
-    email: {
+    location: {
         type: String,
         trim: true,
-        match: [/.+\@.+\..+/, 'Please provide a valid email address'],
-        required: 'Email is required'
+        required: 'Location is required'
     },
-    completion: {
-        type: Date,
-        required: 'Completion date is required'
-    },
-    description: {
-        type: String,
-        trim: true
+    details: {
+        type: [String],
+        default: []
     }
 }, { timestamps: true }); // Automatically adds createdAt and updatedAt
 

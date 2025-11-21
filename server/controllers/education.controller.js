@@ -8,9 +8,26 @@ import Education from '../models/education.model.js';
 import _ from 'lodash';
 import errorHandler from '../helpers/dbErrorHandler.js';
 
+const normalizeDetails = (detailsInput) => {
+    if (Array.isArray(detailsInput)) {
+        return detailsInput.map((d) => d?.toString().trim()).filter(Boolean);
+    }
+    if (typeof detailsInput === 'string') {
+        return detailsInput.split('\n').map((d) => d.trim()).filter(Boolean);
+    }
+    return [];
+};
+
 // Create new education entry
 const create = async (req, res) => {
-    const education = new Education(req.body);
+    const { program, school, period, location, details } = req.body;
+    const education = new Education({
+        program,
+        school,
+        period,
+        location,
+        details: normalizeDetails(details)
+    });
     try {
         await education.save();
         return res.status(200).json(education);
@@ -22,7 +39,7 @@ const create = async (req, res) => {
 // List all education entries
 const list = async (req, res) => {
     try {
-        let educationList = await Education.find().sort('-completion'); // Sort by completion date (newest first)
+        let educationList = await Education.find().sort('-createdAt'); // Newest first
         res.json(educationList);
     } catch (err) {
         return res.status(400).json({ error: errorHandler.getErrorMessage(err) });
@@ -38,7 +55,14 @@ const read = (req, res) => {
 const update = async (req, res) => {
     try {
         let education = req.education;
-        education = _.extend(education, req.body);
+        const { program, school, period, location, details } = req.body;
+        education = _.extend(education, {
+            program,
+            school,
+            period,
+            location,
+            details: normalizeDetails(details)
+        });
         await education.save();
         res.json(education);
     } catch (err) {
