@@ -20,6 +20,8 @@ import userRoutes from './routes/user.routes.js';
 import projectRoutes from './routes/project.routes.js';
 import contactRoutes from './routes/contact.routes.js';
 import educationRoutes from './routes/education.routes.js';
+import serviceRoutes from './routes/service.routes.js';
+import galleryRoutes from './routes/gallery.routes.js';
 
 // Define __dirname for ES Modules
 const __filename = fileURLToPath(import.meta.url);
@@ -42,6 +44,8 @@ app.use('/api', userRoutes);
 app.use('/api', projectRoutes);
 app.use('/api', contactRoutes);
 app.use('/api', educationRoutes);
+app.use('/api', serviceRoutes);
+app.use('/api', galleryRoutes);
 
 // --- API 404 Handler ---
 // Return JSON 404 for any unmatched /api route
