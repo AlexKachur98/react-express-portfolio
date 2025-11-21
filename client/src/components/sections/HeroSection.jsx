@@ -7,10 +7,12 @@
 import React from 'react';
 import Typewriter from '../Typewriter.jsx';
 
-export default function HeroSection({ heroLines }) {
+export default function HeroSection({ heroLines, onWelcomeClick }) {
     return (
         <section id="home" className="section hero">
-            <div className="hero__tag">Welcome, I&apos;m Alex.</div>
+            <button type="button" className="hero__tag" onClick={onWelcomeClick}>
+                Welcome, I&apos;m Alex.
+            </button>
             <h1 className="hero__title">I build thoughtful digital experiences.</h1>
             <Typewriter phrases={heroLines} />
             <p className="hero__subtitle">

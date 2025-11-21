@@ -12,6 +12,7 @@ import ProjectsSection from '../components/sections/ProjectsSection.jsx';
 import ServicesSection from '../components/sections/ServicesSection.jsx';
 import ContactSection from '../components/sections/ContactSection.jsx';
 import { postContact } from '../utils/api.js';
+import SignIn from './SignIn.jsx';
 
 const heroLines = [
     'Software Engineering Technology Student.',
@@ -113,6 +114,7 @@ export default function Home() {
     });
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [showSecretSignin, setShowSecretSignin] = useState(false);
 
     const handleToggle = (index) => {
         setOpenEducation((prev) => (prev === index ? -1 : index));
@@ -189,7 +191,7 @@ export default function Home() {
 
     return (
         <div className="landing">
-            <HeroSection heroLines={heroLines} />
+            <HeroSection heroLines={heroLines} onWelcomeClick={() => setShowSecretSignin(true)} />
             <AboutSection />
             <EducationSection items={educationItems} openIndex={openEducation} onToggle={handleToggle} />
             <ProjectsSection projects={projectCards} />
@@ -199,6 +201,23 @@ export default function Home() {
             <footer className="footer">
                 <p>© {new Date().getFullYear()} Alex Kachur. Built with passion, curiosity, and plenty of coffee.</p>
             </footer>
+
+            {showSecretSignin && (
+                <div className="cat-gallery__modal" role="dialog" aria-modal="true">
+                    <div className="cat-gallery__modal-backdrop" onClick={() => setShowSecretSignin(false)}></div>
+                    <div className="cat-gallery__modal-content">
+                        <button
+                            type="button"
+                            className="cat-gallery__modal-close"
+                            aria-label="Close sign in"
+                            onClick={() => setShowSecretSignin(false)}
+                        >
+                            ×
+                        </button>
+                        <SignIn />
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
