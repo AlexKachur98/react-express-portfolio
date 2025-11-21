@@ -7,8 +7,9 @@ const emptyForm = {
     title: '',
     description: '',
     tags: '',
-    imageUrl: '',
-    projectUrl: ''
+    image: '',
+    github: '',
+    live: ''
 };
 
 export default function AdminProjects() {
@@ -47,8 +48,9 @@ export default function AdminProjects() {
             title: form.title,
             description: form.description,
             tags: form.tags ? form.tags.split(',').map((t) => t.trim()).filter(Boolean) : [],
-            image: form.imageUrl || undefined,
-            live: form.projectUrl || undefined,
+            image: form.image || undefined,
+            github: form.github || undefined,
+            live: form.live || undefined,
         };
 
         const res = editingId
@@ -83,8 +85,9 @@ export default function AdminProjects() {
             title: item.title || '',
             description: item.description || '',
             tags: Array.isArray(item.tags) ? item.tags.join(', ') : '',
-            imageUrl: item.image || '',
-            projectUrl: item.live || ''
+            image: item.image || '',
+            github: item.github || '',
+            live: item.live || ''
         });
     };
 
@@ -115,11 +118,15 @@ export default function AdminProjects() {
                 </label>
                 <label>
                     Image URL
-                    <input type="text" value={form.imageUrl} onChange={handleChange('imageUrl')} />
+                    <input type="text" value={form.image} onChange={handleChange('image')} />
                 </label>
                 <label>
-                    Project URL
-                    <input type="text" value={form.projectUrl} onChange={handleChange('projectUrl')} />
+                    GitHub URL
+                    <input type="text" value={form.github} onChange={handleChange('github')} />
+                </label>
+                <label>
+                    Live URL
+                    <input type="text" value={form.live} onChange={handleChange('live')} />
                 </label>
                 {error && <p className="contact-form__error">{error}</p>}
                 <button className="btn contact-form__submit" type="submit" disabled={loading}>

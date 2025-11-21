@@ -13,8 +13,26 @@ import errorHandler from '../helpers/dbErrorHandler.js';
  * @route POST /api/projects
  * @access Protected
  */
+const normalizeTags = (tagsInput) => {
+    if (Array.isArray(tagsInput)) {
+        return tagsInput.map((t) => t?.toString().trim()).filter(Boolean);
+    }
+    if (typeof tagsInput === 'string') {
+        return tagsInput.split(',').map((t) => t.trim()).filter(Boolean);
+    }
+    return [];
+};
+
 const create = async (req, res) => {
-    const project = new Project(req.body);
+    const { title, description, tags, image, github, live } = req.body;
+    const project = new Project({
+        title,
+        description,
+        tags: normalizeTags(tags),
+        image,
+        github,
+        live
+    });
     try {
         await project.save();
         return res.status(200).json(project);
@@ -56,7 +74,15 @@ const read = (req, res) => {
 const update = async (req, res) => {
     try {
         let project = req.project; // Get project from middleware
-        project = _.extend(project, req.body); // Merge changes
+        const { title, description, tags, image, github, live } = req.body;
+        project = _.extend(project, {
+            title,
+            description,
+            tags: normalizeTags(tags),
+            image,
+            github,
+            live
+        });
         await project.save();
         res.json(project); // Return updated project
     } catch (err) {
