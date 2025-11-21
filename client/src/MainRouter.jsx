@@ -14,6 +14,9 @@ import SignIn from './pages/SignIn.jsx';
 import SignUp from './pages/SignUp.jsx';
 import AdminLayout from './components/admin/AdminLayout.jsx';
 import AdminDashboard from './pages/AdminDashboard.jsx';
+import AdminEducation from './pages/AdminEducation.jsx';
+import AdminProjects from './pages/AdminProjects.jsx';
+import AdminServices from './pages/AdminServices.jsx';
 
 const MainRouter = () => {
     return (
@@ -28,9 +31,9 @@ const MainRouter = () => {
             </Route>
             <Route path="/admin" element={<AdminLayout />}>
                 <Route index element={<AdminDashboard />} />
-                <Route path="education" element={<div className="section section--glass"><h2>Admin Education</h2></div>} />
-                <Route path="projects" element={<div className="section section--glass"><h2>Admin Projects</h2></div>} />
-                <Route path="services" element={<div className="section section--glass"><h2>Admin Services</h2></div>} />
+                <Route path="education" element={<AdminEducation />} />
+                <Route path="projects" element={<AdminProjects />} />
+                <Route path="services" element={<AdminServices />} />
                 <Route path="gallery" element={<div className="section section--glass"><h2>Admin Gallery</h2></div>} />
                 <Route path="contacts" element={<div className="section section--glass"><h2>Admin Contacts</h2></div>} />
             </Route>

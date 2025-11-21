@@ -11,7 +11,7 @@ import EducationSection from '../components/sections/EducationSection.jsx';
 import ProjectsSection from '../components/sections/ProjectsSection.jsx';
 import ServicesSection from '../components/sections/ServicesSection.jsx';
 import ContactSection from '../components/sections/ContactSection.jsx';
-import { postContact } from '../utils/api.js';
+import { getProjects, getQualifications, getServices, postContact } from '../utils/api.js';
 import SignIn from './SignIn.jsx';
 
 const heroLines = [
@@ -20,7 +20,7 @@ const heroLines = [
     'Problem solver. Team player. Lifelong learner.',
 ];
 
-const educationItems = [
+const fallbackEducation = [
     {
         program: 'Software Engineering Technology (Co-op)',
         school: 'Centennial College',
@@ -37,7 +37,7 @@ const educationItems = [
     },
 ];
 
-const projectCards = [
+const fallbackProjects = [
     {
         title: 'C# Hangman Game',
         description: 'A console-based word guessing game built in C# applying OOP basics.',
@@ -63,7 +63,7 @@ const projectCards = [
     },
 ];
 
-const serviceCards = [
+const fallbackServices = [
     {
         title: 'General Programming',
         description: 'Clean, readable problem solving across C#, Java, and Python.',
@@ -105,6 +105,9 @@ const serviceCards = [
 export default function Home() {
     // Track accordion progress plus form state so the contact CTA feels responsive.
     const [openEducation, setOpenEducation] = useState(0);
+    const [educationItems, setEducationItems] = useState([]);
+    const [projects, setProjects] = useState([]);
+    const [services, setServices] = useState([]);
     const [values, setValues] = useState({
         firstName: '',
         lastName: '',
@@ -189,13 +192,39 @@ export default function Home() {
         return () => observer.disconnect();
     }, []);
 
+    useEffect(() => {
+        const loadData = async () => {
+            const [eduRes, projRes, svcRes] = await Promise.allSettled([
+                getQualifications(),
+                getProjects(),
+                getServices()
+            ]);
+
+            const eduData = eduRes.status === 'fulfilled' && !eduRes.value?.error && Array.isArray(eduRes.value)
+                ? eduRes.value
+                : fallbackEducation;
+            const projData = projRes.status === 'fulfilled' && !projRes.value?.error && Array.isArray(projRes.value)
+                ? projRes.value
+                : fallbackProjects;
+            const svcData = svcRes.status === 'fulfilled' && !svcRes.value?.error && Array.isArray(svcRes.value)
+                ? svcRes.value
+                : fallbackServices;
+
+            setEducationItems(eduData);
+            setProjects(projData);
+            setServices(svcData);
+        };
+
+        loadData();
+    }, []);
+
     return (
         <div className="landing">
             <HeroSection heroLines={heroLines} onWelcomeClick={() => setShowSecretSignin(true)} />
             <AboutSection />
             <EducationSection items={educationItems} openIndex={openEducation} onToggle={handleToggle} />
-            <ProjectsSection projects={projectCards} />
-            <ServicesSection services={serviceCards} />
+            <ProjectsSection projects={projects} />
+            <ServicesSection services={services} />
             <ContactSection values={values} isSubmitted={isSubmitted} isSubmitting={isSubmitting} onChange={handleChange} onSubmit={handleSubmit} />
 
             <footer className="footer">
