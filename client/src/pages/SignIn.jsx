@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext.jsx';
 
-export default function SignIn() {
+export default function SignIn({ onSignedIn } = {}) {
     const { handleSignin } = useAuth();
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
@@ -23,6 +23,9 @@ export default function SignIn() {
         }
 
         navigate('/');
+        if (typeof onSignedIn === 'function') {
+            onSignedIn();
+        }
     };
 
     return (

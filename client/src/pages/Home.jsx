@@ -243,7 +243,7 @@ export default function Home() {
                         >
                             ×
                         </button>
-                        <SignIn />
+                        <SignIn onSignedIn={() => setShowSecretSignin(false)} />
                     </div>
                 </div>
             )}
