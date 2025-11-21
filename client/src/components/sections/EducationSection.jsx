@@ -6,16 +6,19 @@
  */
 import React from 'react';
 
-export default function EducationSection({ items, openIndex, onToggle }) {
+export default function EducationSection({ items = [], openIndex, onToggle }) {
+    const safeItems = Array.isArray(items) ? items : [];
     return (
         <section id="education" className="section">
             <span className="section__eyebrow">Education</span>
             <h2 className="section__heading">The coursework shaping my craft</h2>
             <div className="accordion">
-                {items.map((item, index) => {
+                {safeItems.map((item, index) => {
                     const open = openIndex === index;
+                    const details = Array.isArray(item.details) ? item.details : [];
+                    const key = item._id || item.program || index;
                     return (
-                        <article key={item.program} className={`accordion__item ${open ? 'accordion__item--open' : ''}`}>
+                        <article key={key} className={`accordion__item ${open ? 'accordion__item--open' : ''}`}>
                             {/* Button keeps the accordion accessible and delegates state back to the parent hook. */}
                             <button type="button" className="accordion__trigger" onClick={() => onToggle(index)}>
                                 <div>
@@ -26,8 +29,8 @@ export default function EducationSection({ items, openIndex, onToggle }) {
                             </button>
                             <div className="accordion__content">
                                 <ul>
-                                    {item.details.map((detail) => (
-                                        <li key={detail}>{detail}</li>
+                                    {details.map((detail, detailIndex) => (
+                                        <li key={`${key}-detail-${detailIndex}`}>{detail}</li>
                                     ))}
                                 </ul>
                                 <div className="accordion__meta">{item.location}</div>

@@ -210,9 +210,9 @@ export default function Home() {
                 ? svcRes.value
                 : fallbackServices;
 
-            setEducationItems(eduData);
-            setProjects(projData);
-            setServices(svcData);
+            setEducationItems(eduData || []);
+            setProjects(projData || []);
+            setServices(svcData || []);
         };
 
         loadData();

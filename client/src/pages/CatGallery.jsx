@@ -46,7 +46,6 @@ export default function CatGallery() {
     // Feature toggles and derived state for filters, favourites, and modal rendering.
     const [favoriteIds, setFavoriteIds] = useState(() => favouriteCookie.read());
     const [images, setImages] = useState([]);
-    const [images, setImages] = useState([]);
     const [showFavouritesOnly, setShowFavouritesOnly] = useState(false);
     const [activeTag, setActiveTag] = useState('all');
     const [isFullscreen, setIsFullscreen] = useState(false);
@@ -80,6 +79,22 @@ export default function CatGallery() {
             return next;
         });
     }, [modalLength]);
+
+    useEffect(() => {
+        const loadImages = async () => {
+            const res = await getGallery();
+            if (!res?.error && Array.isArray(res)) {
+                const normalized = res.map((item) => ({
+                    ...item,
+                    id: item._id || item.id,
+                    src: item.imageData || item.src,
+                    tags: Array.isArray(item.tags) ? item.tags : []
+                }));
+                setImages(normalized);
+            }
+        };
+        loadImages();
+    }, []);
 
     useEffect(() => {
         // Persist favourites whenever the selection changes.
@@ -356,18 +371,3 @@ export default function CatGallery() {
         </div>
     );
 }
-    useEffect(() => {
-        const loadImages = async () => {
-            const res = await getGallery();
-            if (!res?.error && Array.isArray(res)) {
-                const normalized = res.map((item) => ({
-                    ...item,
-                    id: item._id || item.id,
-                    src: item.imageData || item.src,
-                    tags: Array.isArray(item.tags) ? item.tags : []
-                }));
-                setImages(normalized);
-            }
-        };
-        loadImages();
-    }, []);
