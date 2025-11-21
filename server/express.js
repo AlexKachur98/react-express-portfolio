@@ -43,6 +43,12 @@ app.use('/api', projectRoutes);
 app.use('/api', contactRoutes);
 app.use('/api', educationRoutes);
 
+// --- API 404 Handler ---
+// Return JSON 404 for any unmatched /api route
+app.use('/api', (req, res) => {
+    return res.status(404).json({ error: 'API route not found' });
+});
+
 // --- Static File Serving (for Production) ---
 // Serve static files (JS, CSS, images) from the React build folder with long-lived caching for assets.
 const ONE_YEAR_MS = 1000 * 60 * 60 * 24 * 365;
@@ -62,9 +68,9 @@ app.use(express.static(clientBuildPath, {
 }));
 
 // --- SPA Fallback Route (for Production) ---
-// For any GET request that doesn't match an API route or static file,
+// For any non-API GET request that doesn't match a static file,
 // send the client's index.html file. This allows React Router to handle routing.
-app.get('*', (req, res) => {
+app.get(/^\/(?!api).*/, (req, res) => {
     res.sendFile(path.join(clientBuildPath, 'index.html'), (err) => {
         if (err) {
             if (err.status === 404) {

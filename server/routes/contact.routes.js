@@ -7,13 +7,14 @@
 import express from 'express';
 import contactCtrl from '../controllers/contact.controller.js';
 import { requireSignin } from '../middlewares/auth.js';
+import { contactLimiter } from '../middlewares/rateLimit.js';
 
 const router = express.Router();
 
 // Collection routes
 router.route('/contacts')
     .get(requireSignin, contactCtrl.list) // Protected: List all contacts
-    .post(contactCtrl.create) // Public: Anyone can send a message
+    .post(contactLimiter, contactCtrl.create) // Public with rate limit: Anyone can send a message
     .delete(requireSignin, contactCtrl.removeAll); // Protected: Delete all contacts
 
 // Document routes for a specific contact message
