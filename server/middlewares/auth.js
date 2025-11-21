@@ -6,6 +6,7 @@
  */
 import { expressjwt } from 'express-jwt';
 import config from '../../config/config.js';
+import User from '../models/user.model.js';
 
 /**
  * @purpose Middleware that verifies the JWT token.
@@ -47,4 +48,21 @@ const hasAuthorization = (req, res, next) => {
     next();
 };
 
-export { requireSignin, hasAuthorization };
+/**
+ * @purpose Middleware to ensure the authenticated user has admin role.
+ * @assumes `requireSignin` has already populated req.auth._id
+ */
+const requireAdmin = async (req, res, next) => {
+    try {
+        const user = await User.findById(req.auth?._id);
+        if (!user || user.role !== 'admin') {
+            return res.status(403).json({ error: "Admin role required" });
+        }
+        req.authUser = user;
+        return next();
+    } catch (err) {
+        return res.status(403).json({ error: "Admin role required" });
+    }
+};
+
+export { requireSignin, hasAuthorization, requireAdmin };

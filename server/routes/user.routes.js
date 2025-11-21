@@ -14,6 +14,8 @@ const router = express.Router();
 // These routes are used for logging in and logging out
 router.route('/signin').post(userCtrl.signin); // POST /api/signin
 router.route('/signout').get(userCtrl.signout); // GET /api/signout
+router.route('/auth/signin').post(userCtrl.signin); // Alias POST /api/auth/signin
+router.route('/auth/signout').get(userCtrl.signout); // Alias GET /api/auth/signout
 
 // --- User CRUD Routes ---
 router.route('/users')

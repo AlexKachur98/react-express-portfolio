@@ -26,7 +26,12 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: "Password is required"
     },
-    salt: String // Stores the salt for this specific user
+    salt: String, // Stores the salt for this specific user
+    role: {
+        type: String,
+        enum: ['user', 'admin'],
+        default: 'user'
+    }
 }, {
     timestamps: true // Automatically adds createdAt and updatedAt
 });

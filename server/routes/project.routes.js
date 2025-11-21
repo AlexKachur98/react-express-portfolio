@@ -6,21 +6,21 @@
  */
 import express from 'express';
 import projectCtrl from '../controllers/project.controller.js';
-import { requireSignin } from '../middlewares/auth.js';
+import { requireSignin, requireAdmin } from '../middlewares/auth.js';
 
 const router = express.Router();
 
 // Collection routes
 router.route('/projects')
     .get(projectCtrl.list) // Public: Anyone can list projects
-    .post(requireSignin, projectCtrl.create) // Protected: Only signed-in users can create
-    .delete(requireSignin, projectCtrl.removeAll); // Protected: remove all projects
+    .post(requireSignin, requireAdmin, projectCtrl.create) // Admin protected: create
+    .delete(requireSignin, requireAdmin, projectCtrl.removeAll); // Admin protected: remove all projects
 
 // Document routes (for a specific project)
 router.route('/projects/:projectId')
     .get(projectCtrl.read) // Public: Anyone can read a single project
-    .put(requireSignin, projectCtrl.update) // Protected: Only signed-in users can update
-    .delete(requireSignin, projectCtrl.remove); // Protected: Only signed-in users can delete
+    .put(requireSignin, requireAdmin, projectCtrl.update) // Admin protected: update
+    .delete(requireSignin, requireAdmin, projectCtrl.remove); // Admin protected: delete
 
 // Param middleware to find project by ID
 router.param('projectId', projectCtrl.projectByID);

@@ -9,6 +9,7 @@ import 'dotenv/config'; // Ensure environment variables are loaded
 import mongoose from 'mongoose';
 import config from './config/config.js'; // Import application configuration
 import app from './server/express.js';   // Import the configured Express app
+import { ensureAdminUser } from './server/utils/adminSeeder.js';
 
 // --- Database Connection ---
 mongoose.Promise = global.Promise; // Use native ES6 Promises
@@ -16,9 +17,12 @@ console.log(`[Server] Attempting to connect to MongoDB at ${config.mongoUri}...`
 
 // Use Mongoose to connect to the database
 mongoose.connect(config.mongoUri)
-  .then(() => {
+  .then(async () => {
     // This block runs if the connection is successful
     console.log(`[Database] Successfully connected to MongoDB.`);
+
+    // Ensure default admin user exists before starting the server
+    await ensureAdminUser();
 
     // --- Start Express Server ---
     // We only start the server *after* the database connection is established

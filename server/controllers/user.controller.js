@@ -45,7 +45,8 @@ const signin = async (req, res) => {
             user: {
                 _id: user._id,
                 name: user.name,
-                email: user.email
+                email: user.email,
+                role: user.role
             }
         });
 
@@ -74,7 +75,11 @@ const signout = (req, res) => {
  * @route POST /api/users
  */
 const create = async (req, res) => {
-    const user = new User(req.body);
+    const { role, ...rest } = req.body;
+    const user = new User({
+        ...rest,
+        role: 'user' // Force default role on public signup
+    });
     try {
         // The password gets hashed automatically by the 'virtual' field in the model
         await user.save();
@@ -92,7 +97,7 @@ const create = async (req, res) => {
 const list = async (req, res) => {
     try {
         // Find all users, selecting only non-sensitive fields
-        let users = await User.find().select('name email updated created');
+        let users = await User.find().select('name email role updated created');
         res.json(users);
     } catch (err) {
         return res.status(400).json({ error: errorHandler.getErrorMessage(err) });
@@ -119,8 +124,9 @@ const read = (req, res) => {
 const update = async (req, res) => {
     try {
         let user = req.profile; // Get user from middleware
+        const { role, ...payload } = req.body; // Prevent role escalation through profile updates
         // Use lodash 'extend' to merge properties from req.body onto the user object
-        user = _.extend(user, req.body);
+        user = _.extend(user, payload);
 
         // If password is being updated, the model's virtual setter will handle hashing
         if (req.body.password) {
