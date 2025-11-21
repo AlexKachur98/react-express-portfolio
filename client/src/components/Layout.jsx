@@ -152,15 +152,6 @@ export default function Layout() {
                             )}
                             {user && (
                                 <>
-                                    {isAdmin && (
-                                        <button
-                                            type="button"
-                                            className="floating-nav__link"
-                                            onClick={() => handleNavSelection('/admin', 'route')}
-                                        >
-                                            Admin
-                                        </button>
-                                    )}
                                     <button
                                         type="button"
                                         className="floating-nav__link"
@@ -173,6 +164,15 @@ export default function Layout() {
                                         Sign Out
                                     </button>
                                 </>
+                            )}
+                            {user && isAdmin && (
+                                <button
+                                    type="button"
+                                    className="floating-nav__link"
+                                    onClick={() => handleNavSelection('/admin', 'route')}
+                                >
+                                    Admin
+                                </button>
                             )}
                         </nav>
                     </div>
