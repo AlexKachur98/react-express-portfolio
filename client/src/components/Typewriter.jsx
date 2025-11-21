@@ -25,13 +25,14 @@ export default function Typewriter({
         const currentPhrase = phrases[index % phrases.length];
         const nextDelay = deleting ? deletingSpeed : typingSpeed;
 
+        let pauseTimer;
         const timer = setTimeout(() => {
             if (!deleting) {
                 const nextText = currentPhrase.slice(0, text.length + 1);
                 setText(nextText);
 
                 if (nextText === currentPhrase) {
-                    setTimeout(() => setDeleting(true), pause);
+                    pauseTimer = setTimeout(() => setDeleting(true), pause);
                 }
             } else {
                 const nextText = currentPhrase.slice(0, Math.max(0, text.length - 1));
@@ -44,7 +45,10 @@ export default function Typewriter({
             }
         }, nextDelay);
 
-        return () => clearTimeout(timer);
+        return () => {
+            clearTimeout(timer);
+            if (pauseTimer) clearTimeout(pauseTimer);
+        };
     }, [deleting, deletingSpeed, index, pause, phrases, text, typingSpeed]);
 
     useEffect(() => {

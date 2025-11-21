@@ -119,7 +119,7 @@ export default function Home() {
     };
 
     const handleChange = (name) => (event) => {
-        setValues({ ...values, [name]: event.target.value });
+        setValues((prev) => ({ ...prev, [name]: event.target.value }));
     };
 
     const handleSubmit = async (event) => {
@@ -138,31 +138,35 @@ export default function Home() {
         };
 
         try {
-            setValues({ ...values, error: '' });
+            setValues((prev) => ({ ...prev, error: '' }));
             setIsSubmitting(true);
             const data = await postContact(contact);
 
             if (!data.error) {
                 setIsSubmitted(true);
-                setValues({
+                setValues(() => ({
                     firstName: '',
                     lastName: '',
                     email: '',
                     message: '',
                     error: '',
-                });
+                }));
             } else {
-                setValues({ ...values, error: data.error || 'Something went wrong.' });
+                setValues((prev) => ({ ...prev, error: data.error || 'Something went wrong.' }));
             }
         } catch (err) {
             console.error('Submission failed:', err);
-            setValues({ ...values, error: 'Could not send message. Please try again later.' });
+            setValues((prev) => ({ ...prev, error: 'Could not send message. Please try again later.' }));
         } finally {
             setIsSubmitting(false);
         }
     };
 
     useEffect(() => {
+        if (typeof window === 'undefined' || typeof IntersectionObserver === 'undefined') {
+            return undefined;
+        }
+
         // Trigger reveal animations as sections scroll into view for progressive storytelling.
         const sections = document.querySelectorAll('.section');
 
