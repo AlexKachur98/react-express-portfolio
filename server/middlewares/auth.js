@@ -13,9 +13,18 @@ import config from '../../config/config.js';
  * If valid, attaches the decoded payload to req.auth.
  */
 const requireSignin = expressjwt({
-    secret: config.jwtSecret,      // The same secret used to sign the tokens
-    algorithms: ['HS256'],       // Algorithm used to sign the token
-    userProperty: 'auth'         // Attach the decoded payload to req.auth
+    secret: config.jwtSecret,       // The same secret used to sign the tokens
+    algorithms: ['HS256'],          // Algorithm used to sign the token
+    requestProperty: 'auth',        // Attach the decoded payload to req.auth
+    getToken: (req) => {
+        if (req.cookies && req.cookies.t) {
+            return req.cookies.t;
+        }
+        if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
+            return req.headers.authorization.split(' ')[1];
+        }
+        return null;
+    }
 });
 
 /**

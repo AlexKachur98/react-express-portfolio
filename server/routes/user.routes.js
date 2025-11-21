@@ -17,7 +17,7 @@ router.route('/signout').get(userCtrl.signout); // GET /api/signout
 
 // --- User CRUD Routes ---
 router.route('/users')
-    .get(userCtrl.list)     // GET /api/users (List all users - public)
+    .get(requireSignin, userCtrl.list)     // GET /api/users (List all users - requires signin)
     .post(userCtrl.create)  // POST /api/users (Register new user - public)
     // DELETE /api/users (Remove all users - protected)
     // As per Assignment 2 PDF, this route is required.
@@ -27,8 +27,8 @@ router.route('/users')
 // These routes handle operations for a specific user, identified by :userId
 router.route('/users/:userId')
     // GET /api/users/:userId (Read a specific user's profile)
-    // Protected: User must be signed in to view any profile
-    .get(requireSignin, userCtrl.read)
+    // Protected: User must be signed in AND authorized to view their own profile
+    .get(requireSignin, hasAuthorization, userCtrl.read)
 
     // PUT /api/users/:userId (Update a user's profile)
     // Protected: User must be signed in AND must be the correct user

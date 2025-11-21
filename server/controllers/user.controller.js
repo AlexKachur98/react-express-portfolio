@@ -9,6 +9,7 @@ import User from '../models/user.model.js';
 import _ from 'lodash'; // Utility for merging objects
 import errorHandler from '../helpers/dbErrorHandler.js';
 import jwtUtil from '../utils/jwt.js';
+import config from '../../config/config.js';
 
 // --- Authentication Controllers ---
 
@@ -31,7 +32,12 @@ const signin = async (req, res) => {
         const token = jwtUtil.generateToken({ _id: user._id });
 
         // Set the token in an HTTP-only cookie for web clients
-        res.cookie('t', token, { expire: new Date() + 9999, httpOnly: true });
+        res.cookie('t', token, {
+            httpOnly: true,
+            secure: config.env === 'production',
+            sameSite: 'strict',
+            maxAge: 60 * 60 * 1000 // 1 hour
+        });
 
         // Send the token and user details (without password/salt) in the response
         return res.json({
@@ -45,7 +51,7 @@ const signin = async (req, res) => {
 
     } catch (err) {
         console.error("[Auth Error] Signin failed:", err);
-        return res.status(401).json({ error: "Could not sign in" });
+        return res.status(500).json({ error: "Could not sign in" });
     }
 };
 
@@ -154,6 +160,9 @@ const remove = async (req, res) => {
  */
 const removeAll = async (req, res) => {
     try {
+        if (config.env !== 'development') {
+            return res.status(403).json({ error: "Deleting all users is only allowed in development." });
+        }
         await User.deleteMany({}); // Empty filter deletes all documents
         return res.status(200).json({
             message: "All users have been deleted."
