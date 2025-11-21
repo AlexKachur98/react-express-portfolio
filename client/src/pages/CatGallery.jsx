@@ -105,6 +105,8 @@ export default function CatGallery() {
     const [introComplete, setIntroComplete] = useState(false);
     const [isFiltering, setIsFiltering] = useState(false);
     const carouselRef = useRef(null);
+    const lastFocusedElementRef = useRef(null);
+    const modalCloseButtonRef = useRef(null);
 
     const favouriteSet = useMemo(() => new Set(favoriteIds), [favoriteIds]);
     const favouriteSequence = useMemo(() => CAT_IMAGES.filter((image) => favouriteSet.has(image.id)), [favouriteSet]);
@@ -176,6 +178,12 @@ export default function CatGallery() {
     }, [isFullscreen, handleModalShift]);
 
     useEffect(() => {
+        if (isFullscreen && modalCloseButtonRef.current) {
+            modalCloseButtonRef.current.focus();
+        }
+    }, [isFullscreen]);
+
+    useEffect(() => {
         const timer = window.setTimeout(() => setIntroComplete(true), 2600);
         return () => window.clearTimeout(timer);
     }, []);
@@ -203,6 +211,7 @@ export default function CatGallery() {
     };
 
     const openFullscreen = (imageId) => {
+        lastFocusedElementRef.current = document.activeElement;
         const source = showFavouritesOnly ? 'favourites' : 'all';
         const tag = activeTag;
         const sequence = showFavouritesOnly ? favouriteTagSequence : tagFiltered;
@@ -217,6 +226,9 @@ export default function CatGallery() {
 
     const handleCloseModal = () => {
         setIsFullscreen(false);
+        if (lastFocusedElementRef.current && lastFocusedElementRef.current.focus) {
+            lastFocusedElementRef.current.focus();
+        }
     };
 
     return (
@@ -347,7 +359,13 @@ export default function CatGallery() {
                 <div className="cat-gallery__modal" role="dialog" aria-modal="true" aria-label="Cat photo full screen view">
                     <div className="cat-gallery__modal-backdrop" onClick={handleCloseModal}></div>
                     <div className="cat-gallery__modal-content">
-                        <button type="button" className="cat-gallery__modal-close" onClick={handleCloseModal} aria-label="Close full screen view">
+                        <button
+                            type="button"
+                            className="cat-gallery__modal-close"
+                            onClick={handleCloseModal}
+                            aria-label="Close full screen view"
+                            ref={modalCloseButtonRef}
+                        >
                             ×
                         </button>
                         <div className="cat-gallery__modal-body">

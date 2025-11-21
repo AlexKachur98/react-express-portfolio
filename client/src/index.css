@@ -2,6 +2,9 @@
     color-scheme: dark;
     font-family: "Inter", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
     line-height: 1.6;
+    --surface-bg: rgba(15, 23, 42, 0.6);
+    --border-subtle: rgba(148, 163, 184, 0.25);
+    --radius-card: 24px;
 }
 
 *,
@@ -164,8 +167,8 @@ a {
 }
 
 .section--glass {
-    background: rgba(15, 23, 42, 0.6);
-    border: 1px solid rgba(148, 163, 184, 0.25);
+    background: var(--surface-bg);
+    border: 1px solid var(--border-subtle);
     border-radius: 28px;
     padding: 56px 48px;
     -webkit-backdrop-filter: blur(20px);
@@ -475,9 +478,9 @@ a {
     display: flex;
     flex-direction: column;
     height: 100%;
-    border-radius: 24px;
-    background: rgba(15, 23, 42, 0.6);
-    border: 1px solid rgba(148, 163, 184, 0.25);
+    border-radius: var(--radius-card);
+    background: var(--surface-bg);
+    border: 1px solid var(--border-subtle);
     overflow: hidden;
     box-shadow: 0 32px 64px rgba(2, 6, 23, 0.45);
     transition: transform 0.25s ease, border 0.25s ease;
@@ -601,8 +604,8 @@ a {
 
 .contact-grid__card {
     border-radius: 22px;
-    background: rgba(15, 23, 42, 0.6);
-    border: 1px solid rgba(148, 163, 184, 0.25);
+    background: var(--surface-bg);
+    border: 1px solid var(--border-subtle);
     padding: 20px;
     display: flex;
     flex-direction: column;
@@ -611,8 +614,8 @@ a {
 
 .contact-grid__form {
     border-radius: 26px;
-    background: rgba(15, 23, 42, 0.6);
-    border: 1px solid rgba(148, 163, 184, 0.25);
+    background: var(--surface-bg);
+    border: 1px solid var(--border-subtle);
     padding: 28px;
     box-shadow: 0 28px 56px rgba(2, 6, 23, 0.45);
 }
@@ -1292,6 +1295,29 @@ a {
     100% {
         opacity: 1;
         transform: translateY(0) scale(1);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+
+    .typewriter__cursor {
+        animation: none !important;
+    }
+
+    .cat-gallery__intro,
+    .cat-gallery__paws {
+        display: none !important;
     }
 }
 
