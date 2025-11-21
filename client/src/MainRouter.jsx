@@ -17,6 +17,7 @@ import AdminDashboard from './pages/AdminDashboard.jsx';
 import AdminEducation from './pages/AdminEducation.jsx';
 import AdminProjects from './pages/AdminProjects.jsx';
 import AdminServices from './pages/AdminServices.jsx';
+import AdminGallery from './pages/AdminGallery.jsx';
 
 const MainRouter = () => {
     return (
@@ -34,7 +35,7 @@ const MainRouter = () => {
                 <Route path="education" element={<AdminEducation />} />
                 <Route path="projects" element={<AdminProjects />} />
                 <Route path="services" element={<AdminServices />} />
-                <Route path="gallery" element={<div className="section section--glass"><h2>Admin Gallery</h2></div>} />
+                <Route path="gallery" element={<AdminGallery />} />
                 <Route path="contacts" element={<div className="section section--glass"><h2>Admin Contacts</h2></div>} />
             </Route>
         </Routes>
