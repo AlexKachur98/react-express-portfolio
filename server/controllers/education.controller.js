@@ -22,7 +22,7 @@ const create = async (req, res) => {
 // List all education entries
 const list = async (req, res) => {
     try {
-        let educationList = await Education.find().sort('-startDate'); // Sort by start date
+        let educationList = await Education.find().sort('-completion'); // Sort by completion date (newest first)
         res.json(educationList);
     } catch (err) {
         return res.status(400).json({ error: errorHandler.getErrorMessage(err) });

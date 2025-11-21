@@ -55,7 +55,7 @@ npm run server
 npm run client
 ```
 
-- App runs at `http://localhost:5173` (frontend) and `http://localhost:5000` (API).
+- App runs at `http://localhost:5173` (frontend) and `http://localhost:3000` (API).
 - Environment variables can be added via a `.env` file (MongoDB URI, JWT secret, etc.).
 
 ### Building for Production

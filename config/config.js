@@ -29,10 +29,17 @@ if (config.jwtSecret === "DEFAULT_SECRET_CHANGE_ME") {
   console.warn('[Config] WARNING: JWT_SECRET is not set. Please set a strong secret in your .env file.');
 }
 
-// Validation: Ensure MONGO_URI is loaded
-if (!config.mongoUri) {
-  console.error('[Config] ERROR: MONGO_URI is not defined. Please set it in the .env file.');
-  process.exit(1); // Exit if the database path is not set
+// Production hardening: require explicit secrets and database URIs
+if (config.env === 'production') {
+  if (!process.env.MONGO_URI) {
+    console.error('[Config] ERROR: MONGO_URI is required in production. Set it via environment variables before starting the server.');
+    process.exit(1);
+  }
+
+  if (config.jwtSecret === "DEFAULT_SECRET_CHANGE_ME") {
+    console.error('[Config] ERROR: JWT_SECRET must be set in production. Provide a strong secret via the JWT_SECRET environment variable.');
+    process.exit(1);
+  }
 }
 
 export default config;

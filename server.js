@@ -27,7 +27,7 @@ mongoose.connect(config.mongoUri)
         console.error("[Server Error] Failed to start server:", err);
       } else {
         // Log a success message
-        console.info(`[Server] Started successfully on port ${config.port} in ${config.env} mode.`);
+        console.info(`[Server] Started successfully on http://localhost:${config.port} in ${config.env} mode.`);
       }
     });
   })
