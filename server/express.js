@@ -31,8 +31,8 @@ const clientBuildPath = path.join(__dirname, '../client/dist');
 const app = express();
 
 // --- Middleware Pipeline (as seen in course examples) ---
-app.use(express.json()); // Built-in JSON parser
-app.use(express.urlencoded({ extended: true })); // Built-in URL-encoded parser
+app.use(express.json({ limit: '10mb' })); // Built-in JSON parser
+app.use(express.urlencoded({ extended: true, limit: '10mb' })); // Built-in URL-encoded parser
 app.use(cookieParser());   // Parse Cookie header
 app.use(compress());       // Compress response bodies
 app.use(helmet());         // Set security HTTP headers
