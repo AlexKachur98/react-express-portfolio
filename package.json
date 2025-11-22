@@ -10,7 +10,8 @@
     "server": "nodemon server.js --exec babel-node",
     "client": "npm run dev --prefix client",
     "build:client": "npm run build --prefix client",
-    "start": "node server.js"
+    "start": "node server.js",
+    "seed": "node seed.js"
   },
   "dependencies": {
     "@babel/runtime": "^7.25.0",
