@@ -5,7 +5,7 @@
  * @purpose Curated gallery experience for cat photos with filtering, favourites, and modal viewing.
  */
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { getGallery } from '../utils/api.js';
+import { getGalleryItems } from '../utils/api.js';
 
 const COOKIE_KEY = 'cat_gallery_favourites';
 
@@ -46,6 +46,7 @@ export default function CatGallery() {
     // Feature toggles and derived state for filters, favourites, and modal rendering.
     const [favoriteIds, setFavoriteIds] = useState(() => favouriteCookie.read());
     const [images, setImages] = useState([]);
+    const [loadError, setLoadError] = useState('');
     const [showFavouritesOnly, setShowFavouritesOnly] = useState(false);
     const [activeTag, setActiveTag] = useState('all');
     const [isFullscreen, setIsFullscreen] = useState(false);
@@ -82,15 +83,18 @@ export default function CatGallery() {
 
     useEffect(() => {
         const loadImages = async () => {
-            const res = await getGallery();
+            const res = await getGalleryItems();
             if (!res?.error && Array.isArray(res)) {
                 const normalized = res.map((item) => ({
                     ...item,
                     id: item._id || item.id,
                     src: item.imageData || item.src,
+                    alt: item.title || 'Cat photo',
                     tags: Array.isArray(item.tags) ? item.tags : []
                 }));
                 setImages(normalized);
+            } else if (res?.error) {
+                setLoadError(res.error);
             }
         };
         loadImages();
@@ -278,7 +282,8 @@ export default function CatGallery() {
                     <div className="cat-gallery__carousel" ref={carouselRef}>
                         {visibleImages.length === 0 ? (
                             <div className="cat-gallery__empty">
-                                <p>No favourites yet. Tap the little hearts to save your favourite poses!</p>
+                                <p>{images.length === 0 ? 'No photos yet. Check back soon!' : 'No favourites yet. Tap the little hearts to save your favourite poses!'}</p>
+                                {loadError && <p className="contact-form__error">{loadError}</p>}
                             </div>
                         ) : (
                             visibleImages.map((image, index) => {

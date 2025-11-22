@@ -210,9 +210,44 @@ export default function Home() {
                 ? svcRes.value
                 : fallbackServices;
 
-            setEducationItems(eduData || []);
-            setProjects(projData || []);
-            setServices(svcData || []);
+            const mappedEducation = (eduData || []).map((item, idx) => ({
+                program: item.program || item.title || fallbackEducation[0].program,
+                school: item.school || item.title || 'Education',
+                period: item.period || item.completion || 'In progress',
+                location: item.location || 'Toronto, Canada',
+                details: Array.isArray(item.details)
+                    ? item.details
+                    : item.description
+                        ? [item.description]
+                        : fallbackEducation[0].details,
+                _id: item._id || idx
+            }));
+
+            const mappedProjects = (projData || []).map((item, idx) => ({
+                title: item.title || `Project ${idx + 1}`,
+                description: item.description || 'Project description coming soon.',
+                tags: Array.isArray(item.tags) && item.tags.length > 0
+                    ? item.tags
+                    : item.category
+                        ? [item.category]
+                        : ['Portfolio'],
+                image: item.image || item.imageUrl || '/assets/portfolio.webp',
+                github: item.github || item.projectUrl || '',
+                live: item.live || '',
+                _id: item._id || idx
+            }));
+
+            const mappedServices = (svcData || []).map((item, idx) => ({
+                title: item.title || `Service ${idx + 1}`,
+                description: item.description || 'Details coming soon.',
+                icon: item.icon || '',
+                iconLabel: item.iconLabel || '',
+                _id: item._id || idx
+            }));
+
+            setEducationItems(mappedEducation.length ? mappedEducation : fallbackEducation);
+            setProjects(mappedProjects.length ? mappedProjects : fallbackProjects);
+            setServices(mappedServices.length ? mappedServices : fallbackServices);
         };
 
         loadData();
