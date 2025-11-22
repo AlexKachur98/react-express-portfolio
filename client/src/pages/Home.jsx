@@ -268,12 +268,15 @@ export default function Home() {
 
             {showSecretSignin && (
                 <div className="cat-gallery__modal" role="dialog" aria-modal="true">
-                    <div className="cat-gallery__modal-backdrop" onClick={() => setShowSecretSignin(false)}></div>
+                    <div
+                        className="cat-gallery__modal-backdrop"
+                        onClick={() => setShowSecretSignin(false)}
+                    ></div>
                     <div className="cat-gallery__modal-content" role="document">
                         <button
                             type="button"
                             className="cat-gallery__modal-close"
-                            aria-label="Close sign in"
+                            aria-label="Close secret sign in"
                             onClick={() => setShowSecretSignin(false)}
                         >
                             ×

@@ -12,7 +12,6 @@ export default function SignIn({ onSignedIn } = {}) {
     const [revealed, setRevealed] = useState(false);
 
     useEffect(() => {
-        // Ensure the page-level sign-in is visible even without the intersection observer
         setRevealed(true);
     }, []);
 

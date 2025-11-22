@@ -12,30 +12,36 @@ import AdminMessages from './AdminMessages.jsx';
 export default function AdminApp() {
     const { isAdmin, initializing } = useAuth();
 
+    let content;
+
     if (initializing) {
-        return (
+        content = (
             <div className="section section--glass">
                 <div className="section__eyebrow">Admin</div>
                 <h2 className="section__heading">Loading...</h2>
                 <p>Please wait while we restore your session.</p>
             </div>
         );
-    }
-
-    if (!isAdmin) {
-        return <AdminLogin />;
+    } else if (!isAdmin) {
+        content = <AdminLogin />;
+    } else {
+        content = (
+            <Routes>
+                <Route element={<AdminLayout />}>
+                    <Route index element={<AdminOverview />} />
+                    <Route path="education" element={<AdminEducation />} />
+                    <Route path="projects" element={<AdminProjects />} />
+                    <Route path="services" element={<AdminServices />} />
+                    <Route path="gallery" element={<AdminGallery />} />
+                    <Route path="messages" element={<AdminMessages />} />
+                </Route>
+            </Routes>
+        );
     }
 
     return (
-        <Routes>
-            <Route element={<AdminLayout />}>
-                <Route index element={<AdminOverview />} />
-                <Route path="education" element={<AdminEducation />} />
-                <Route path="projects" element={<AdminProjects />} />
-                <Route path="services" element={<AdminServices />} />
-                <Route path="gallery" element={<AdminGallery />} />
-                <Route path="messages" element={<AdminMessages />} />
-            </Route>
-        </Routes>
+        <div className="admin-shell">
+            {content}
+        </div>
     );
 }
