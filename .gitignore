@@ -8,6 +8,18 @@
 
 # Environment Variables File
 .env
+.env.*
+*.env
+*.env.*
+.env.local
+.env.*.local
+
+# Local-only seed scripts and data
+seed.js
+seeds/
+seed-data/
+scripts/seed/
+scripts/seeds/
 
 # Logs
 logs
