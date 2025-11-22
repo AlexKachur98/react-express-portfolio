@@ -36,7 +36,7 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' })); // Built-in URL-
 app.use(cookieParser());   // Parse Cookie header
 app.use(compress());       // Compress response bodies
 app.use(helmet());         // Set security HTTP headers
-app.use(cors());           // Enable Cross-Origin Resource Sharing
+app.use(cors());           // Enable Cross-Origin Resource Sharing (tighten allowed origins + cookie flags in production)
 
 // --- Mount API Routes ---
 // All API routes are mounted under the '/api' prefix

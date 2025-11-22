@@ -27,15 +27,15 @@ const signin = async (req, res) => {
             return res.status(401).json({ error: "Email and password do not match." });
         }
 
-        // If authentication is successful, generate a JWT
-        // The payload contains the user's ID
-        const token = jwtUtil.generateToken({ _id: user._id });
+        // If authentication is successful, generate a JWT with id + role
+        const token = jwtUtil.generateToken({ _id: user._id, role: user.role });
 
         // Set the token in an HTTP-only cookie for web clients
         res.cookie('t', token, {
             httpOnly: true,
+            // Enable secure in production once served over HTTPS
             secure: config.env === 'production',
-            sameSite: 'strict',
+            sameSite: config.env === 'production' ? 'none' : 'lax',
             maxAge: 60 * 60 * 1000 // 1 hour
         });
 

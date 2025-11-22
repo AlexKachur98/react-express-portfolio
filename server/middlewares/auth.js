@@ -6,7 +6,6 @@
  */
 import { expressjwt } from 'express-jwt';
 import config from '../../config/config.js';
-import User from '../models/user.model.js';
 
 /**
  * @purpose Middleware that verifies the JWT token.
@@ -16,9 +15,9 @@ import User from '../models/user.model.js';
 const requireSignin = expressjwt({
     secret: config.jwtSecret,       // The same secret used to sign the tokens
     algorithms: ['HS256'],          // Algorithm used to sign the token
-    requestProperty: 'auth',        // Attach the decoded payload to req.auth
+    requestProperty: 'auth',        // Keep decoded payload on req.auth
     getToken: (req) => {
-        if (req.cookies && req.cookies.t) {
+        if (req.cookies && req.cookies.t) { // Prefer HTTP-only cookie
             return req.cookies.t;
         }
         if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
@@ -50,19 +49,13 @@ const hasAuthorization = (req, res, next) => {
 
 /**
  * @purpose Middleware to ensure the authenticated user has admin role.
- * @assumes `requireSignin` has already populated req.auth._id
+ * @assumes `requireSignin` has already populated req.auth
  */
-const requireAdmin = async (req, res, next) => {
-    try {
-        const user = await User.findById(req.auth?._id);
-        if (!user || user.role !== 'admin') {
-            return res.status(403).json({ error: "Admin role required" });
-        }
-        req.authUser = user;
-        return next();
-    } catch (err) {
-        return res.status(403).json({ error: "Admin role required" });
+const requireAdmin = (req, res, next) => {
+    if (!req.auth || req.auth.role !== 'admin') {
+        return res.status(403).json({ error: 'Admin access required' });
     }
+    return next();
 };
 
 export { requireSignin, hasAuthorization, requireAdmin };

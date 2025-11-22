@@ -18,6 +18,6 @@ router.route('/gallery/:galleryId')
     .put(requireSignin, requireAdmin, galleryCtrl.update) // Admin: update
     .delete(requireSignin, requireAdmin, galleryCtrl.remove); // Admin: delete
 
-router.param('galleryId', galleryCtrl.galleryByID);
+router.param('galleryId', galleryCtrl.galleryItemByID);
 
 export default router;

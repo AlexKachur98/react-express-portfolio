@@ -15,6 +15,10 @@ const ServiceSchema = new mongoose.Schema({
         trim: true,
         required: 'Description is required'
     },
+    highlight: {
+        type: Boolean,
+        default: false
+    },
     icon: {
         type: String,
         trim: true
