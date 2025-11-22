@@ -5,8 +5,14 @@
  * @purpose Controller functions for Contact message CRUD logic.
  */
 import Contact from '../models/contact.model.js';
-import _ from 'lodash';
 import errorHandler from '../helpers/dbErrorHandler.js';
+
+const sanitizeContactPayload = (payload = {}) => ({
+    firstName: typeof payload.firstName === 'string' ? payload.firstName.trim() : '',
+    lastName: typeof payload.lastName === 'string' ? payload.lastName.trim() : '',
+    email: typeof payload.email === 'string' ? payload.email.trim().toLowerCase() : '',
+    message: typeof payload.message === 'string' ? payload.message.trim() : ''
+});
 
 /**
  * @purpose Creates a new contact message document.
@@ -14,7 +20,12 @@ import errorHandler from '../helpers/dbErrorHandler.js';
  * @access Public
  */
 const create = async (req, res) => {
-    const contact = new Contact(req.body);
+    const payload = sanitizeContactPayload(req.body);
+    if (!payload.firstName || !payload.lastName || !payload.email || !payload.message) {
+        return res.status(400).json({ error: 'First name, last name, email, and message are required.' });
+    }
+
+    const contact = new Contact(payload);
     try {
         await contact.save();
         return res.status(200).json({ message: "Contact message received successfully!" });
@@ -53,8 +64,12 @@ const read = (req, res) => {
  */
 const update = async (req, res) => {
     try {
-        let contact = req.contact;
-        contact = _.extend(contact, req.body);
+        const payload = sanitizeContactPayload(req.body);
+        const contact = req.contact;
+        contact.firstName = payload.firstName || contact.firstName;
+        contact.lastName = payload.lastName || contact.lastName;
+        contact.email = payload.email || contact.email;
+        contact.message = payload.message || contact.message;
         await contact.save();
         res.json(contact);
     } catch (err) {

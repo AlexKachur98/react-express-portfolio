@@ -14,6 +14,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import config from '../config/config.js';
 
 // --- Import All API Routes ---
 import userRoutes from './routes/user.routes.js';
@@ -30,13 +31,30 @@ const clientBuildPath = path.join(__dirname, '../client/dist');
 
 const app = express();
 
+// Behind a proxy (Heroku/Vercel/etc.) secure cookies require trust proxy.
+app.set('trust proxy', 1);
+
 // --- Middleware Pipeline (as seen in course examples) ---
 app.use(express.json({ limit: '10mb' })); // Built-in JSON parser
 app.use(express.urlencoded({ extended: true, limit: '10mb' })); // Built-in URL-encoded parser
 app.use(cookieParser());   // Parse Cookie header
 app.use(compress());       // Compress response bodies
-app.use(helmet());         // Set security HTTP headers
-app.use(cors());           // Enable Cross-Origin Resource Sharing (tighten allowed origins + cookie flags in production)
+app.use(helmet({
+    crossOriginResourcePolicy: { policy: 'same-origin' },
+    referrerPolicy: { policy: 'strict-origin-when-cross-origin' }
+}));         // Set security HTTP headers
+
+const allowAll = config.env === 'development' && !config.clientOrigins.length;
+const corsOptions = {
+    origin: (origin, callback) => {
+        if (!origin || allowAll) return callback(null, true);
+        if (config.clientOrigins.includes(origin)) return callback(null, true);
+        return callback(new Error('Not allowed by CORS'));
+    },
+    credentials: true
+};
+app.use(cors(corsOptions));           // Enable Cross-Origin Resource Sharing (tighten allowed origins + cookie flags in production)
+app.options('*', cors(corsOptions));
 
 // --- Mount API Routes ---
 // All API routes are mounted under the '/api' prefix
@@ -46,6 +64,11 @@ app.use('/api', contactRoutes);
 app.use('/api', educationRoutes);
 app.use('/api', serviceRoutes);
 app.use('/api', galleryRoutes);
+
+// Lightweight health endpoint for uptime checks
+app.get('/api/health', (_req, res) => {
+    res.json({ status: 'ok', uptime: process.uptime() });
+});
 
 // --- API 404 Handler ---
 // Return JSON 404 for any unmatched /api route
@@ -89,6 +112,9 @@ app.get(/^\/(?!api).*/, (req, res) => {
 // --- General Error Handling Middleware ---
 // This catches errors, including 'UnauthorizedError' from express-jwt
 app.use((err, req, res, next) => {
+    if (err.message === 'Not allowed by CORS') {
+        return res.status(403).json({ error: 'Origin not allowed' });
+    }
     if (err.name === 'UnauthorizedError') {
         // This error is thrown by express-jwt when a token is invalid
         return res.status(401).json({ "error": "Unauthorized: " + err.message });

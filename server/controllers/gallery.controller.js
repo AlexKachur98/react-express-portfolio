@@ -3,20 +3,31 @@
  * @purpose CRUD controllers for cat gallery images stored as base64 strings.
  */
 import GalleryItem from '../models/galleryItem.model.js';
-import _ from 'lodash';
 import errorHandler from '../helpers/dbErrorHandler.js';
 
+const normalizeTags = (tagsInput) => {
+    if (Array.isArray(tagsInput)) {
+        return tagsInput.map((tag) => tag?.toString().trim()).filter(Boolean);
+    }
+    if (typeof tagsInput === 'string') {
+        return tagsInput.split(',').map((t) => t.trim()).filter(Boolean);
+    }
+    return [];
+};
+
+const buildGalleryPayload = (body = {}) => ({
+    title: typeof body.title === 'string' ? body.title.trim() : '',
+    imageData: typeof body.imageData === 'string' ? body.imageData.trim() : '',
+    tags: normalizeTags(body.tags)
+});
+
 const create = async (req, res) => {
-    const { title, imageData, tags } = req.body;
-    if (!title || !imageData) {
+    const payload = buildGalleryPayload(req.body);
+    if (!payload.title || !payload.imageData) {
         return res.status(400).json({ error: "Title and image data are required." });
     }
 
-    const galleryItem = new GalleryItem({
-        title,
-        imageData,
-        tags: tags || []
-    });
+    const galleryItem = new GalleryItem(payload);
     try {
         await galleryItem.save();
         return res.status(200).json(galleryItem);
@@ -42,8 +53,11 @@ const read = (req, res) => {
 
 const update = async (req, res) => {
     try {
-        let galleryItem = req.galleryItem;
-        galleryItem = _.extend(galleryItem, req.body);
+        const payload = buildGalleryPayload(req.body);
+        const galleryItem = req.galleryItem;
+        galleryItem.title = payload.title || galleryItem.title;
+        galleryItem.imageData = payload.imageData || galleryItem.imageData;
+        galleryItem.tags = payload.tags.length ? payload.tags : galleryItem.tags;
         await galleryItem.save();
         return res.json(galleryItem);
     } catch (err) {

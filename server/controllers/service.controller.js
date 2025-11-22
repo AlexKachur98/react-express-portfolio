@@ -3,11 +3,29 @@
  * @purpose Controller functions for Service CRUD logic.
  */
 import Service from '../models/service.model.js';
-import _ from 'lodash';
 import errorHandler from '../helpers/dbErrorHandler.js';
 
+const buildServicePayload = (body = {}) => ({
+    title: typeof body.title === 'string' ? body.title.trim() : '',
+    description: typeof body.description === 'string' ? body.description.trim() : '',
+    highlight: typeof body.highlight === 'boolean'
+        ? body.highlight
+        : typeof body.highlight === 'string'
+            ? ['true', '1', 'yes', 'on'].includes(body.highlight.toLowerCase())
+            : undefined,
+    icon: typeof body.icon === 'string' ? body.icon.trim() : '',
+    iconLabel: typeof body.iconLabel === 'string' ? body.iconLabel.trim() : ''
+});
+
 const create = async (req, res) => {
-    const service = new Service(req.body);
+    const payload = buildServicePayload(req.body);
+    const service = new Service({
+        title: payload.title,
+        description: payload.description,
+        highlight: payload.highlight ?? false,
+        icon: payload.icon,
+        iconLabel: payload.iconLabel
+    });
     try {
         await service.save();
         return res.status(200).json(service);
@@ -31,8 +49,15 @@ const read = (req, res) => {
 
 const update = async (req, res) => {
     try {
-        let service = req.service;
-        service = _.extend(service, req.body);
+        const payload = buildServicePayload(req.body);
+        const service = req.service;
+        service.title = payload.title || service.title;
+        service.description = payload.description || service.description;
+        if (payload.highlight !== undefined) {
+            service.highlight = payload.highlight;
+        }
+        service.icon = payload.icon || service.icon;
+        service.iconLabel = payload.iconLabel || service.iconLabel;
         await service.save();
         return res.json(service);
     } catch (err) {

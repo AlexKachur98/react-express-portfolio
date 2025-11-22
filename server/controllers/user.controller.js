@@ -6,10 +6,15 @@
  */
 
 import User from '../models/user.model.js';
-import _ from 'lodash'; // Utility for merging objects
 import errorHandler from '../helpers/dbErrorHandler.js';
 import jwtUtil from '../utils/jwt.js';
 import config from '../../config/config.js';
+
+const normalizeUserPayload = (body = {}) => ({
+    name: typeof body.name === 'string' ? body.name.trim() : '',
+    email: typeof body.email === 'string' ? body.email.trim().toLowerCase() : '',
+    password: typeof body.password === 'string' ? body.password : '',
+});
 
 // --- Authentication Controllers ---
 
@@ -19,23 +24,29 @@ import config from '../../config/config.js';
  */
 const signin = async (req, res) => {
     try {
+        const { email, password } = normalizeUserPayload(req.body);
+        if (!email || !password) {
+            return res.status(400).json({ error: "Email and password are required." });
+        }
+
         // Find the user by their email address
-        let user = await User.findOne({ email: req.body.email });
+        let user = await User.findOne({ email });
 
         // If user not found, or password doesn't match, return 401
-        if (!user || !user.authenticate(req.body.password)) {
+        if (!user || !user.authenticate(password)) {
             return res.status(401).json({ error: "Email and password do not match." });
         }
 
         // If authentication is successful, generate a JWT with id + role
         const token = jwtUtil.generateToken({ _id: user._id, role: user.role });
+        const useSecureCookies = config.enableSecureCookies;
 
         // Set the token in an HTTP-only cookie for web clients
         res.cookie('t', token, {
             httpOnly: true,
             // Enable secure in production once served over HTTPS
-            secure: config.env === 'production',
-            sameSite: config.env === 'production' ? 'none' : 'lax',
+            secure: useSecureCookies,
+            sameSite: useSecureCookies ? 'none' : 'lax',
             maxAge: 60 * 60 * 1000 // 1 hour
         });
 
@@ -62,7 +73,12 @@ const signin = async (req, res) => {
  */
 const signout = (req, res) => {
     // Clear the cookie named 't'
-    res.clearCookie("t");
+    const useSecureCookies = config.enableSecureCookies;
+    res.clearCookie("t", {
+        httpOnly: true,
+        secure: useSecureCookies,
+        sameSite: useSecureCookies ? 'none' : 'lax'
+    });
     return res.status(200).json({
         message: "Signed out successfully"
     });
@@ -75,10 +91,16 @@ const signout = (req, res) => {
  * @route POST /api/users
  */
 const create = async (req, res) => {
-    const { role, ...rest } = req.body;
+    const payload = normalizeUserPayload(req.body);
+    if (!payload.name || !payload.email || !payload.password) {
+        return res.status(400).json({ error: "Name, email, and password are required." });
+    }
+
     const user = new User({
-        ...rest,
-        role: 'user' // Force default role on public signup
+        name: payload.name,
+        email: payload.email,
+        password: payload.password,
+        role: 'user'
     });
     try {
         // The password gets hashed automatically by the 'virtual' field in the model
@@ -124,13 +146,13 @@ const read = (req, res) => {
 const update = async (req, res) => {
     try {
         let user = req.profile; // Get user from middleware
-        const { role, ...payload } = req.body; // Prevent role escalation through profile updates
-        // Use lodash 'extend' to merge properties from req.body onto the user object
-        user = _.extend(user, payload);
+        const payload = normalizeUserPayload(req.body);
+        if (payload.name) user.name = payload.name;
+        if (payload.email) user.email = payload.email;
 
         // If password is being updated, the model's virtual setter will handle hashing
-        if (req.body.password) {
-            user.password = req.body.password;
+        if (payload.password) {
+            user.password = payload.password;
         }
 
         await user.save();

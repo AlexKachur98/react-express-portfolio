@@ -5,7 +5,6 @@
  * @purpose Controller functions for handling all Project CRUD logic.
  */
 import Project from '../models/project.model.js';
-import _ from 'lodash';
 import errorHandler from '../helpers/dbErrorHandler.js';
 
 /**
@@ -23,16 +22,17 @@ const normalizeTags = (tagsInput) => {
     return [];
 };
 
+const buildProjectPayload = (body = {}) => ({
+    title: typeof body.title === 'string' ? body.title.trim() : '',
+    description: typeof body.description === 'string' ? body.description.trim() : '',
+    tags: normalizeTags(body.tags),
+    image: typeof body.image === 'string' ? body.image.trim() : '',
+    github: typeof body.github === 'string' ? body.github.trim() : '',
+    live: typeof body.live === 'string' ? body.live.trim() : ''
+});
+
 const create = async (req, res) => {
-    const { title, description, tags, image, github, live } = req.body;
-    const project = new Project({
-        title,
-        description,
-        tags: normalizeTags(tags),
-        image,
-        github,
-        live
-    });
+    const project = new Project(buildProjectPayload(req.body));
     try {
         await project.save();
         return res.status(200).json(project);
@@ -73,16 +73,14 @@ const read = (req, res) => {
  */
 const update = async (req, res) => {
     try {
-        let project = req.project; // Get project from middleware
-        const { title, description, tags, image, github, live } = req.body;
-        project = _.extend(project, {
-            title,
-            description,
-            tags: normalizeTags(tags),
-            image,
-            github,
-            live
-        });
+        const payload = buildProjectPayload(req.body);
+        const project = req.project; // Get project from middleware
+        project.title = payload.title || project.title;
+        project.description = payload.description || project.description;
+        project.tags = payload.tags.length ? payload.tags : project.tags;
+        project.image = payload.image || project.image;
+        project.github = payload.github || project.github;
+        project.live = payload.live || project.live;
         await project.save();
         res.json(project); // Return updated project
     } catch (err) {

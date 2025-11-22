@@ -5,7 +5,6 @@
  * @purpose Controller functions for Education/Qualification CRUD logic.
  */
 import Education from '../models/education.model.js';
-import _ from 'lodash';
 import errorHandler from '../helpers/dbErrorHandler.js';
 
 const normalizeDetails = (detailsInput) => {
@@ -18,16 +17,18 @@ const normalizeDetails = (detailsInput) => {
     return [];
 };
 
+const buildEducationPayload = (body = {}) => ({
+    program: typeof body.program === 'string' ? body.program.trim() : '',
+    school: typeof body.school === 'string' ? body.school.trim() : '',
+    period: typeof body.period === 'string' ? body.period.trim() : '',
+    location: typeof body.location === 'string' ? body.location.trim() : '',
+    details: normalizeDetails(body.details)
+});
+
 // Create new education entry
 const create = async (req, res) => {
-    const { program, school, period, location, details } = req.body;
-    const education = new Education({
-        program,
-        school,
-        period,
-        location,
-        details: normalizeDetails(details)
-    });
+    const payload = buildEducationPayload(req.body);
+    const education = new Education(payload);
     try {
         await education.save();
         return res.status(200).json(education);
@@ -54,15 +55,13 @@ const read = (req, res) => {
 // Update an education entry
 const update = async (req, res) => {
     try {
-        let education = req.education;
-        const { program, school, period, location, details } = req.body;
-        education = _.extend(education, {
-            program,
-            school,
-            period,
-            location,
-            details: normalizeDetails(details)
-        });
+        const payload = buildEducationPayload(req.body);
+        const education = req.education;
+        education.program = payload.program || education.program;
+        education.school = payload.school || education.school;
+        education.period = payload.period || education.period;
+        education.location = payload.location || education.location;
+        education.details = payload.details.length ? payload.details : education.details;
         await education.save();
         res.json(education);
     } catch (err) {

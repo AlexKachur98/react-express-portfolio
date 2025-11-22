@@ -7,22 +7,26 @@
 
 import 'dotenv/config'; // Make sure to load dotenv here as well
 
+const parseList = (value) => (value || '')
+  .split(',')
+  .map((item) => item.trim())
+  .filter(Boolean);
+
+const env = process.env.NODE_ENV || 'development';
+const port = process.env.PORT || 3000;
+
 const config = {
-    // Environment mode (development, production)
-    env: process.env.NODE_ENV || 'development',
-    
-    // Server port from .env, default to 3000
-    port: process.env.PORT || 3000,
-    
-    // Secret key for signing JSON Web Tokens from .env
+    env,
+    port,
     jwtSecret: process.env.JWT_SECRET || "DEFAULT_SECRET_CHANGE_ME",
-    
-    // MongoDB Connection String from .env, with a fallback to local
-    mongoUri: process.env.MONGO_URI || 
+    mongoUri: process.env.MONGO_URI ||
         'mongodb://' + (process.env.IP || 'localhost') + ':' +
         (process.env.MONGO_PORT || '27017') +
-        '/MyPortfolioDB' // The name of your database
-}
+        '/MyPortfolioDB',
+    clientOrigins: parseList(process.env.CLIENT_ORIGINS || process.env.ALLOWED_ORIGINS)
+        .concat(env === 'development' ? ['http://localhost:5173', `http://localhost:${port}`] : []),
+    enableSecureCookies: process.env.COOKIE_SECURE === 'true' || env === 'production'
+};
 
 // Security check: Warn if default JWT_SECRET is used
 if (config.jwtSecret === "DEFAULT_SECRET_CHANGE_ME") {
@@ -39,6 +43,10 @@ if (config.env === 'production') {
   if (config.jwtSecret === "DEFAULT_SECRET_CHANGE_ME") {
     console.error('[Config] ERROR: JWT_SECRET must be set in production. Provide a strong secret via the JWT_SECRET environment variable.');
     process.exit(1);
+  }
+
+  if (!config.clientOrigins.length) {
+    console.warn('[Config] WARNING: CLIENT_ORIGINS is empty. Set CLIENT_ORIGINS (comma separated) to restrict CORS in production.');
   }
 }
 

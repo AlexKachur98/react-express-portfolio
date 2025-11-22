@@ -2,15 +2,21 @@ const API_BASE_URL = (import.meta.env.VITE_API_URL || '/api').replace(/\/$/, '')
 
 async function request(endpoint, options = {}) {
     const normalizedEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
-    const response = await fetch(`${API_BASE_URL}${normalizedEndpoint}`, {
-        credentials: 'include', // send cookies (httpOnly JWT)
-        ...options,
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            ...(options.headers || {})
-        }
-    });
+    let response;
+
+    try {
+        response = await fetch(`${API_BASE_URL}${normalizedEndpoint}`, {
+            credentials: 'include', // send cookies (httpOnly JWT)
+            ...options,
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                ...(options.headers || {})
+            }
+        });
+    } catch (error) {
+        return { error: error?.message || 'Network request failed', status: 0 };
+    }
 
     let data;
     try {
