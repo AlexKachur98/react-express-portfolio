@@ -7,12 +7,15 @@ import { useEffect, useRef } from 'react';
 const loadScript = (src) => {
     if (typeof document === 'undefined') return Promise.resolve();
     const existing = document.querySelector(`script[src="${src}"]`);
-    if (existing) return existing.dataset.loaded === 'true'
-        ? Promise.resolve()
-        : new Promise((resolve, reject) => {
+    if (existing) {
+        if (existing.dataset.loaded === 'true' || existing.readyState === 'complete') {
+            return Promise.resolve();
+        }
+        return new Promise((resolve, reject) => {
             existing.addEventListener('load', () => resolve());
             existing.addEventListener('error', reject);
         });
+    }
 
     return new Promise((resolve, reject) => {
         const script = document.createElement('script');
@@ -31,6 +34,7 @@ const loadScript = (src) => {
 export default function VantaBackground() {
     const backgroundRef = useRef(null);
     const instanceRef = useRef(null);
+    const retriesRef = useRef(0);
 
     useEffect(() => {
         let mounted = true;
@@ -41,11 +45,28 @@ export default function VantaBackground() {
                 await loadScript('/three.min.js');
                 await loadScript('/vanta.waves.min.js');
 
-                const VANTA = window.VANTA;
+                let VANTA = window.VANTA;
                 const THREE = window.THREE;
+                const RawEffect = window._vantaEffect;
 
-                if (!mounted || !backgroundRef.current || !VANTA?.WAVES || !THREE) {
-                    console.error('Vanta assets not available', { hasVanta: !!VANTA, hasThree: !!THREE });
+                // Fallback: some builds expose only `_vantaEffect`.
+                if (!VANTA && RawEffect) {
+                    VANTA = window.VANTA = { WAVES: (opts) => new RawEffect(opts) };
+                } else if (VANTA && !VANTA.WAVES && RawEffect) {
+                    VANTA.WAVES = (opts) => new RawEffect(opts);
+                }
+
+                if (!mounted) return;
+
+                // Wait a tick if the ref is not attached yet (StrictMode double-render, etc.).
+                if (!backgroundRef.current && retriesRef.current < 3) {
+                    retriesRef.current += 1;
+                    requestAnimationFrame(attachVanta);
+                    return;
+                }
+
+                if (!backgroundRef.current || !VANTA?.WAVES || !THREE) {
+                    console.error('Vanta assets not available', { hasVanta: !!VANTA, hasWaves: !!VANTA?.WAVES, hasThree: !!THREE, rawEffect: !!RawEffect });
                     return;
                 }
 
@@ -53,22 +74,26 @@ export default function VantaBackground() {
                     instanceRef.current.destroy();
                 }
 
-                instanceRef.current = VANTA.WAVES({
-                    el: backgroundRef.current,
-                    THREE,
-                    mouseControls: true,
-                    touchControls: true,
-                    gyroControls: false,
-                    minHeight: 200.0,
-                    minWidth: 200.0,
-                    scale: 1.0,
-                    scaleMobile: 1.0,
-                    color: 0x020617,
-                    shininess: 35.0,
-                    waveHeight: 18.0,
-                    waveSpeed: 0.35,
-                    zoom: 0.85,
-                });
+                try {
+                    instanceRef.current = VANTA.WAVES({
+                        el: backgroundRef.current,
+                        THREE,
+                        mouseControls: true,
+                        touchControls: true,
+                        gyroControls: false,
+                        minHeight: 200.0,
+                        minWidth: 200.0,
+                        scale: 1.0,
+                        scaleMobile: 1.0,
+                        color: 0x020617,
+                        shininess: 35.0,
+                        waveHeight: 18.0,
+                        waveSpeed: 0.35,
+                        zoom: 0.85,
+                    });
+                } catch (err) {
+                    console.error('Vanta init failed', err);
+                }
             } catch (error) {
                 console.error('Failed to initialise Vanta background.', error);
             }

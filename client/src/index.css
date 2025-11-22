@@ -138,10 +138,12 @@ a {
 }
 
 .landing {
+    --section-gap: clamp(200px, 18vw, 300px);
+    --footer-gap: clamp(24px, 4vw, 40px);
     display: flex;
     flex-direction: column;
-    gap: 96px;
-    padding-bottom: 96px;
+    gap: var(--section-gap);
+    padding-bottom: clamp(24px, 4vw, 48px);
 }
 
 .section {
@@ -793,8 +795,8 @@ a {
 
 .footer {
     width: min(1100px, 90vw);
-    margin: 0 auto;
-    padding: 48px 0 24px;
+    margin: calc(var(--footer-gap, 28px) - var(--section-gap, 0px)) auto 0;
+    padding: 12px 0 16px;
     text-align: center;
     color: rgba(148, 163, 184, 0.68);
     font-size: 0.9rem;
