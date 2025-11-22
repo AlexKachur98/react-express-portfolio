@@ -6,10 +6,12 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
+    "postinstall": "npm install --prefix client",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "server": "nodemon server.js --exec babel-node",
     "client": "npm run dev --prefix client",
     "build:client": "npm run build --prefix client",
+    "gcp-build": "npm run postinstall && npm run build:client",
     "start": "node server.js",
     "seed:admin": "node server/scripts/seedAdmin.js",
     "seed": "node seed.js"

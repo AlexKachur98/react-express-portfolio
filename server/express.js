@@ -44,10 +44,10 @@ app.use(helmet({
     referrerPolicy: { policy: 'strict-origin-when-cross-origin' }
 }));         // Set security HTTP headers
 
-const allowAll = config.env === 'development' && !config.clientOrigins.length;
 const corsOptions = {
     origin: (origin, callback) => {
-        if (!origin || allowAll) return callback(null, true);
+        // Allow non-browser requests (no Origin), and allow all if no origins configured.
+        if (!origin || !config.clientOrigins.length) return callback(null, true);
         if (config.clientOrigins.includes(origin)) return callback(null, true);
         return callback(new Error('Not allowed by CORS'));
     },
