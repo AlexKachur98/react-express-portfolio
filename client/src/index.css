@@ -1629,3 +1629,79 @@ a {
         flex: 1 1 calc(50% - 8px);
     }
 }
+
+/* Secret sign-in modal */
+.secret-modal {
+    position: fixed;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    z-index: 9999;
+}
+
+.secret-modal__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.75);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+}
+
+.secret-modal__content {
+    position: relative;
+    z-index: 1;
+    width: min(720px, 92vw);
+    background: rgba(15, 23, 42, 0.96);
+    border: 1px solid rgba(148, 163, 184, 0.35);
+    box-shadow: 0 36px 64px rgba(2, 6, 23, 0.55);
+    border-radius: 24px;
+    padding: 28px;
+    color: #e2e8f0;
+}
+
+.secret-modal__close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(15, 23, 42, 0.85);
+    color: #f8fafc;
+    font-size: 1.4rem;
+    cursor: pointer;
+}
+
+.secret-modal .section.section--glass {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    color: inherit;
+    padding: 0;
+}
+
+.secret-login {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.secret-login__header {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.secret-login__title {
+    margin: 0;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #f8fafc;
+}
+
+.secret-login__hint {
+    margin: 0;
+    font-size: 0.95rem;
+    color: rgba(226, 232, 240, 0.8);
+}

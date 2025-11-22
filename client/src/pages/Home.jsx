@@ -12,7 +12,7 @@ import ProjectsSection from '../components/sections/ProjectsSection.jsx';
 import ServicesSection from '../components/sections/ServicesSection.jsx';
 import ContactSection from '../components/sections/ContactSection.jsx';
 import { getProjects, getQualifications, getServices, postContact } from '../utils/api.js';
-import SignIn from './SignIn.jsx';
+import SecretSigninForm from '../components/SecretSigninForm.jsx';
 
 const heroLines = [
     'Software Engineering Technology Student.',
@@ -269,7 +269,7 @@ export default function Home() {
             {showSecretSignin && (
                 <div className="cat-gallery__modal" role="dialog" aria-modal="true">
                     <div className="cat-gallery__modal-backdrop" onClick={() => setShowSecretSignin(false)}></div>
-                    <div className="cat-gallery__modal-content">
+                    <div className="cat-gallery__modal-content" role="document">
                         <button
                             type="button"
                             className="cat-gallery__modal-close"
@@ -278,7 +278,7 @@ export default function Home() {
                         >
                             ×
                         </button>
-                        <SignIn onSignedIn={() => setShowSecretSignin(false)} />
+                        <SecretSigninForm onClose={() => setShowSecretSignin(false)} />
                     </div>
                 </div>
             )}
