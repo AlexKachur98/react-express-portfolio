@@ -1,6 +1,13 @@
-import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+/**
+ * @file AuthContext.jsx
+ * @author Alex Kachur
+ * @since 2025-11-22
+ * @purpose Provides auth state and helpers to the React app, persisting sessions locally.
+ */
+import { createContext, useContext, useEffect, useState } from 'react';
 import { signin as signinApi, signout as signoutApi, signup as signupApi } from '../utils/api.js';
 
+/* eslint-disable react-refresh/only-export-components */
 const AuthContext = createContext(null);
 const STORAGE_KEY = 'portfolio_auth_user';
 
@@ -59,7 +66,7 @@ export function AuthProvider({ children }) {
         return res;
     };
 
-    const value = useMemo(() => ({
+    const value = {
         user,
         isAuthenticated: Boolean(user),
         isAdmin: user?.role === 'admin',
@@ -67,7 +74,7 @@ export function AuthProvider({ children }) {
         signin,
         signout,
         signup
-    }), [user, initializing]);
+    };
 
     return (
         <AuthContext.Provider value={value}>

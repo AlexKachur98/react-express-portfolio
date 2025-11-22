@@ -1,3 +1,9 @@
+/**
+ * @file AdminServices.jsx
+ * @author Alex Kachur
+ * @since 2025-11-22
+ * @purpose Admin control panel for creating and maintaining service offerings.
+ */
 import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext.jsx';
 import {

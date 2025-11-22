@@ -1,9 +1,12 @@
 /**
  * @file service.controller.js
+ * @author Alex Kachur
+ * @since 2025-11-22
  * @purpose Controller functions for Service CRUD logic.
  */
 import Service from '../models/service.model.js';
 import errorHandler from '../helpers/dbErrorHandler.js';
+import config from '../../config/config.js';
 
 const buildServicePayload = (body = {}) => ({
     title: typeof body.title === 'string' ? body.title.trim() : '',
@@ -68,8 +71,8 @@ const update = async (req, res) => {
 const remove = async (req, res) => {
     try {
         const service = req.service;
-        const deleted = await service.deleteOne();
-        return res.json(deleted);
+        await service.deleteOne();
+        return res.json(service);
     } catch (err) {
         return res.status(400).json({ error: errorHandler.getErrorMessage(err) });
     }
@@ -77,6 +80,9 @@ const remove = async (req, res) => {
 
 const removeAll = async (req, res) => {
     try {
+        if (config.env !== 'development') {
+            return res.status(403).json({ error: "Deleting all services is only allowed in development." });
+        }
         await Service.deleteMany({});
         return res.status(200).json({ message: "All services have been deleted." });
     } catch (err) {
@@ -92,7 +98,7 @@ const serviceByID = async (req, res, next, id) => {
         }
         req.service = service;
         next();
-    } catch (err) {
+    } catch (_err) {
         return res.status(400).json({ error: "Could not retrieve service" });
     }
 };

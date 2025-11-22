@@ -149,3 +149,38 @@ export async function deleteGalleryItem(galleryId) {
 export async function deleteAllGalleryItems() {
     return request('/gallery', { method: 'DELETE' });
 }
+
+// --- Guest Book (authenticated users) ---
+export async function getGuestbookEntries() {
+    return request('/guestbook', { method: 'GET' });
+}
+
+export async function signGuestbook(entry) {
+    return request('/guestbook', { method: 'POST', body: JSON.stringify(entry) });
+}
+
+export async function deleteMyGuestbookEntry() {
+    return request('/guestbook', { method: 'DELETE' });
+}
+
+// Admin guest book actions
+export async function deleteGuestbookEntry(entryId) {
+    return request(`/guestbook/${entryId}`, { method: 'DELETE' });
+}
+
+export async function deleteAllGuestbookEntries() {
+    return request('/guestbook/all', { method: 'DELETE' });
+}
+
+// --- Users (admin) ---
+export async function getUsers() {
+    return request('/users', { method: 'GET' });
+}
+
+export async function deleteUser(userId) {
+    return request(`/users/${userId}`, { method: 'DELETE' });
+}
+
+export async function deleteAllUsers() {
+    return request('/users', { method: 'DELETE' });
+}

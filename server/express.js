@@ -23,6 +23,7 @@ import contactRoutes from './routes/contact.routes.js';
 import educationRoutes from './routes/education.routes.js';
 import serviceRoutes from './routes/service.routes.js';
 import galleryRoutes from './routes/gallery.routes.js';
+import guestbookRoutes from './routes/guestbook.routes.js';
 
 // Define __dirname for ES Modules
 const __filename = fileURLToPath(import.meta.url);
@@ -64,6 +65,7 @@ app.use('/api', contactRoutes);
 app.use('/api', educationRoutes);
 app.use('/api', serviceRoutes);
 app.use('/api', galleryRoutes);
+app.use('/api', guestbookRoutes);
 
 // Lightweight health endpoint for uptime checks
 app.get('/api/health', (_req, res) => {

@@ -6,6 +6,7 @@
  */
 import Contact from '../models/contact.model.js';
 import errorHandler from '../helpers/dbErrorHandler.js';
+import config from '../../config/config.js';
 
 const sanitizeContactPayload = (payload = {}) => ({
     firstName: typeof payload.firstName === 'string' ? payload.firstName.trim() : '',
@@ -84,9 +85,9 @@ const update = async (req, res) => {
  */
 const remove = async (req, res) => {
     try {
-        let contact = req.contact;
-        let deletedContact = await contact.deleteOne();
-        res.json(deletedContact);
+        const contact = req.contact;
+        await contact.deleteOne();
+        res.json(contact);
     } catch (err) {
         return res.status(400).json({ error: errorHandler.getErrorMessage(err) });
     }
@@ -99,6 +100,9 @@ const remove = async (req, res) => {
  */
 const removeAll = async (req, res) => {
     try {
+        if (config.env !== 'development') {
+            return res.status(403).json({ error: "Deleting all contacts is only allowed in development." });
+        }
         await Contact.deleteMany({});
         return res.status(200).json({
             message: "All contacts have been deleted."
@@ -120,7 +124,7 @@ const contactByID = async (req, res, next, id) => {
         if (!contact) return res.status(400).json({ error: "Contact message not found" });
         req.contact = contact;
         next();
-    } catch (err) {
+    } catch (_err) {
         return res.status(400).json({ error: "Could not retrieve contact message" });
     }
 };

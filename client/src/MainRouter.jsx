@@ -13,6 +13,7 @@ import CatGallery from './pages/CatGallery.jsx';
 import SignIn from './pages/SignIn.jsx';
 import SignUp from './pages/SignUp.jsx';
 import AdminApp from './admin/AdminApp.jsx';
+import GuestbookApp from './guestbook/GuestbookApp.jsx';
 
 const MainRouter = () => {
     return (
@@ -26,6 +27,7 @@ const MainRouter = () => {
                 <Route path="signup" element={<SignUp />} />
             </Route>
             <Route path="/admin/*" element={<AdminApp />} />
+            <Route path="/guestbook" element={<GuestbookApp />} />
         </Routes>
     );
 };

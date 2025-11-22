@@ -1,6 +1,6 @@
 {
   "name": "my-portfolio-backend",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "COMP229 Assignment 2 - MERN Portfolio Backend",
   "author": "Alex Kachur",
   "main": "server.js",
@@ -13,8 +13,7 @@
     "build:client": "npm run build --prefix client",
     "gcp-build": "npm run postinstall && npm run build:client",
     "start": "node server.js",
-    "seed:admin": "node server/scripts/seedAdmin.js",
-    "seed": "node seed.js"
+    "lint": "eslint ."
   },
   "dependencies": {
     "@babel/runtime": "^7.25.0",
@@ -23,10 +22,10 @@
     "concurrently": "^8.2.2",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
-    "express-rate-limit": "^7.4.0",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "express-jwt": "^8.4.1",
+    "express-rate-limit": "^7.4.0",
     "helmet": "^7.1.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.5.1"
@@ -36,6 +35,9 @@
     "@babel/core": "^7.24.9",
     "@babel/node": "^7.24.8",
     "@babel/preset-env": "^7.24.8",
+    "@eslint/js": "^9.39.1",
+    "eslint": "^9.39.1",
+    "globals": "^16.5.0",
     "nodemon": "^3.1.4"
   }
 }

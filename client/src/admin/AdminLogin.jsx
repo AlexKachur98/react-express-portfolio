@@ -1,3 +1,9 @@
+/**
+ * @file AdminLogin.jsx
+ * @author Alex Kachur
+ * @since 2025-11-22
+ * @purpose Handles the admin authentication flow and redirects to the dashboard.
+ */
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';

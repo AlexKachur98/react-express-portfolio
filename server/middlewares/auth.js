@@ -34,16 +34,13 @@ const requireSignin = expressjwt({
  * @assumes `userByID` (param middleware) has run and attached user to `req.profile`.
  */
 const hasAuthorization = (req, res, next) => {
-    // req.profile is the user loaded from the URL parameter (e.g., /api/users/:userId)
-    // req.auth is the user payload from the JWT token
-    const authorized = req.profile && req.auth && req.profile._id.toString() === req.auth._id;
+    // Allow if the authenticated user owns the profile or has admin role.
+    const isOwner = req.profile && req.auth && req.profile._id.toString() === req.auth._id;
+    const isAdmin = req.auth && req.auth.role === 'admin';
 
-    if (!authorized) {
-        return res.status(403).json({
-            error: "User is not authorized"
-        });
+    if (!isOwner && !isAdmin) {
+        return res.status(403).json({ error: "User is not authorized" });
     }
-    // If IDs match, user is authorized, proceed
     next();
 };
 

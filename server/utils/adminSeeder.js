@@ -1,5 +1,7 @@
 /**
  * @file adminSeeder.js
+ * @author Alex Kachur
+ * @since 2025-11-22
  * @purpose Ensure a default admin user exists for assignment requirements.
  */
 import User from '../models/user.model.js';

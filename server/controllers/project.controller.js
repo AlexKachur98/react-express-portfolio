@@ -6,6 +6,7 @@
  */
 import Project from '../models/project.model.js';
 import errorHandler from '../helpers/dbErrorHandler.js';
+import config from '../../config/config.js';
 
 /**
  * @purpose Create a new project.
@@ -95,9 +96,9 @@ const update = async (req, res) => {
  */
 const remove = async (req, res) => {
     try {
-        let project = req.project;
-        let deletedProject = await project.deleteOne();
-        res.json(deletedProject); // Return deleted project info
+        const project = req.project;
+        await project.deleteOne();
+        res.json(project); // Return deleted project info
     } catch (err) {
         return res.status(400).json({ error: errorHandler.getErrorMessage(err) });
     }
@@ -110,6 +111,9 @@ const remove = async (req, res) => {
  */
 const removeAll = async (req, res) => {
     try {
+        if (config.env !== 'development') {
+            return res.status(403).json({ error: "Deleting all projects is only allowed in development." });
+        }
         await Project.deleteMany({}); // Empty filter deletes all
         return res.status(200).json({
             message: "All projects have been deleted."
@@ -132,7 +136,7 @@ const projectByID = async (req, res, next, id) => {
         if (!project) return res.status(400).json({ error: "Project not found" });
         req.project = project; // Attach project to the request
         next();
-    } catch (err) {
+    } catch (_err) {
         return res.status(400).json({ error: "Could not retrieve project" });
     }
 };

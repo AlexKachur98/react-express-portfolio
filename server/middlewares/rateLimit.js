@@ -1,5 +1,7 @@
 /**
  * @file rateLimit.js
+ * @author Alex Kachur
+ * @since 2025-11-22
  * @purpose Centralized rate limiters for API endpoints.
  */
 import rateLimit from 'express-rate-limit';

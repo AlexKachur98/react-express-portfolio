@@ -5,6 +5,7 @@
  * @purpose This component renders the Home page of the portfolio.
  */
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import HeroSection from '../components/sections/HeroSection.jsx';
 import AboutSection from '../components/sections/AboutSection.jsx';
 import EducationSection from '../components/sections/EducationSection.jsx';
@@ -13,6 +14,7 @@ import ServicesSection from '../components/sections/ServicesSection.jsx';
 import ContactSection from '../components/sections/ContactSection.jsx';
 import { getProjects, getQualifications, getServices, postContact } from '../utils/api.js';
 import SecretSigninForm from '../components/SecretSigninForm.jsx';
+import { useAuth } from '../context/AuthContext.jsx';
 
 const heroLines = [
     'Software Engineering Technology Student.',
@@ -118,6 +120,8 @@ export default function Home() {
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [showSecretSignin, setShowSecretSignin] = useState(false);
+    const { isAdmin, isAuthenticated } = useAuth();
+    const navigate = useNavigate();
 
     const handleToggle = (index) => {
         setOpenEducation((prev) => (prev === index ? -1 : index));
@@ -255,7 +259,20 @@ export default function Home() {
 
     return (
         <div className="landing">
-            <HeroSection heroLines={heroLines} onWelcomeClick={() => setShowSecretSignin(true)} />
+            <HeroSection
+                heroLines={heroLines}
+                onWelcomeClick={() => {
+                    if (isAdmin) {
+                        navigate('/admin');
+                        return;
+                    }
+                    if (isAuthenticated) {
+                        navigate('/guestbook');
+                        return;
+                    }
+                    setShowSecretSignin(true);
+                }}
+            />
             <AboutSection />
             <EducationSection items={educationItems} openIndex={openEducation} onToggle={handleToggle} />
             <ProjectsSection projects={projects} />

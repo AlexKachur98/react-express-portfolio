@@ -1,3 +1,9 @@
+/**
+ * @file AdminGallery.jsx
+ * @author Alex Kachur
+ * @since 2025-11-22
+ * @purpose Admin UI to upload, edit, and delete cat gallery images.
+ */
 import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext.jsx';
 import {

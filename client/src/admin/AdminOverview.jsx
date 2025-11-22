@@ -1,3 +1,9 @@
+/**
+ * @file AdminOverview.jsx
+ * @author Alex Kachur
+ * @since 2025-11-22
+ * @purpose Simple welcome card for the admin dashboard home route.
+ */
 export default function AdminOverview() {
     return (
         <div className="contact-grid__card">

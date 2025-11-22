@@ -1,5 +1,7 @@
 /**
  * @file gallery.routes.js
+ * @author Alex Kachur
+ * @since 2025-11-22
  * @purpose Defines API endpoints for Cat Gallery CRUD, applying auth middleware.
  */
 import express from 'express';

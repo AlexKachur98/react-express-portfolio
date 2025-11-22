@@ -1,9 +1,12 @@
 /**
  * @file gallery.controller.js
+ * @author Alex Kachur
+ * @since 2025-11-22
  * @purpose CRUD controllers for cat gallery images stored as base64 strings.
  */
 import GalleryItem from '../models/galleryItem.model.js';
 import errorHandler from '../helpers/dbErrorHandler.js';
+import config from '../../config/config.js';
 
 const normalizeTags = (tagsInput) => {
     if (Array.isArray(tagsInput)) {
@@ -68,8 +71,8 @@ const update = async (req, res) => {
 const remove = async (req, res) => {
     try {
         const galleryItem = req.galleryItem;
-        const deleted = await galleryItem.deleteOne();
-        return res.json(deleted);
+        await galleryItem.deleteOne();
+        return res.json(galleryItem);
     } catch (err) {
         return res.status(400).json({ error: errorHandler.getErrorMessage(err) });
     }
@@ -77,6 +80,9 @@ const remove = async (req, res) => {
 
 const removeAll = async (req, res) => {
     try {
+        if (config.env !== 'development') {
+            return res.status(403).json({ error: "Deleting all gallery images is only allowed in development." });
+        }
         await GalleryItem.deleteMany({});
         return res.status(200).json({ message: "All gallery images have been deleted." });
     } catch (err) {
@@ -92,7 +98,7 @@ const galleryItemByID = async (req, res, next, id) => {
         }
         req.galleryItem = galleryItem;
         next();
-    } catch (err) {
+    } catch (_err) {
         return res.status(400).json({ error: "Could not retrieve gallery image" });
     }
 };

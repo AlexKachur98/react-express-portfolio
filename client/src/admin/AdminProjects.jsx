@@ -1,3 +1,9 @@
+/**
+ * @file AdminProjects.jsx
+ * @author Alex Kachur
+ * @since 2025-11-22
+ * @purpose Admin interface to manage portfolio projects and metadata.
+ */
 import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext.jsx';
 import {

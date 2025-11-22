@@ -1,5 +1,7 @@
 /**
  * @file service.model.js
+ * @author Alex Kachur
+ * @since 2025-11-22
  * @purpose Defines the Mongoose schema and model for service offerings.
  */
 import mongoose from 'mongoose';

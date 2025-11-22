@@ -1,3 +1,9 @@
+/**
+ * @file SignIn.jsx
+ * @author Alex Kachur
+ * @since 2025-11-22
+ * @purpose Sign-in screen that routes admins to the dashboard and guests to the guest book.
+ */
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
@@ -27,10 +33,12 @@ export default function SignIn({ onSignedIn } = {}) {
             return;
         }
 
-        navigate('/');
-        if (typeof onSignedIn === 'function') {
-            onSignedIn();
+        if (res?.user?.role === 'admin') {
+            navigate('/admin', { replace: true });
+        } else {
+            navigate('/guestbook', { replace: true });
         }
+        typeof onSignedIn === 'function' && onSignedIn();
     };
 
     return (

@@ -1,5 +1,7 @@
 /**
  * @file galleryItem.model.js
+ * @author Alex Kachur
+ * @since 2025-11-22
  * @purpose Stores cat gallery images with metadata and base64 image data.
  */
 import mongoose from 'mongoose';

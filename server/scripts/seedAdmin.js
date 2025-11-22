@@ -1,5 +1,7 @@
 /**
  * @file seedAdmin.js
+ * @author Alex Kachur
+ * @since 2025-11-22
  * @purpose Seeds a single admin user using environment variables.
  * Requires ADMIN_NAME, ADMIN_EMAIL, and ADMIN_PASSWORD to be set.
  */

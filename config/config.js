@@ -46,7 +46,8 @@ if (config.env === 'production') {
   }
 
   if (!config.clientOrigins.length) {
-    console.warn('[Config] WARNING: CLIENT_ORIGINS is empty. Set CLIENT_ORIGINS (comma separated) to restrict CORS in production.');
+    console.error('[Config] ERROR: CLIENT_ORIGINS is required in production. Set CLIENT_ORIGINS (comma separated) to restrict CORS.');
+    process.exit(1);
   }
 }
 

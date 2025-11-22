@@ -119,7 +119,7 @@ const create = async (req, res) => {
 const list = async (req, res) => {
     try {
         // Find all users, selecting only non-sensitive fields
-        let users = await User.find().select('name email role updated created');
+        let users = await User.find().select('name email role createdAt updatedAt');
         res.json(users);
     } catch (err) {
         return res.status(400).json({ error: errorHandler.getErrorMessage(err) });
@@ -171,11 +171,11 @@ const update = async (req, res) => {
  */
 const remove = async (req, res) => {
     try {
-        let user = req.profile;
-        let deletedUser = await user.deleteOne(); // Mongoose v6+
-        deletedUser.hashed_password = undefined; // Clear sensitive data
-        deletedUser.salt = undefined;
-        res.json(deletedUser);
+        const user = req.profile;
+        await user.deleteOne(); // Remove the document from the collection
+        user.hashed_password = undefined; // Clear sensitive data
+        user.salt = undefined;
+        res.json(user);
     } catch (err) {
         return res.status(400).json({ error: errorHandler.getErrorMessage(err) });
     }
@@ -219,7 +219,7 @@ const userByID = async (req, res, next, id) => {
         // Attach user object to the request for later use
         req.profile = user;
         next(); // Proceed to the next handler
-    } catch (err) {
+    } catch (_err) {
         return res.status(400).json({ error: "Could not retrieve user" });
     }
 };

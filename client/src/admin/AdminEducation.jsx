@@ -1,3 +1,9 @@
+/**
+ * @file AdminEducation.jsx
+ * @author Alex Kachur
+ * @since 2025-11-22
+ * @purpose Admin form for creating, updating, and deleting education/qualification entries.
+ */
 import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext.jsx';
 import {

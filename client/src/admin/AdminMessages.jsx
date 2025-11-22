@@ -1,3 +1,9 @@
+/**
+ * @file AdminMessages.jsx
+ * @author Alex Kachur
+ * @since 2025-11-22
+ * @purpose Admin dashboard panel for reading and purging contact form submissions.
+ */
 import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext.jsx';
 import { deleteAllContacts, deleteContact, getContacts } from '../utils/api.js';

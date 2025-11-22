@@ -21,7 +21,7 @@ const ContactSchema = new mongoose.Schema({
     email: {
         type: String,
         trim: true,
-        match: [/.+\@.+\..+/, 'Valid email required'],
+        match: [/.+@.+\..+/, 'Valid email required'],
         required: 'Email is required'
     },
     message: {

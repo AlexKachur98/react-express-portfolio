@@ -1,3 +1,9 @@
+/**
+ * @file SignUp.jsx
+ * @author Alex Kachur
+ * @since 2025-11-22
+ * @purpose Account creation form that provisions a basic user profile.
+ */
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';

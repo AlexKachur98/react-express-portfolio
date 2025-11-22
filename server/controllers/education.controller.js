@@ -6,6 +6,7 @@
  */
 import Education from '../models/education.model.js';
 import errorHandler from '../helpers/dbErrorHandler.js';
+import config from '../../config/config.js';
 
 const normalizeDetails = (detailsInput) => {
     if (Array.isArray(detailsInput)) {
@@ -72,9 +73,9 @@ const update = async (req, res) => {
 // Remove an education entry
 const remove = async (req, res) => {
     try {
-        let education = req.education;
-        let deletedEducation = await education.deleteOne();
-        res.json(deletedEducation);
+        const education = req.education;
+        await education.deleteOne();
+        res.json(education);
     } catch (err) {
         return res.status(400).json({ error: errorHandler.getErrorMessage(err) });
     }
@@ -87,6 +88,9 @@ const remove = async (req, res) => {
  */
 const removeAll = async (req, res) => {
     try {
+        if (config.env !== 'development') {
+            return res.status(403).json({ error: "Deleting all education entries is only allowed in development." });
+        }
         await Education.deleteMany({}); // Empty filter deletes all
         return res.status(200).json({
             message: "All education entries have been deleted."
@@ -105,7 +109,7 @@ const educationByID = async (req, res, next, id) => {
         if (!education) return res.status(400).json({ error: "Education entry not found" });
         req.education = education; // Attach to request
         next();
-    } catch (err) {
+    } catch (_err) {
         return res.status(400).json({ error: "Could not retrieve education entry" });
     }
 };

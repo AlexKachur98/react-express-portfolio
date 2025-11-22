@@ -1,3 +1,9 @@
+/**
+ * @file SecretSigninForm.jsx
+ * @author Alex Kachur
+ * @since 2025-11-22
+ * @purpose Secret login/signup widget used on public pages to reach admin or guest book flows.
+ */
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
@@ -31,7 +37,7 @@ export default function SecretSigninForm({ onClose }) {
             if (user?.role === 'admin') {
                 navigate('/admin');
             } else {
-                navigate('/');
+                navigate('/guestbook');
             }
 
             if (typeof onClose === 'function') {
@@ -57,7 +63,7 @@ export default function SecretSigninForm({ onClose }) {
             return;
         }
 
-        navigate('/');
+        navigate('/guestbook');
         if (typeof onClose === 'function') {
             onClose();
         }
