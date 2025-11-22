@@ -1,10 +1,32 @@
 /**
  * @file VantaBackground.jsx
- * @author Alex Kachur
- * @since 2025-10-16
- * @purpose This component attaches the animated Vanta.js background to the application shell.
+ * @purpose Self-hosted Vanta Waves background (no external CDNs).
  */
 import { useEffect, useRef } from 'react';
+
+const loadScript = (src) => {
+    if (typeof document === 'undefined') return Promise.resolve();
+    const existing = document.querySelector(`script[src="${src}"]`);
+    if (existing) return existing.dataset.loaded === 'true'
+        ? Promise.resolve()
+        : new Promise((resolve, reject) => {
+            existing.addEventListener('load', () => resolve());
+            existing.addEventListener('error', reject);
+        });
+
+    return new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = src;
+        script.async = true;
+        script.dataset.loaded = 'false';
+        script.onload = () => {
+            script.dataset.loaded = 'true';
+            resolve();
+        };
+        script.onerror = reject;
+        document.head.appendChild(script);
+    });
+};
 
 export default function VantaBackground() {
     const backgroundRef = useRef(null);
@@ -15,15 +37,23 @@ export default function VantaBackground() {
 
         const attachVanta = async () => {
             try {
-                // Bundle-friendly dynamic imports to avoid CSP-blocked CDNs.
-                const [{ default: WAVES }, THREE] = await Promise.all([
-                    import('vanta/dist/vanta.waves.min'),
-                    import('three')
-                ]);
+                // Load self-hosted builds to satisfy CSP (served from /public).
+                await loadScript('/three.min.js');
+                await loadScript('/vanta.waves.min.js');
 
-                if (!mounted || !backgroundRef.current) return;
+                const VANTA = window.VANTA;
+                const THREE = window.THREE;
 
-                instanceRef.current = WAVES({
+                if (!mounted || !backgroundRef.current || !VANTA?.WAVES || !THREE) {
+                    console.error('Vanta assets not available', { hasVanta: !!VANTA, hasThree: !!THREE });
+                    return;
+                }
+
+                if (instanceRef.current?.destroy) {
+                    instanceRef.current.destroy();
+                }
+
+                instanceRef.current = VANTA.WAVES({
                     el: backgroundRef.current,
                     THREE,
                     mouseControls: true,
@@ -48,7 +78,7 @@ export default function VantaBackground() {
 
         return () => {
             mounted = false;
-            if (instanceRef.current) {
+            if (instanceRef.current?.destroy) {
                 instanceRef.current.destroy();
                 instanceRef.current = null;
             }
