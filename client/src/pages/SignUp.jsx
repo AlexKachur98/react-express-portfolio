@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../auth/AuthContext.jsx';
+import { useAuth } from '../context/AuthContext.jsx';
 
 export default function SignUp() {
-    const { handleSignup } = useAuth();
+    const { signup } = useAuth();
     const navigate = useNavigate();
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
@@ -18,7 +18,7 @@ export default function SignUp() {
         setSuccessMsg('');
         setLoading(true);
 
-        const res = await handleSignup({ name, email, password });
+        const res = await signup({ name, email, password });
         if (res?.error) {
             setError(res.error);
             setLoading(false);

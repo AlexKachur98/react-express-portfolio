@@ -8,7 +8,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import VantaBackground from './VantaBackground.jsx';
-import { useAuth } from '../auth/AuthContext.jsx';
 
 const NAV_LINKS = [
     { name: 'Home', href: '#home', type: 'anchor' },
@@ -26,7 +25,6 @@ export default function Layout() {
     const navigate = useNavigate();
     const location = useLocation();
     const isCatGallery = location.pathname.startsWith('/cats');
-    const { user, isAdmin, handleSignout } = useAuth();
 
     useEffect(() => {
         const handleScroll = () => {
@@ -132,48 +130,6 @@ export default function Layout() {
                                     {item.name}
                                 </button>
                             ))}
-                            {!user && (
-                                <>
-                                    <button
-                                        type="button"
-                                        className="floating-nav__link"
-                                        onClick={() => handleNavSelection('/signin', 'route')}
-                                    >
-                                        Sign In
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className="floating-nav__link"
-                                        onClick={() => handleNavSelection('/signup', 'route')}
-                                    >
-                                        Sign Up
-                                    </button>
-                                </>
-                            )}
-                            {user && (
-                                <>
-                                    <button
-                                        type="button"
-                                        className="floating-nav__link"
-                                        onClick={async () => {
-                                            await handleSignout();
-                                            navigate('/');
-                                            setMenuOpen(false);
-                                        }}
-                                    >
-                                        Sign Out
-                                    </button>
-                                </>
-                            )}
-                            {user && isAdmin && (
-                                <button
-                                    type="button"
-                                    className="floating-nav__link"
-                                    onClick={() => handleNavSelection('/admin', 'route')}
-                                >
-                                    Admin
-                                </button>
-                            )}
                         </nav>
                     </div>
                 </header>

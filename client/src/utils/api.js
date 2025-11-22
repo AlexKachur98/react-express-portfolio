@@ -3,12 +3,13 @@ const API_BASE_URL = (import.meta.env.VITE_API_URL || '/api').replace(/\/$/, '')
 async function request(endpoint, options = {}) {
     const normalizedEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
     const response = await fetch(`${API_BASE_URL}${normalizedEndpoint}`, {
+        credentials: 'include', // send cookies (httpOnly JWT)
+        ...options,
         headers: {
             Accept: 'application/json',
             'Content-Type': 'application/json',
             ...(options.headers || {})
-        },
-        ...options
+        }
     });
 
     let data;
@@ -26,153 +27,119 @@ async function request(endpoint, options = {}) {
     return data ?? {};
 }
 
-export async function postContact(contact) {
-    return request('/contacts', {
-        method: 'POST',
-        body: JSON.stringify(contact)
-    });
-}
-
+// --- Auth ---
 export async function signup(user) {
-    return request('/users', {
-        method: 'POST',
-        body: JSON.stringify(user)
-    });
+    return request('/users', { method: 'POST', body: JSON.stringify(user) });
 }
 
 export async function signin(credentials) {
-    return request('/auth/signin', {
-        method: 'POST',
-        body: JSON.stringify(credentials)
-    });
+    return request('/signin', { method: 'POST', body: JSON.stringify(credentials) });
 }
 
 export async function signout() {
-    return request('/auth/signout', {
-        method: 'GET'
-    });
+    return request('/signout', { method: 'GET' });
 }
 
-export async function getProjects() {
-    return request('/projects', { method: 'GET' });
+// --- Contact (public + admin) ---
+export async function postContact(contact) {
+    return request('/contacts', { method: 'POST', body: JSON.stringify(contact) });
 }
 
+export async function getContacts() {
+    return request('/contacts', { method: 'GET' });
+}
+
+export async function deleteContact(contactId) {
+    return request(`/contacts/${contactId}`, { method: 'DELETE' });
+}
+
+export async function deleteAllContacts() {
+    return request('/contacts', { method: 'DELETE' });
+}
+
+// --- Education / Qualifications ---
 export async function getQualifications() {
     return request('/qualifications', { method: 'GET' });
 }
 
+export async function createQualification(data) {
+    return request('/qualifications', { method: 'POST', body: JSON.stringify(data) });
+}
+
+export async function updateQualification(educationId, data) {
+    return request(`/qualifications/${educationId}`, { method: 'PUT', body: JSON.stringify(data) });
+}
+
+export async function deleteQualification(educationId) {
+    return request(`/qualifications/${educationId}`, { method: 'DELETE' });
+}
+
+export async function deleteAllQualifications() {
+    return request('/qualifications', { method: 'DELETE' });
+}
+
+// --- Projects ---
+export async function getProjects() {
+    return request('/projects', { method: 'GET' });
+}
+
+export async function createProject(data) {
+    return request('/projects', { method: 'POST', body: JSON.stringify(data) });
+}
+
+export async function updateProject(projectId, data) {
+    return request(`/projects/${projectId}`, { method: 'PUT', body: JSON.stringify(data) });
+}
+
+export async function deleteProject(projectId) {
+    return request(`/projects/${projectId}`, { method: 'DELETE' });
+}
+
+export async function deleteAllProjects() {
+    return request('/projects', { method: 'DELETE' });
+}
+
+// --- Services ---
 export async function getServices() {
     return request('/services', { method: 'GET' });
 }
 
-export async function getGallery() {
+export async function createService(data) {
+    return request('/services', { method: 'POST', body: JSON.stringify(data) });
+}
+
+export async function updateService(serviceId, data) {
+    return request(`/services/${serviceId}`, { method: 'PUT', body: JSON.stringify(data) });
+}
+
+export async function deleteService(serviceId) {
+    return request(`/services/${serviceId}`, { method: 'DELETE' });
+}
+
+export async function deleteAllServices() {
+    return request('/services', { method: 'DELETE' });
+}
+
+// --- Gallery ---
+export async function getGalleryItems() {
     return request('/gallery', { method: 'GET' });
 }
 
-const authHeader = (token) => (token ? { Authorization: `Bearer ${token}` } : {});
+// Temporary alias to avoid breaking existing imports (CatGallery/admin until updated)
+export const getGallery = getGalleryItems;
 
-export async function getContacts(token) {
-    return request('/contacts', {
-        method: 'GET',
-        headers: authHeader(token)
-    });
+export async function createGalleryItem(data) {
+    return request('/gallery', { method: 'POST', body: JSON.stringify(data) });
 }
 
-export async function createProject(data, token) {
-    return request('/projects', {
-        method: 'POST',
-        headers: authHeader(token),
-        body: JSON.stringify(data)
-    });
+export async function updateGalleryItem(galleryId, data) {
+    return request(`/gallery/${galleryId}`, { method: 'PUT', body: JSON.stringify(data) });
 }
 
-export async function updateProject(projectId, data, token) {
-    return request(`/projects/${projectId}`, {
-        method: 'PUT',
-        headers: authHeader(token),
-        body: JSON.stringify(data)
-    });
+export async function deleteGalleryItem(galleryId) {
+    return request(`/gallery/${galleryId}`, { method: 'DELETE' });
 }
 
-export async function deleteProject(projectId, token) {
-    return request(`/projects/${projectId}`, {
-        method: 'DELETE',
-        headers: authHeader(token)
-    });
-}
-
-export async function createQualification(data, token) {
-    return request('/qualifications', {
-        method: 'POST',
-        headers: authHeader(token),
-        body: JSON.stringify(data)
-    });
-}
-
-export async function updateQualification(educationId, data, token) {
-    return request(`/qualifications/${educationId}`, {
-        method: 'PUT',
-        headers: authHeader(token),
-        body: JSON.stringify(data)
-    });
-}
-
-export async function deleteQualification(educationId, token) {
-    return request(`/qualifications/${educationId}`, {
-        method: 'DELETE',
-        headers: authHeader(token)
-    });
-}
-
-export async function createService(data, token) {
-    return request('/services', {
-        method: 'POST',
-        headers: authHeader(token),
-        body: JSON.stringify(data)
-    });
-}
-
-export async function updateService(serviceId, data, token) {
-    return request(`/services/${serviceId}`, {
-        method: 'PUT',
-        headers: authHeader(token),
-        body: JSON.stringify(data)
-    });
-}
-
-export async function deleteService(serviceId, token) {
-    return request(`/services/${serviceId}`, {
-        method: 'DELETE',
-        headers: authHeader(token)
-    });
-}
-
-export async function createGalleryItem(data, token) {
-    return request('/gallery', {
-        method: 'POST',
-        headers: authHeader(token),
-        body: JSON.stringify(data)
-    });
-}
-
-export async function updateGalleryItem(galleryId, data, token) {
-    return request(`/gallery/${galleryId}`, {
-        method: 'PUT',
-        headers: authHeader(token),
-        body: JSON.stringify(data)
-    });
-}
-
-export async function deleteGalleryItem(galleryId, token) {
-    return request(`/gallery/${galleryId}`, {
-        method: 'DELETE',
-        headers: authHeader(token)
-    });
-}
-
-export async function deleteAllGalleryItems(token) {
-    return request('/gallery', {
-        method: 'DELETE',
-        headers: authHeader(token)
-    });
+export async function deleteAllGalleryItems() {
+    return request('/gallery', { method: 'DELETE' });
 }

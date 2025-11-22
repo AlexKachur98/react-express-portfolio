@@ -1,42 +1,42 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../auth/AuthContext.jsx';
-import { createGalleryItem, deleteGalleryItem, getGallery } from '../utils/api.js';
+import { useAuth } from '../context/AuthContext.jsx';
+import {
+    createGalleryItem,
+    deleteGalleryItem,
+    deleteAllGalleryItems,
+    getGalleryItems,
+    updateGalleryItem
+} from '../utils/api.js';
 
 const emptyForm = {
     title: '',
-    alt: '',
     tags: '',
     imageData: ''
 };
 
 export default function AdminGallery() {
-    const { isAuthenticated, isAdmin, token } = useAuth();
-    const navigate = useNavigate();
+    const { isAdmin } = useAuth();
     const [items, setItems] = useState([]);
     const [form, setForm] = useState(emptyForm);
+    const [editingId, setEditingId] = useState(null);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        if (!isAuthenticated || !isAdmin) {
-            navigate('/signin', { replace: true });
-            return;
-        }
+        if (!isAdmin) return;
         const load = async () => {
-            const res = await getGallery();
+            const res = await getGalleryItems();
             if (!res?.error && Array.isArray(res)) {
                 const normalized = res.map((item) => ({
                     ...item,
                     id: item._id || item.id,
-                    src: item.imageData || item.src,
                     tags: Array.isArray(item.tags) ? item.tags : []
                 }));
                 setItems(normalized);
             }
         };
         load();
-    }, [isAuthenticated, isAdmin, navigate]);
+    }, [isAdmin]);
 
     const handleChange = (field) => (event) => {
         setForm((prev) => ({ ...prev, [field]: event.target.value }));
@@ -46,44 +46,76 @@ export default function AdminGallery() {
         const file = event.target.files?.[0];
         if (!file) return;
         const reader = new FileReader();
-        reader.onload = () => {
-            setForm((prev) => ({ ...prev, imageData: reader.result }));
-        };
+        reader.onload = () => setForm((prev) => ({ ...prev, imageData: reader.result }));
         reader.readAsDataURL(file);
     };
 
     const handleSubmit = async (event) => {
         event.preventDefault();
         setError('');
-        if (!form.title || !form.alt || !form.imageData) {
-            setError('Title, alt, and image are required.');
+        if (!form.title || !form.imageData) {
+            setError('Title and image are required.');
             return;
         }
         setLoading(true);
+
         const payload = {
             title: form.title,
-            alt: form.alt,
             tags: form.tags ? form.tags.split(',').map((t) => t.trim()).filter(Boolean) : [],
             imageData: form.imageData
         };
-        const res = await createGalleryItem(payload, token);
+
+        const res = editingId
+            ? await updateGalleryItem(editingId, payload)
+            : await createGalleryItem(payload);
+
         if (res?.error) {
             setError(res.error);
             setLoading(false);
             return;
         }
-        const newItem = { ...res, id: res._id || res.id, src: res.imageData || res.src, tags: Array.isArray(res.tags) ? res.tags : [] };
-        setItems((prev) => [...prev, newItem]);
+
+        const normalized = { ...res, id: res._id || res.id, tags: Array.isArray(res.tags) ? res.tags : [] };
+        if (editingId) {
+            setItems((prev) => prev.map((item) => (item._id === editingId || item.id === editingId ? normalized : item)));
+        } else {
+            setItems((prev) => [...prev, normalized]);
+        }
+
         setForm(emptyForm);
+        setEditingId(null);
         setLoading(false);
     };
 
+    const handleEdit = (item) => {
+        const id = item._id || item.id;
+        setEditingId(id);
+        setForm({
+            title: item.title || '',
+            tags: Array.isArray(item.tags) ? item.tags.join(', ') : '',
+            imageData: item.imageData || ''
+        });
+    };
+
     const handleDelete = async (id) => {
-        const res = await deleteGalleryItem(id, token);
+        const res = await deleteGalleryItem(id);
         if (!res?.error) {
-            setItems((prev) => prev.filter((item) => item.id !== id && item._id !== id));
+            setItems((prev) => prev.filter((item) => (item._id || item.id) !== id));
         }
     };
+
+    const handleDeleteAll = async () => {
+        const confirmed = window.confirm('Delete ALL gallery items? This cannot be undone.');
+        if (!confirmed) return;
+        const res = await deleteAllGalleryItems();
+        if (!res?.error) {
+            setItems([]);
+        }
+    };
+
+    if (!isAdmin) {
+        return <p className="section section--glass">Admin access required.</p>;
+    }
 
     return (
         <div className="section section--glass">
@@ -94,10 +126,6 @@ export default function AdminGallery() {
                 <label>
                     Title
                     <input type="text" value={form.title} onChange={handleChange('title')} required />
-                </label>
-                <label>
-                    Alt text
-                    <input type="text" value={form.alt} onChange={handleChange('alt')} required />
                 </label>
                 <label>
                     Tags (comma separated)
@@ -113,26 +141,36 @@ export default function AdminGallery() {
                     </div>
                 )}
                 {error && <p className="contact-form__error">{error}</p>}
-                <button className="btn contact-form__submit" type="submit" disabled={loading}>
-                    {loading ? 'Saving...' : 'Add Image'}
-                </button>
+                <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                    <button className="btn contact-form__submit" type="submit" disabled={loading}>
+                        {loading ? 'Saving...' : editingId ? 'Update Image' : 'Add Image'}
+                    </button>
+                    <button type="button" className="btn btn--ghost" onClick={() => { setForm(emptyForm); setEditingId(null); }}>
+                        Clear
+                    </button>
+                    <button type="button" className="btn btn--ghost" onClick={handleDeleteAll}>
+                        Delete all
+                    </button>
+                </div>
             </form>
 
             <div className="contact-grid__card">
                 <h3 style={{ marginTop: 0 }}>Gallery Items</h3>
                 {items.length === 0 && <p>No images yet.</p>}
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '12px' }}>
                     {items.map((item) => {
-                        const id = item.id || item._id;
+                        const id = item._id || item.id;
                         return (
                             <div key={id} style={{ border: '1px solid rgba(148,163,184,0.25)', borderRadius: '10px', padding: '10px' }}>
-                                <img src={item.src} alt={item.alt} style={{ width: '100%', borderRadius: '8px' }} />
+                                {item.imageData && (
+                                    <img src={item.imageData} alt={item.title} style={{ width: '100%', borderRadius: '8px', marginBottom: '8px' }} />
+                                )}
                                 <strong>{item.title}</strong>
-                                <div style={{ fontSize: '0.9rem', color: 'rgba(226,232,240,0.75)' }}>{item.alt}</div>
                                 <div style={{ fontSize: '0.85rem', color: 'rgba(148,163,184,0.9)' }}>{Array.isArray(item.tags) ? item.tags.join(', ') : ''}</div>
-                                <button type="button" className="btn btn--ghost" style={{ marginTop: '8px' }} onClick={() => handleDelete(id)}>
-                                    Delete
-                                </button>
+                                <div style={{ marginTop: '8px', display: 'flex', gap: '8px' }}>
+                                    <button type="button" className="btn btn--ghost" onClick={() => handleEdit(item)}>Edit</button>
+                                    <button type="button" className="btn btn--ghost" onClick={() => handleDelete(id)}>Delete</button>
+                                </div>
                             </div>
                         );
                     })}

@@ -1,14 +1,20 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 
-export default function SignIn({ onSignedIn } = {}) {
-    const { signin } = useAuth();
+export default function AdminLogin() {
+    const { signin, signout, isAdmin, user } = useAuth();
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        if (isAdmin) {
+            navigate('/admin', { replace: true });
+        }
+    }, [isAdmin, navigate]);
 
     const onSubmit = async (event) => {
         event.preventDefault();
@@ -22,16 +28,30 @@ export default function SignIn({ onSignedIn } = {}) {
             return;
         }
 
-        navigate('/');
-        if (typeof onSignedIn === 'function') {
-            onSignedIn();
+        if (res?.user?.role !== 'admin') {
+            setError('Admin account required.');
+            await signout();
+            setLoading(false);
+            return;
         }
+
+        navigate('/admin', { replace: true });
     };
+
+    const showNonAdminWarning = user && user.role !== 'admin';
 
     return (
         <div className="section section--glass">
-            <div className="section__eyebrow">Account</div>
-            <h2 className="section__heading">Sign In</h2>
+            <div className="section__eyebrow">Admin</div>
+            <h2 className="section__heading">Sign in to continue</h2>
+            {showNonAdminWarning && (
+                <>
+                    <p className="contact-form__error">Admin access required. Please sign in with an admin account.</p>
+                    <button type="button" className="btn btn--ghost" onClick={signout} style={{ marginBottom: '12px' }}>
+                        Sign out current session
+                    </button>
+                </>
+            )}
             <form className="contact-form" onSubmit={onSubmit}>
                 <label>
                     Email

@@ -1,7 +1,12 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../auth/AuthContext.jsx';
-import { createQualification, deleteQualification, getQualifications, updateQualification } from '../utils/api.js';
+import { useAuth } from '../context/AuthContext.jsx';
+import {
+    createQualification,
+    deleteQualification,
+    deleteAllQualifications,
+    getQualifications,
+    updateQualification
+} from '../utils/api.js';
 
 const emptyForm = {
     program: '',
@@ -12,8 +17,7 @@ const emptyForm = {
 };
 
 export default function AdminEducation() {
-    const { isAdmin, isAuthenticated, token } = useAuth();
-    const navigate = useNavigate();
+    const { isAdmin } = useAuth();
     const [items, setItems] = useState([]);
     const [form, setForm] = useState(emptyForm);
     const [editingId, setEditingId] = useState(null);
@@ -21,10 +25,7 @@ export default function AdminEducation() {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        if (!isAuthenticated || !isAdmin) {
-            navigate('/signin', { replace: true });
-            return;
-        }
+        if (!isAdmin) return;
         const load = async () => {
             const res = await getQualifications();
             if (!res?.error && Array.isArray(res)) {
@@ -32,7 +33,7 @@ export default function AdminEducation() {
             }
         };
         load();
-    }, [isAuthenticated, isAdmin, navigate]);
+    }, [isAdmin]);
 
     const handleChange = (field) => (event) => {
         setForm((prev) => ({ ...prev, [field]: event.target.value }));
@@ -57,10 +58,9 @@ export default function AdminEducation() {
         setLoading(true);
 
         const payload = buildPayload();
-
         const res = editingId
-            ? await updateQualification(editingId, payload, token)
-            : await createQualification(payload, token);
+            ? await updateQualification(editingId, payload)
+            : await createQualification(payload);
 
         if (res?.error) {
             setError(res.error);
@@ -73,7 +73,6 @@ export default function AdminEducation() {
         } else if (res?._id) {
             setItems((prev) => [...prev, res]);
         } else {
-            // Fallback refetch if response lacks full data
             const refreshed = await getQualifications();
             if (!refreshed?.error && Array.isArray(refreshed)) {
                 setItems(refreshed);
@@ -97,11 +96,24 @@ export default function AdminEducation() {
     };
 
     const handleDelete = async (id) => {
-        const res = await deleteQualification(id, token);
+        const res = await deleteQualification(id);
         if (!res?.error) {
             setItems((prev) => prev.filter((item) => item._id !== id));
         }
     };
+
+    const handleDeleteAll = async () => {
+        const confirmed = window.confirm('Delete ALL qualifications? This cannot be undone.');
+        if (!confirmed) return;
+        const res = await deleteAllQualifications();
+        if (!res?.error) {
+            setItems([]);
+        }
+    };
+
+    if (!isAdmin) {
+        return <p className="section section--glass">Admin access required.</p>;
+    }
 
     return (
         <div className="section section--glass">
@@ -134,9 +146,17 @@ export default function AdminEducation() {
                     <textarea value={form.detailsText} onChange={handleChange('detailsText')} rows={5} />
                 </label>
                 {error && <p className="contact-form__error">{error}</p>}
-                <button className="btn contact-form__submit" type="submit" disabled={loading}>
-                    {loading ? 'Saving...' : editingId ? 'Update Education' : 'Create Education'}
-                </button>
+                <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                    <button className="btn contact-form__submit" type="submit" disabled={loading}>
+                        {loading ? 'Saving...' : editingId ? 'Update Education' : 'Create Education'}
+                    </button>
+                    <button type="button" className="btn btn--ghost" onClick={() => { setForm(emptyForm); setEditingId(null); }}>
+                        Clear
+                    </button>
+                    <button type="button" className="btn btn--ghost" onClick={handleDeleteAll}>
+                        Delete all
+                    </button>
+                </div>
             </form>
 
             <div className="contact-grid__card">
@@ -145,6 +165,11 @@ export default function AdminEducation() {
                 {items.map((item) => (
                     <div key={item._id} style={{ borderBottom: '1px solid rgba(148,163,184,0.2)', padding: '10px 0' }}>
                         <strong>{item.program}</strong> — {item.school} • {item.period} • {item.location}
+                        {Array.isArray(item.details) && item.details.length > 0 && (
+                            <ul style={{ marginTop: '6px', marginBottom: 0, paddingLeft: '18px' }}>
+                                {item.details.map((d, idx) => <li key={idx}>{d}</li>)}
+                            </ul>
+                        )}
                         <div style={{ marginTop: '8px', display: 'flex', gap: '8px' }}>
                             <button type="button" className="btn btn--ghost" onClick={() => handleEdit(item)}>Edit</button>
                             <button type="button" className="btn btn--ghost" onClick={() => handleDelete(item._id)}>Delete</button>

@@ -1,6 +1,6 @@
 import { Outlet, useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
-import { useAuth } from '../../auth/AuthContext.jsx';
+import { useAuth } from '../../context/AuthContext.jsx';
 
 const ADMIN_LINKS = [
     { label: 'Dashboard', path: '/admin' },

@@ -12,12 +12,7 @@ import Home from './pages/Home.jsx';
 import CatGallery from './pages/CatGallery.jsx';
 import SignIn from './pages/SignIn.jsx';
 import SignUp from './pages/SignUp.jsx';
-import AdminLayout from './components/admin/AdminLayout.jsx';
-import AdminDashboard from './pages/AdminDashboard.jsx';
-import AdminEducation from './pages/AdminEducation.jsx';
-import AdminProjects from './pages/AdminProjects.jsx';
-import AdminServices from './pages/AdminServices.jsx';
-import AdminGallery from './pages/AdminGallery.jsx';
+import AdminApp from './admin/AdminApp.jsx';
 
 const MainRouter = () => {
     return (
@@ -30,15 +25,8 @@ const MainRouter = () => {
                 <Route path="signin" element={<SignIn />} />
                 <Route path="signup" element={<SignUp />} />
             </Route>
-            <Route path="/admin" element={<AdminLayout />}>
-                <Route index element={<AdminDashboard />} />
-                <Route path="education" element={<AdminEducation />} />
-                <Route path="projects" element={<AdminProjects />} />
-                <Route path="services" element={<AdminServices />} />
-                <Route path="gallery" element={<AdminGallery />} />
-                <Route path="contacts" element={<div className="section section--glass"><h2>Admin Contacts</h2></div>} />
-            </Route>
+            <Route path="/admin/*" element={<AdminApp />} />
         </Routes>
     );
-}
+};
 export default MainRouter;

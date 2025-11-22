@@ -10,7 +10,7 @@ import { createRoot } from 'react-dom/client';
 import './index.css';
 import App from './App.jsx';
 import { BrowserRouter } from 'react-router-dom';
-import { AuthProvider } from './auth/AuthContext.jsx';
+import { AuthProvider } from './context/AuthContext.jsx';
 
 // Renders the main application component into the 'root' div in index.html
 createRoot(document.getElementById('root')).render(

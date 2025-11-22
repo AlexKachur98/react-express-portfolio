@@ -1,20 +1,21 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../auth/AuthContext.jsx';
-import { createProject, deleteProject, getProjects, updateProject } from '../utils/api.js';
+import { useAuth } from '../context/AuthContext.jsx';
+import {
+    createService,
+    deleteService,
+    deleteAllServices,
+    getServices,
+    updateService
+} from '../utils/api.js';
 
 const emptyForm = {
     title: '',
     description: '',
-    tags: '',
-    image: '',
-    github: '',
-    live: ''
+    highlight: false
 };
 
-export default function AdminProjects() {
-    const { isAdmin, isAuthenticated, token } = useAuth();
-    const navigate = useNavigate();
+export default function AdminServices() {
+    const { isAdmin } = useAuth();
     const [items, setItems] = useState([]);
     const [form, setForm] = useState(emptyForm);
     const [editingId, setEditingId] = useState(null);
@@ -22,21 +23,19 @@ export default function AdminProjects() {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        if (!isAuthenticated || !isAdmin) {
-            navigate('/signin', { replace: true });
-            return;
-        }
+        if (!isAdmin) return;
         const load = async () => {
-            const res = await getProjects();
+            const res = await getServices();
             if (!res?.error && Array.isArray(res)) {
                 setItems(res);
             }
         };
         load();
-    }, [isAuthenticated, isAdmin, navigate]);
+    }, [isAdmin]);
 
     const handleChange = (field) => (event) => {
-        setForm((prev) => ({ ...prev, [field]: event.target.value }));
+        const value = field === 'highlight' ? event.target.checked : event.target.value;
+        setForm((prev) => ({ ...prev, [field]: value }));
     };
 
     const handleSubmit = async (event) => {
@@ -44,18 +43,10 @@ export default function AdminProjects() {
         setError('');
         setLoading(true);
 
-        const payload = {
-            title: form.title,
-            description: form.description,
-            tags: form.tags ? form.tags.split(',').map((t) => t.trim()).filter(Boolean) : [],
-            image: form.image || undefined,
-            github: form.github || undefined,
-            live: form.live || undefined,
-        };
-
+        const payload = { ...form };
         const res = editingId
-            ? await updateProject(editingId, payload, token)
-            : await createProject(payload, token);
+            ? await updateService(editingId, payload)
+            : await createService(payload);
 
         if (res?.error) {
             setError(res.error);
@@ -68,7 +59,7 @@ export default function AdminProjects() {
         } else if (res?._id) {
             setItems((prev) => [...prev, res]);
         } else {
-            const refreshed = await getProjects();
+            const refreshed = await getServices();
             if (!refreshed?.error && Array.isArray(refreshed)) {
                 setItems(refreshed);
             }
@@ -84,24 +75,34 @@ export default function AdminProjects() {
         setForm({
             title: item.title || '',
             description: item.description || '',
-            tags: Array.isArray(item.tags) ? item.tags.join(', ') : '',
-            image: item.image || '',
-            github: item.github || '',
-            live: item.live || ''
+            highlight: Boolean(item.highlight)
         });
     };
 
     const handleDelete = async (id) => {
-        const res = await deleteProject(id, token);
+        const res = await deleteService(id);
         if (!res?.error) {
             setItems((prev) => prev.filter((item) => item._id !== id));
         }
     };
 
+    const handleDeleteAll = async () => {
+        const confirmed = window.confirm('Delete ALL services? This cannot be undone.');
+        if (!confirmed) return;
+        const res = await deleteAllServices();
+        if (!res?.error) {
+            setItems([]);
+        }
+    };
+
+    if (!isAdmin) {
+        return <p className="section section--glass">Admin access required.</p>;
+    }
+
     return (
         <div className="section section--glass">
             <div className="section__eyebrow">Admin</div>
-            <h2 className="section__heading">Manage Projects</h2>
+            <h2 className="section__heading">Manage Services</h2>
 
             <form className="contact-form" onSubmit={handleSubmit} style={{ marginBottom: '24px' }}>
                 <label>
@@ -112,37 +113,35 @@ export default function AdminProjects() {
                     Description
                     <textarea value={form.description} onChange={handleChange('description')} rows={3} required />
                 </label>
-                <label>
-                    Tags (comma separated)
-                    <input type="text" value={form.tags} onChange={handleChange('tags')} />
-                </label>
-                <label>
-                    Image URL
-                    <input type="text" value={form.image} onChange={handleChange('image')} />
-                </label>
-                <label>
-                    GitHub URL
-                    <input type="text" value={form.github} onChange={handleChange('github')} />
-                </label>
-                <label>
-                    Live URL
-                    <input type="text" value={form.live} onChange={handleChange('live')} />
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <input
+                        type="checkbox"
+                        checked={form.highlight}
+                        onChange={handleChange('highlight')}
+                    />
+                    Highlight
                 </label>
                 {error && <p className="contact-form__error">{error}</p>}
-                <button className="btn contact-form__submit" type="submit" disabled={loading}>
-                    {loading ? 'Saving...' : editingId ? 'Update Project' : 'Create Project'}
-                </button>
+                <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                    <button className="btn contact-form__submit" type="submit" disabled={loading}>
+                        {loading ? 'Saving...' : editingId ? 'Update Service' : 'Create Service'}
+                    </button>
+                    <button type="button" className="btn btn--ghost" onClick={() => { setForm(emptyForm); setEditingId(null); }}>
+                        Clear
+                    </button>
+                    <button type="button" className="btn btn--ghost" onClick={handleDeleteAll}>
+                        Delete all
+                    </button>
+                </div>
             </form>
 
             <div className="contact-grid__card">
-                <h3 style={{ marginTop: 0 }}>Existing Projects</h3>
+                <h3 style={{ marginTop: 0 }}>Existing Services</h3>
                 {items.length === 0 && <p>No entries yet.</p>}
                 {items.map((item) => (
                     <div key={item._id} style={{ borderBottom: '1px solid rgba(148,163,184,0.2)', padding: '10px 0' }}>
-                        <strong>{item.title}</strong> — {item.description}
-                        <div style={{ marginTop: '6px', color: 'rgba(226,232,240,0.75)' }}>
-                            {Array.isArray(item.tags) ? item.tags.join(', ') : ''}
-                        </div>
+                        <strong>{item.title}</strong> {item.highlight && <span style={{ color: '#38bdf8' }}>(Highlight)</span>}
+                        <div style={{ marginTop: '6px', color: 'rgba(226,232,240,0.85)' }}>{item.description}</div>
                         <div style={{ marginTop: '8px', display: 'flex', gap: '8px' }}>
                             <button type="button" className="btn btn--ghost" onClick={() => handleEdit(item)}>Edit</button>
                             <button type="button" className="btn btn--ghost" onClick={() => handleDelete(item._id)}>Delete</button>
