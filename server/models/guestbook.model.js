@@ -25,4 +25,7 @@ const GuestbookEntrySchema = new mongoose.Schema({
     }
 }, { timestamps: true });
 
+// Index for sorting by update time (most common query pattern)
+GuestbookEntrySchema.index({ updatedAt: -1 });
+
 export default mongoose.model('GuestbookEntry', GuestbookEntrySchema);

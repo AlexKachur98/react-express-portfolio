@@ -4,9 +4,11 @@
  * @since 2025-11-22
  * @purpose Controller logic for guest book entries so authenticated users can sign and view notes.
  */
+import mongoose from 'mongoose';
 import GuestbookEntry from '../models/guestbook.model.js';
 import errorHandler from '../helpers/dbErrorHandler.js';
 import config from '../../config/config.js';
+import { parsePaginationParams, paginatedQuery } from '../helpers/pagination.js';
 
 const sanitizeEntry = (payload = {}) => ({
     displayName: typeof payload.displayName === 'string' ? payload.displayName.trim() : '',
@@ -14,6 +16,11 @@ const sanitizeEntry = (payload = {}) => ({
 });
 
 const entryByID = async (req, res, next, id) => {
+    // Validate ObjectId format before querying
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({ error: 'Invalid guest book entry ID format' });
+    }
+
     try {
         const entry = await GuestbookEntry.findById(id);
         if (!entry) {
@@ -21,20 +28,22 @@ const entryByID = async (req, res, next, id) => {
         }
         req.guestbookEntry = entry;
         next();
-    } catch (_err) {
+    } catch (err) {
+        console.error('[entryByID] Database error:', err.message);
         return res.status(400).json({ error: 'Could not retrieve guest book entry' });
     }
 };
 
 /**
- * @purpose List all guest book entries for authenticated users.
- * @route GET /api/guestbook
+ * @purpose List all guest book entries for authenticated users with pagination.
+ * @route GET /api/guestbook?page=1&limit=20
  * @access Protected (any signed-in user)
  */
-const list = async (_req, res) => {
+const list = async (req, res) => {
     try {
-        const entries = await GuestbookEntry.find().sort('-updatedAt');
-        return res.json(entries);
+        const { page, limit } = parsePaginationParams(req.query);
+        const result = await paginatedQuery(GuestbookEntry, {}, { page, limit, sort: '-updatedAt' });
+        return res.json(result);
     } catch (err) {
         return res.status(400).json({ error: errorHandler.getErrorMessage(err) });
     }

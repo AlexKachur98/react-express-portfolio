@@ -7,6 +7,7 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext.jsx';
 import { deleteAllGuestbookEntries, deleteGuestbookEntry, getGuestbookEntries } from '../utils/api.js';
+import { formatDate, extractPaginatedData } from '../utils/helpers.js';
 
 export default function AdminGuestbook() {
     const { isAdmin } = useAuth();
@@ -18,11 +19,12 @@ export default function AdminGuestbook() {
         if (!isAdmin) return;
         const load = async () => {
             const res = await getGuestbookEntries();
-            if (!res?.error && Array.isArray(res)) {
-                setEntries(res);
-            } else if (res?.error) {
+            if (res?.error) {
                 setError(res.error);
+                return;
             }
+            const { items: loadedEntries } = extractPaginatedData(res);
+            setEntries(loadedEntries);
         };
         load();
     }, [isAdmin]);
@@ -80,7 +82,7 @@ export default function AdminGuestbook() {
                         </div>
                         <div style={{ marginTop: '4px', color: 'rgba(226,232,240,0.85)' }}>{entry.message}</div>
                         <div style={{ fontSize: '0.85rem', color: 'rgba(148,163,184,0.9)', marginTop: '4px' }}>
-                            {entry.updatedAt ? new Date(entry.updatedAt).toLocaleString() : ''}
+                            {formatDate(entry.updatedAt)}
                         </div>
                     </div>
                 ))}

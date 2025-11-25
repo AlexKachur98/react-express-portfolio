@@ -4,10 +4,10 @@
  * @since 2025-10-28
  * @purpose Highlight recent work with quick access to code and live demos.
  */
-import React from 'react';
+import { memo } from 'react';
 import ExternalLinkIcon from '../icons/ExternalLinkIcon.jsx';
 
-export default function ProjectsSection({ projects = [] }) {
+function ProjectsSection({ projects = [] }) {
     const safeProjects = Array.isArray(projects) ? projects : [];
     return (
         <section id="projects" className="section">
@@ -51,3 +51,5 @@ export default function ProjectsSection({ projects = [] }) {
         </section>
     );
 }
+
+export default memo(ProjectsSection);

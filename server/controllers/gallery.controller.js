@@ -4,9 +4,11 @@
  * @since 2025-11-22
  * @purpose CRUD controllers for cat gallery images stored as base64 strings.
  */
+import mongoose from 'mongoose';
 import GalleryItem from '../models/galleryItem.model.js';
 import errorHandler from '../helpers/dbErrorHandler.js';
 import config from '../../config/config.js';
+import { parsePaginationParams, paginatedQuery } from '../helpers/pagination.js';
 
 const normalizeTags = (tagsInput) => {
     if (Array.isArray(tagsInput)) {
@@ -41,8 +43,18 @@ const create = async (req, res) => {
 
 const list = async (req, res) => {
     try {
-        const { tag } = req.query;
+        const { tag, page: pageParam, limit: limitParam } = req.query;
         const filter = tag ? { tags: tag } : {};
+
+        // Support both paginated and non-paginated responses for backward compatibility
+        // If page/limit provided, return paginated response; otherwise return array
+        if (pageParam || limitParam) {
+            const { page, limit } = parsePaginationParams(req.query);
+            const result = await paginatedQuery(GalleryItem, filter, { page, limit, sort: '-createdAt' });
+            return res.json(result);
+        }
+
+        // Default: return all items as array for backward compatibility with CatGallery
         const items = await GalleryItem.find(filter).sort('-createdAt');
         return res.json(items);
     } catch (err) {
@@ -91,6 +103,11 @@ const removeAll = async (req, res) => {
 };
 
 const galleryItemByID = async (req, res, next, id) => {
+    // Validate ObjectId format before querying
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({ error: "Invalid gallery item ID format" });
+    }
+
     try {
         const galleryItem = await GalleryItem.findById(id);
         if (!galleryItem) {
@@ -98,7 +115,8 @@ const galleryItemByID = async (req, res, next, id) => {
         }
         req.galleryItem = galleryItem;
         next();
-    } catch (_err) {
+    } catch (err) {
+        console.error('[galleryItemByID] Database error:', err.message);
         return res.status(400).json({ error: "Could not retrieve gallery image" });
     }
 };

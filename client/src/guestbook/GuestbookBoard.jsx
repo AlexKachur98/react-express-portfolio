@@ -7,6 +7,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { deleteMyGuestbookEntry, getGuestbookEntries, signGuestbook } from '../utils/api.js';
 import { useAuth } from '../context/AuthContext.jsx';
+import { formatDate, extractPaginatedData } from '../utils/helpers.js';
 
 const sortEntries = (items = []) => {
     return [...items].sort((a, b) => {
@@ -48,18 +49,19 @@ export default function GuestbookBoard() {
             const res = await getGuestbookEntries();
             if (!isMounted) return;
 
-            if (!res?.error && Array.isArray(res)) {
-                const sorted = sortEntries(res);
+            if (res?.error) {
+                setError(res.error);
+            } else {
+                const { items: loadedEntries } = extractPaginatedData(res);
+                const sorted = sortEntries(loadedEntries);
                 setEntries(sorted);
                 const mine = sorted.find((entry) => {
                     const entryUser = typeof entry.user === 'object' ? entry.user?._id : entry.user;
-                    return entryUser && user && entryUser.toString() === user._id?.toString();
+                    return entryUser && user?._id && entryUser.toString() === user._id.toString();
                 });
                 if (mine?.message) {
                     setMessage(mine.message);
                 }
-            } else if (res?.error) {
-                setError(res.error);
             }
             setLoading(false);
         };
@@ -126,7 +128,7 @@ export default function GuestbookBoard() {
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: '10px' }}>
                                 <strong>{entry.displayName}</strong>
                                 <span style={{ fontSize: '0.85rem', color: 'rgba(148,163,184,0.9)' }}>
-                                    {entry.updatedAt ? new Date(entry.updatedAt).toLocaleString() : ''}
+                                    {formatDate(entry.updatedAt)}
                                 </span>
                             </div>
                             <div style={{ marginTop: '6px', color: 'rgba(226,232,240,0.92)' }}>{entry.message}</div>

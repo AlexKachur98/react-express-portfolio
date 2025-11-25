@@ -4,9 +4,9 @@
  * @since 2025-10-28
  * @purpose Accordion detailing program highlights while keeping the section compact.
  */
-import React from 'react';
+import { memo } from 'react';
 
-export default function EducationSection({ items = [], openIndex, onToggle }) {
+function EducationSection({ items = [], openIndex, onToggle }) {
     const safeItems = Array.isArray(items) ? items : [];
     return (
         <section id="education" className="section">
@@ -42,3 +42,5 @@ export default function EducationSection({ items = [], openIndex, onToggle }) {
         </section>
     );
 }
+
+export default memo(EducationSection);

@@ -4,7 +4,7 @@
  * @since 2025-11-22
  * @purpose Secret login/signup widget used on public pages to reach admin or guest book flows.
  */
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 

@@ -4,9 +4,11 @@
  * @since 2025-10-27
  * @purpose Controller functions for Contact message CRUD logic.
  */
+import mongoose from 'mongoose';
 import Contact from '../models/contact.model.js';
 import errorHandler from '../helpers/dbErrorHandler.js';
 import config from '../../config/config.js';
+import { parsePaginationParams, paginatedQuery } from '../helpers/pagination.js';
 
 const sanitizeContactPayload = (payload = {}) => ({
     firstName: typeof payload.firstName === 'string' ? payload.firstName.trim() : '',
@@ -36,14 +38,15 @@ const create = async (req, res) => {
 };
 
 /**
- * @purpose List all contact messages.
- * @route GET /api/contact
+ * @purpose List all contact messages with pagination.
+ * @route GET /api/contacts?page=1&limit=20
  * @access Protected
  */
 const list = async (req, res) => {
     try {
-        let contacts = await Contact.find().sort('-createdAt');
-        res.json(contacts);
+        const { page, limit } = parsePaginationParams(req.query);
+        const result = await paginatedQuery(Contact, {}, { page, limit, sort: '-createdAt' });
+        res.json(result);
     } catch (err) {
         return res.status(400).json({ error: errorHandler.getErrorMessage(err) });
     }
@@ -119,12 +122,18 @@ const removeAll = async (req, res) => {
  * @param {string} id - The contact ID from the route parameter.
  */
 const contactByID = async (req, res, next, id) => {
+    // Validate ObjectId format before querying
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({ error: "Invalid contact ID format" });
+    }
+
     try {
         let contact = await Contact.findById(id);
         if (!contact) return res.status(400).json({ error: "Contact message not found" });
         req.contact = contact;
         next();
-    } catch (_err) {
+    } catch (err) {
+        console.error('[contactByID] Database error:', err.message);
         return res.status(400).json({ error: "Could not retrieve contact message" });
     }
 };

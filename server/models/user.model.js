@@ -57,12 +57,14 @@ UserSchema
 UserSchema.methods = {
     /**
      * @purpose Authenticates a user by checking if the plain text password matches the hashed password.
+     * Uses bcryptjs.compareSync for timing-safe comparison to prevent timing attacks.
      * @param {string} plainText - The plain text password to check.
      * @returns {boolean} - True if the password matches, false otherwise.
      */
     authenticate: function (plainText) {
-        // Hash the incoming plain text password with the user's stored salt and compare
-        return this.encryptPassword(plainText) === this.hashed_password;
+        if (!plainText || !this.hashed_password) return false;
+        // Use timing-safe comparison to prevent timing attacks
+        return bcryptjs.compareSync(plainText, this.hashed_password);
     },
 
     /**

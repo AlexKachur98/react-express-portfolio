@@ -4,9 +4,9 @@
  * @since 2025-10-28
  * @purpose Communicate service offerings with concise summaries and optional illustrative icons.
  */
-import React from 'react';
+import { memo } from 'react';
 
-export default function ServicesSection({ services }) {
+function ServicesSection({ services }) {
     return (
         <section id="services" className="section">
             <span className="section__eyebrow">Services</span>
@@ -33,3 +33,5 @@ export default function ServicesSection({ services }) {
         </section>
     );
 }
+
+export default memo(ServicesSection);

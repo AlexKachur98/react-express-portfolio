@@ -7,6 +7,7 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext.jsx';
 import { deleteAllContacts, deleteContact, getContacts } from '../utils/api.js';
+import { formatDate, extractPaginatedData } from '../utils/helpers.js';
 
 export default function AdminMessages() {
     const { isAdmin } = useAuth();
@@ -18,11 +19,12 @@ export default function AdminMessages() {
         if (!isAdmin) return;
         const load = async () => {
             const res = await getContacts();
-            if (!res?.error && Array.isArray(res)) {
-                setItems(res);
-            } else if (res?.error) {
+            if (res?.error) {
                 setError(res.error);
+                return;
             }
+            const { items: loadedItems } = extractPaginatedData(res);
+            setItems(loadedItems);
         };
         load();
     }, [isAdmin]);
@@ -68,7 +70,7 @@ export default function AdminMessages() {
                         <strong>{msg.firstName} {msg.lastName}</strong> — {msg.email}
                         <div style={{ marginTop: '4px', color: 'rgba(226,232,240,0.85)' }}>{msg.message}</div>
                         <div style={{ fontSize: '0.85rem', color: 'rgba(148,163,184,0.9)', marginTop: '4px' }}>
-                            {msg.createdAt ? new Date(msg.createdAt).toLocaleString() : ''}
+                            {formatDate(msg.createdAt)}
                         </div>
                         <button type="button" className="btn btn--ghost" style={{ marginTop: '6px' }} onClick={() => handleDelete(msg._id)}>
                             Delete

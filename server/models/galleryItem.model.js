@@ -24,4 +24,8 @@ const GalleryItemSchema = new mongoose.Schema({
     timestamps: true
 });
 
+// Indexes for common query patterns
+GalleryItemSchema.index({ createdAt: -1 }); // For listing by date
+GalleryItemSchema.index({ tags: 1 }); // For filtering by tag
+
 export default mongoose.model('GalleryItem', GalleryItemSchema);

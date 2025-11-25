@@ -4,11 +4,12 @@
  * @since 2025-10-27
  * @purpose Controller functions for all user-related logic (CRUD + Auth).
  */
-
+import mongoose from 'mongoose';
 import User from '../models/user.model.js';
 import errorHandler from '../helpers/dbErrorHandler.js';
 import jwtUtil from '../utils/jwt.js';
 import config from '../../config/config.js';
+import { parsePaginationParams } from '../helpers/pagination.js';
 
 const normalizeUserPayload = (body = {}) => ({
     name: typeof body.name === 'string' ? body.name.trim() : '',
@@ -113,14 +114,35 @@ const create = async (req, res) => {
 };
 
 /**
- * @purpose Lists all users.
- * @route GET /api/users
+ * @purpose Lists all users with pagination.
+ * @route GET /api/users?page=1&limit=20
  */
 const list = async (req, res) => {
     try {
-        // Find all users, selecting only non-sensitive fields
-        let users = await User.find().select('name email role createdAt updatedAt');
-        res.json(users);
+        const { page, limit } = parsePaginationParams(req.query);
+        // Use custom query to select only non-sensitive fields
+        const skip = (page - 1) * limit;
+
+        const [users, total] = await Promise.all([
+            User.find()
+                .select('name email role createdAt updatedAt')
+                .sort('-createdAt')
+                .skip(skip)
+                .limit(limit),
+            User.countDocuments()
+        ]);
+
+        res.json({
+            items: users,
+            pagination: {
+                page,
+                limit,
+                total,
+                pages: Math.ceil(total / limit),
+                hasNext: page * limit < total,
+                hasPrev: page > 1
+            }
+        });
     } catch (err) {
         return res.status(400).json({ error: errorHandler.getErrorMessage(err) });
     }
@@ -209,6 +231,11 @@ const removeAll = async (req, res) => {
  * @param {string} id - The user ID from the route parameter.
  */
 const userByID = async (req, res, next, id) => {
+    // Validate ObjectId format before querying
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({ error: "Invalid user ID format" });
+    }
+
     try {
         // Find a user document by its MongoDB ObjectId
         let user = await User.findById(id);
@@ -219,7 +246,8 @@ const userByID = async (req, res, next, id) => {
         // Attach user object to the request for later use
         req.profile = user;
         next(); // Proceed to the next handler
-    } catch (_err) {
+    } catch (err) {
+        console.error('[userByID] Database error:', err.message);
         return res.status(400).json({ error: "Could not retrieve user" });
     }
 };

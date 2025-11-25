@@ -5,24 +5,28 @@
  * @purpose Admin view to audit users and perform deletions when necessary.
  */
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 import { deleteAllUsers, deleteUser, getUsers } from '../utils/api.js';
+import { formatDate, extractPaginatedData } from '../utils/helpers.js';
 
 export default function AdminUsers() {
-    const { isAdmin, user: currentUser } = useAuth();
+    const { isAdmin, user: currentUser, signout } = useAuth();
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (!isAdmin) return;
         const load = async () => {
             const res = await getUsers();
-            if (!res?.error && Array.isArray(res)) {
-                setUsers(res);
-            } else if (res?.error) {
+            if (res?.error) {
                 setError(res.error);
+                return;
             }
+            const { items: loadedUsers } = extractPaginatedData(res);
+            setUsers(loadedUsers);
         };
         load();
     }, [isAdmin]);
@@ -33,8 +37,10 @@ export default function AdminUsers() {
         const res = await deleteUser(id);
         if (!res?.error) {
             setUsers((prev) => prev.filter((u) => u._id !== id));
+            // If user deleted themselves, sign out and redirect
             if (currentUser?._id === id) {
-                window.location.assign('/');
+                await signout();
+                navigate('/');
             }
         } else if (res?.error) {
             setError(res.error);
@@ -82,8 +88,8 @@ export default function AdminUsers() {
                             </button>
                         </div>
                         <div style={{ fontSize: '0.85rem', color: 'rgba(148,163,184,0.9)', marginTop: '4px' }}>
-                            {u.createdAt ? `Created ${new Date(u.createdAt).toLocaleString()}` : ''}
-                            {u.updatedAt ? ` • Updated ${new Date(u.updatedAt).toLocaleString()}` : ''}
+                            {u.createdAt ? `Created ${formatDate(u.createdAt)}` : ''}
+                            {u.updatedAt ? ` • Updated ${formatDate(u.updatedAt)}` : ''}
                         </div>
                     </div>
                 ))}

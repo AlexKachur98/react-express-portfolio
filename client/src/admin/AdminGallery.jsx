@@ -20,6 +20,28 @@ const emptyForm = {
     imageData: ''
 };
 
+// File upload constraints
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+
+/**
+ * Validates an image file before processing
+ * @param {File} file - The file to validate
+ * @returns {{ valid: boolean, error?: string }}
+ */
+const validateImageFile = (file) => {
+    if (!file) {
+        return { valid: false, error: 'No file selected.' };
+    }
+    if (file.size > MAX_FILE_SIZE) {
+        return { valid: false, error: `File too large. Maximum size is ${MAX_FILE_SIZE / 1024 / 1024}MB.` };
+    }
+    if (!ALLOWED_TYPES.includes(file.type)) {
+        return { valid: false, error: 'Invalid file type. Allowed: JPEG, PNG, GIF, WebP.' };
+    }
+    return { valid: true };
+};
+
 export default function AdminGallery() {
     const { isAdmin } = useAuth();
     const [items, setItems] = useState([]);
@@ -51,8 +73,31 @@ export default function AdminGallery() {
     const handleFile = (event) => {
         const file = event.target.files?.[0];
         if (!file) return;
+
+        // Validate file before processing
+        const validation = validateImageFile(file);
+        if (!validation.valid) {
+            setError(validation.error);
+            event.target.value = ''; // Reset file input
+            return;
+        }
+
+        setError(''); // Clear any previous errors
         const reader = new FileReader();
-        reader.onload = () => setForm((prev) => ({ ...prev, imageData: reader.result }));
+        reader.onerror = () => {
+            setError('Failed to read file. Please try again.');
+            event.target.value = '';
+        };
+        reader.onload = () => {
+            // Additional validation: ensure it's a valid base64 image
+            const result = reader.result;
+            if (!result || !result.startsWith('data:image/')) {
+                setError('Invalid image data. Please select a valid image file.');
+                event.target.value = '';
+                return;
+            }
+            setForm((prev) => ({ ...prev, imageData: result }));
+        };
         reader.readAsDataURL(file);
     };
 

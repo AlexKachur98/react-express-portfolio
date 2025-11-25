@@ -31,4 +31,8 @@ const ContactSchema = new mongoose.Schema({
     }
 }, { timestamps: true }); // Automatically adds createdAt and updatedAt
 
+// Indexes for common query patterns
+ContactSchema.index({ createdAt: -1 }); // For listing contacts by date
+ContactSchema.index({ email: 1 }); // For potential lookup by email
+
 export default mongoose.model('Contact', ContactSchema);

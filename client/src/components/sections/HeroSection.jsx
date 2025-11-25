@@ -4,7 +4,6 @@
  * @since 2025-10-28
  * @purpose Landing hero introducing the portfolio voice, CTA, and animated typewriter lead-in.
  */
-import React from 'react';
 import Typewriter from '../Typewriter.jsx';
 
 export default function HeroSection({ heroLines, onWelcomeClick }) {
