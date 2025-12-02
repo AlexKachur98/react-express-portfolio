@@ -99,7 +99,7 @@ app.use(express.static(clientBuildPath, {
 // --- SPA Fallback Route (for Production) ---
 // For any non-API GET request that doesn't match a static file,
 // send the client's index.html file. This allows React Router to handle routing.
-app.get(/^\/(?!api).*/, (req, res) => {
+app.get(/^\/(?!api|assets).*/, (req, res) => {
     res.sendFile(path.join(clientBuildPath, 'index.html'), (err) => {
         if (err) {
             if (err.status === 404) {
