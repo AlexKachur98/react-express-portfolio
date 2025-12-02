@@ -45,3 +45,19 @@ mongoose.connect(config.mongoUri)
 mongoose.connection.on('error', (err) => {
   console.error(`[Database Error] A connection error occurred: ${err}`);
 });
+
+// --- Graceful Shutdown ---
+const gracefulShutdown = async (signal) => {
+  console.log(`\n[Server] Received ${signal}. Shutting down gracefully...`);
+  try {
+    await mongoose.connection.close();
+    console.log('[Database] MongoDB connection closed.');
+    process.exit(0);
+  } catch (err) {
+    console.error('[Server] Error during shutdown:', err);
+    process.exit(1);
+  }
+};
+
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));

@@ -36,8 +36,8 @@ const app = express();
 app.set('trust proxy', 1);
 
 // --- Middleware Pipeline (as seen in course examples) ---
-app.use(express.json({ limit: '10mb' })); // Built-in JSON parser
-app.use(express.urlencoded({ extended: true, limit: '10mb' })); // Built-in URL-encoded parser
+app.use(express.json({ limit: '6mb' })); // Built-in JSON parser (6MB allows 5MB images + overhead)
+app.use(express.urlencoded({ extended: true, limit: '6mb' })); // Built-in URL-encoded parser
 app.use(cookieParser());   // Parse Cookie header
 app.use(compress());       // Compress response bodies
 app.use(helmet({
@@ -119,11 +119,15 @@ app.use((err, req, res, next) => {
     }
     if (err.name === 'UnauthorizedError') {
         // This error is thrown by express-jwt when a token is invalid
-        return res.status(401).json({ "error": "Unauthorized: " + err.message });
+        return res.status(401).json({ error: 'Unauthorized: ' + err.message });
     } else if (err) {
-        // Handle other general errors
-        console.error("[Server Error]", err.stack); // Log the full error
-        return res.status(err.status || 400).json({ "error": err.message || "An error occurred." });
+        // Log the full error server-side for debugging
+        console.error('[Server Error]', err.stack);
+        // Only expose stack traces in development to prevent information leakage
+        return res.status(err.status || 500).json({
+            error: config.env === 'production' ? 'Internal server error' : (err.message || 'An error occurred.'),
+            ...(config.env !== 'production' && { stack: err.stack })
+        });
     }
     // If no error, proceed
     next();

@@ -20,5 +20,14 @@ export default defineConfig([
                 caughtErrorsIgnorePattern: '^_'
             }]
         }
+    },
+    {
+        files: ['**/*.test.js', '**/tests/**/*.js'],
+        languageOptions: {
+            globals: {
+                ...globals.node,
+                ...globals.jest
+            }
+        }
     }
 ]);

@@ -98,8 +98,8 @@ UserSchema.methods = {
  * Ensures password is long enough and exists on creation.
  */
 UserSchema.path('hashed_password').validate(function (_v) {
-    if (this._password && this._password.length < 6) {
-        this.invalidate('password', 'Password must be at least 6 characters.');
+    if (this._password && this._password.length < 8) {
+        this.invalidate('password', 'Password must be at least 8 characters.');
     }
     // Ensure password is provided when creating a new user
     if (this.isNew && !this._password) {

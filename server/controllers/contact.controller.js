@@ -5,16 +5,17 @@
  * @purpose Controller functions for Contact message CRUD logic.
  */
 import mongoose from 'mongoose';
+import xss from 'xss';
 import Contact from '../models/contact.model.js';
 import errorHandler from '../helpers/dbErrorHandler.js';
 import config from '../../config/config.js';
 import { parsePaginationParams, paginatedQuery } from '../helpers/pagination.js';
 
 const sanitizeContactPayload = (payload = {}) => ({
-    firstName: typeof payload.firstName === 'string' ? payload.firstName.trim() : '',
-    lastName: typeof payload.lastName === 'string' ? payload.lastName.trim() : '',
+    firstName: typeof payload.firstName === 'string' ? xss(payload.firstName.trim()) : '',
+    lastName: typeof payload.lastName === 'string' ? xss(payload.lastName.trim()) : '',
     email: typeof payload.email === 'string' ? payload.email.trim().toLowerCase() : '',
-    message: typeof payload.message === 'string' ? payload.message.trim() : ''
+    message: typeof payload.message === 'string' ? xss(payload.message.trim()) : ''
 });
 
 /**

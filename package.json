@@ -13,10 +13,12 @@
     "build:client": "npm run build --prefix client",
     "gcp-build": "npm run postinstall && npm run build:client",
     "start": "node server.js",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "test": "NODE_OPTIONS='--experimental-vm-modules' jest --detectOpenHandles --forceExit"
   },
   "dependencies": {
     "@babel/runtime": "^7.25.0",
+    "bcrypt": "^6.0.0",
     "bcryptjs": "^2.4.3",
     "compression": "^1.7.4",
     "concurrently": "^8.2.2",
@@ -28,7 +30,8 @@
     "express-rate-limit": "^7.4.0",
     "helmet": "^7.1.0",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.5.1"
+    "mongoose": "^8.5.1",
+    "xss": "^1.0.15"
   },
   "devDependencies": {
     "@babel/cli": "^7.24.8",
@@ -38,6 +41,8 @@
     "@eslint/js": "^9.39.1",
     "eslint": "^9.39.1",
     "globals": "^16.5.0",
-    "nodemon": "^3.1.4"
+    "jest": "^30.2.0",
+    "nodemon": "^3.1.4",
+    "supertest": "^7.1.4"
   }
 }

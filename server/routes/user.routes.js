@@ -7,14 +7,16 @@
 import express from 'express';
 import userCtrl from '../controllers/user.controller.js';
 import { requireSignin, hasAuthorization, requireAdmin } from '../middlewares/auth.js';
+import { authLimiter } from '../middlewares/rateLimit.js';
 
 const router = express.Router();
 
 // --- Public Authentication Routes ---
 // These routes are used for logging in and logging out
-router.route('/signin').post(userCtrl.signin); // POST /api/signin
+// Rate limited to prevent brute force attacks
+router.route('/signin').post(authLimiter, userCtrl.signin); // POST /api/signin
 router.route('/signout').get(userCtrl.signout); // GET /api/signout
-router.route('/auth/signin').post(userCtrl.signin); // Alias POST /api/auth/signin
+router.route('/auth/signin').post(authLimiter, userCtrl.signin); // Alias POST /api/auth/signin
 router.route('/auth/signout').get(userCtrl.signout); // Alias GET /api/auth/signout
 
 // --- User CRUD Routes ---

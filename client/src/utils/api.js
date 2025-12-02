@@ -1,13 +1,19 @@
 const API_BASE_URL = (import.meta.env.VITE_API_URL || '/api').replace(/\/$/, '');
+const DEFAULT_TIMEOUT = 30000; // 30 seconds
 
 async function request(endpoint, options = {}) {
     const normalizedEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
     let response;
 
+    // Create AbortController for request timeout
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), options.timeout || DEFAULT_TIMEOUT);
+
     try {
         response = await fetch(`${API_BASE_URL}${normalizedEndpoint}`, {
             credentials: 'include', // send cookies (httpOnly JWT)
             ...options,
+            signal: controller.signal,
             headers: {
                 Accept: 'application/json',
                 'Content-Type': 'application/json',
@@ -15,8 +21,14 @@ async function request(endpoint, options = {}) {
             }
         });
     } catch (error) {
+        clearTimeout(timeoutId);
+        if (error.name === 'AbortError') {
+            return { error: 'Request timed out. Please try again.', status: 0 };
+        }
         return { error: error?.message || 'Network request failed', status: 0 };
     }
+
+    clearTimeout(timeoutId);
 
     let data;
     try {

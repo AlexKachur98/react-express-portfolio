@@ -5,14 +5,15 @@
  * @purpose Controller logic for guest book entries so authenticated users can sign and view notes.
  */
 import mongoose from 'mongoose';
+import xss from 'xss';
 import GuestbookEntry from '../models/guestbook.model.js';
 import errorHandler from '../helpers/dbErrorHandler.js';
 import config from '../../config/config.js';
 import { parsePaginationParams, paginatedQuery } from '../helpers/pagination.js';
 
 const sanitizeEntry = (payload = {}) => ({
-    displayName: typeof payload.displayName === 'string' ? payload.displayName.trim() : '',
-    message: typeof payload.message === 'string' ? payload.message.trim() : ''
+    displayName: typeof payload.displayName === 'string' ? xss(payload.displayName.trim()) : '',
+    message: typeof payload.message === 'string' ? xss(payload.message.trim()) : ''
 });
 
 const entryByID = async (req, res, next, id) => {
