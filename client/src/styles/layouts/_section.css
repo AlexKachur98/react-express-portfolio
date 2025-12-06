@@ -1,0 +1,110 @@
+/**
+ * @file _section.css
+ * @purpose Section and layout styles
+ */
+
+.app-shell {
+    position: relative;
+    min-height: 100vh;
+}
+
+.vanta-background {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.vanta-background--loading {
+    background: linear-gradient(135deg, rgb(2, 6, 23) 0%, rgb(15, 23, 42) 100%);
+}
+
+.app-main {
+    position: relative;
+    z-index: 1;
+    padding-top: 140px;
+}
+
+.app-main--cat {
+    padding-top: 70px;
+}
+
+.landing {
+    --section-gap: clamp(200px, 18vw, 300px);
+    --footer-gap: clamp(24px, 4vw, 40px);
+    display: flex;
+    flex-direction: column;
+    gap: var(--section-gap);
+    padding-bottom: clamp(24px, 4vw, 48px);
+}
+
+.section {
+    width: min(1100px, 90vw);
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    scroll-margin-top: 140px;
+    opacity: 0;
+    transform: translateY(40px);
+    transition:
+        opacity 0.6s ease,
+        transform 0.6s ease;
+}
+
+.section.reveal-active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.section.reveal-exit {
+    opacity: 0;
+    transform: translateY(-20px);
+}
+
+.section--glass {
+    background: var(--surface-bg);
+    border: 1px solid var(--border-subtle);
+    border-radius: 28px;
+    padding: 56px 48px;
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    box-shadow: 0 36px 72px rgba(2, 6, 23, 0.55);
+}
+
+.section__eyebrow {
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    font-size: 0.92rem;
+    color: rgba(96, 165, 250, 0.85);
+}
+
+.section__heading {
+    margin: 0;
+    font-size: clamp(2.1rem, 4.2vw, 3.36rem);
+    font-weight: 700;
+    color: #f8fafc;
+}
+
+.section__grid {
+    display: grid;
+    gap: 36px;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    align-items: center;
+}
+
+.section__grid p {
+    margin: 0 0 18px;
+    color: rgba(226, 232, 240, 0.82);
+    font-size: 1.05rem;
+    line-height: 1.75;
+}
+
+.footer {
+    width: min(1100px, 90vw);
+    margin: calc(var(--footer-gap, 28px) - var(--section-gap, 0px)) auto 0;
+    padding: 12px 0 16px;
+    text-align: center;
+    color: rgba(148, 163, 184, 0.68);
+    font-size: 0.9rem;
+}

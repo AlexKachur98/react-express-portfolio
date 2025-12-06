@@ -7,29 +7,36 @@
 import mongoose from 'mongoose';
 
 // Note: This model is based on the 'contact' form fields from Assignment 1
-const ContactSchema = new mongoose.Schema({
-    firstName: {
-        type: String,
-        trim: true,
-        required: 'First name is required'
+const ContactSchema = new mongoose.Schema(
+    {
+        firstName: {
+            type: String,
+            trim: true,
+            required: 'First name is required',
+            maxlength: [100, 'First name cannot exceed 100 characters']
+        },
+        lastName: {
+            type: String,
+            trim: true,
+            required: 'Last name is required',
+            maxlength: [100, 'Last name cannot exceed 100 characters']
+        },
+        email: {
+            type: String,
+            trim: true,
+            match: [/.+@.+\..+/, 'Valid email required'],
+            required: 'Email is required',
+            maxlength: [255, 'Email cannot exceed 255 characters']
+        },
+        message: {
+            type: String,
+            trim: true,
+            required: 'Message is required',
+            maxlength: [5000, 'Message cannot exceed 5000 characters']
+        }
     },
-    lastName: {
-        type: String,
-        trim: true,
-        required: 'Last name is required'
-    },
-    email: {
-        type: String,
-        trim: true,
-        match: [/.+@.+\..+/, 'Valid email required'],
-        required: 'Email is required'
-    },
-    message: {
-        type: String,
-        trim: true,
-        required: 'Message is required'
-    }
-}, { timestamps: true }); // Automatically adds createdAt and updatedAt
+    { timestamps: true }
+); // Automatically adds createdAt and updatedAt
 
 // Indexes for common query patterns
 ContactSchema.index({ createdAt: -1 }); // For listing contacts by date

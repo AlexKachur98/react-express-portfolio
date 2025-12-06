@@ -28,13 +28,13 @@ Hosted on Google Cloud at **[alexkachur.dev](https://alexkachur.dev)**.
 
 ## 🏗️ Tech Stack
 
-| Layer      | Tech                                                               |
-|------------|--------------------------------------------------------------------|
-| Frontend   | React 19, Vite, React Router 7                                     |
-| Styling    | Custom CSS (glassmorphism, animations, responsive layout)          |
-| Animation  | Vanta.js (waves), custom IntersectionObserver reveal, typewriter   |
-| Backend    | Express 4, Mongoose 8, JWT auth (httpOnly cookies), Helmet, CORS, Compression, express-rate-limit |
-| Tooling    | Babel, Nodemon, Concurrently                                       |
+| Layer     | Tech                                                                                              |
+| --------- | ------------------------------------------------------------------------------------------------- |
+| Frontend  | React 19, Vite, React Router 7                                                                    |
+| Styling   | Custom CSS (glassmorphism, animations, responsive layout)                                         |
+| Animation | Vanta.js (waves), custom IntersectionObserver reveal, typewriter                                  |
+| Backend   | Express 4, Mongoose 8, JWT auth (httpOnly cookies), Helmet, CORS, Compression, express-rate-limit |
+| Tooling   | Babel, Nodemon, Concurrently                                                                      |
 
 ---
 
@@ -80,19 +80,43 @@ npm start             # Serves built frontend + API via Express
 ## 📁 Project Structure
 
 ```
-├── client/                  # React frontend (Vite)
-│   ├── public/              # Static assets (favicon, images)
+├── client/                     # React frontend (Vite)
+│   ├── public/
+│   │   ├── assets/
+│   │   │   ├── icons/          # SVG service icons
+│   │   │   ├── images/         # Cat gallery photos
+│   │   │   └── projects/       # Project screenshots
+│   │   └── vendor/             # Self-hosted Three.js + Vanta
 │   └── src/
-│       ├── admin/           # Admin dashboard shell + CRUD panels
-│       ├── guestbook/       # Authenticated guest book layout + feed
-│       ├── components/      # Layout shell, Vanta background, typewriter, secret login widget
-│       ├── pages/           # Home.jsx (main sections), CatGallery.jsx (Simba & Moura gallery), auth pages
-│       ├── index.css        # Global styles and responsive rules
-│       └── main.jsx         # App bootstrap
-├── server/                  # Express controllers, routes, models, middleware (incl. guestbook + gallery)
-├── server/scripts/seedAdmin # Optional script to seed a custom admin user
-├── server.js                # Backend entry point (connects DB, seeds default admin)
-└── README.md
+│       ├── admin/              # Admin dashboard + CRUD panels
+│       │   ├── components/     # AdminCrudPanel, AdminListItem
+│       │   └── configs/        # Entity configurations
+│       ├── components/
+│       │   ├── common/         # ErrorBoundary, VantaBackground, Typewriter
+│       │   ├── icons/          # SVG icon components
+│       │   ├── layout/         # Layout wrapper
+│       │   ├── sections/       # Home page sections
+│       │   └── ui/             # Reusable UI (FormField, LoadingSpinner, etc.)
+│       ├── constants/          # Fallback data, config
+│       ├── context/            # AuthContext
+│       ├── guestbook/          # Guest book feature
+│       ├── hooks/              # useAsync, useForm, useFocusTrap
+│       ├── pages/              # Home, CatGallery, SignIn, SignUp
+│       ├── styles/             # Modular CSS (base, components, layouts, pages)
+│       ├── types/              # TypeScript definitions (api.d.ts)
+│       └── utils/              # API client, helpers, logger
+├── config/                     # Server configuration
+├── server/
+│   ├── controllers/            # API controllers + barrel export
+│   ├── helpers/                # CRUD factory, route factory, pagination
+│   ├── middlewares/            # Auth, cache, CSRF, rate-limit, sanitize
+│   ├── models/                 # Mongoose models + barrel export
+│   ├── routes/                 # API routes + barrel export
+│   ├── scripts/                # CLI utilities (seedAdmin)
+│   ├── tests/                  # Jest test suites
+│   └── utils/                  # JWT, admin seeder
+├── server.js                   # Backend entry point
+└── seed.js                     # Database seeder (gitignored)
 ```
 
 ---
@@ -109,7 +133,20 @@ npm start             # Serves built frontend + API via Express
 
 ## 🧪 Testing & Quality
 
-While automated tests are not included yet, the project is structured to add Jest (frontend) and supertest/Mocha (backend). Recommended manual checks:
+```bash
+npm test          # Run all Jest test suites (99 tests)
+npm run lint      # ESLint check
+```
+
+**Test Coverage:**
+
+- CRUD factory validation and error handling
+- Form validators (email, password, required fields)
+- Input sanitization and XSS prevention
+- Security middleware (rate limiting, cookie settings)
+- API validation rules
+
+**Manual Checks:**
 
 - Run `npm run dev` and confirm anchors, reveals, and the Vanta background load without console errors.
 - Create a user via `/signup`, sign in, sign the guest book, and update/delete your note; verify admin moderation on `/admin/guestbook`.

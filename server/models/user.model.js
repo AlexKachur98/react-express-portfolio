@@ -9,40 +9,42 @@
 import mongoose from 'mongoose';
 import bcryptjs from 'bcryptjs';
 
-const UserSchema = new mongoose.Schema({
-    name: {
-        type: String,
-        trim: true,
-        required: 'Name is required'
+const UserSchema = new mongoose.Schema(
+    {
+        name: {
+            type: String,
+            trim: true,
+            required: 'Name is required'
+        },
+        email: {
+            type: String,
+            trim: true,
+            unique: 'Email already exists',
+            match: [/.+@.+\..+/, 'Please fill a valid email address'],
+            required: 'Email is required'
+        },
+        hashed_password: {
+            type: String,
+            required: 'Password is required'
+        },
+        salt: String, // Stores the salt for this specific user
+        role: {
+            type: String,
+            enum: ['user', 'admin'],
+            default: 'user'
+        }
     },
-    email: {
-        type: String,
-        trim: true,
-        unique: 'Email already exists',
-        match: [/.+@.+\..+/, 'Please fill a valid email address'],
-        required: 'Email is required'
-    },
-    hashed_password: {
-        type: String,
-        required: "Password is required"
-    },
-    salt: String, // Stores the salt for this specific user
-    role: {
-        type: String,
-        enum: ['user', 'admin'],
-        default: 'user'
+    {
+        timestamps: true // Automatically adds createdAt and updatedAt
     }
-}, {
-    timestamps: true // Automatically adds createdAt and updatedAt
-});
+);
 
 /**
  * @purpose Virtual field 'password' to handle password input from the client.
  * This field is not saved to the database. When set, it hashes the
  * password and stores it in 'hashed_password'.
  */
-UserSchema
-    .virtual('password')
+UserSchema.virtual('password')
     .set(function (password) {
         // Note: Using an arrow function here would break 'this' context
         this._password = password; // Store plain password temporarily
@@ -78,7 +80,7 @@ UserSchema.methods = {
             // Use bcryptjs synchronous hashing, as seen in course examples
             return bcryptjs.hashSync(password, this.salt);
         } catch (err) {
-            console.error("Password encryption failed:", err);
+            console.error('Password encryption failed:', err);
             return '';
         }
     },

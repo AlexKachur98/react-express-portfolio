@@ -47,23 +47,30 @@ const createPaginatedResponse = (items, total, page, limit) => ({
  * Executes a paginated query on a Mongoose model
  * @param {Model} Model - Mongoose model
  * @param {object} filter - Query filter
- * @param {object} options - Query options { page, limit, sort, populate }
+ * @param {object} options - Query options { page, limit, sort, populate, select }
  * @returns {Promise<{ items, pagination }>}
  */
 const paginatedQuery = async (Model, filter = {}, options = {}) => {
-    const { page = DEFAULT_PAGE, limit = DEFAULT_LIMIT, sort = '-createdAt', populate = null } = options;
+    const {
+        page = DEFAULT_PAGE,
+        limit = DEFAULT_LIMIT,
+        sort = '-createdAt',
+        populate = null,
+        select = null
+    } = options;
     const skip = (page - 1) * limit;
 
     let query = Model.find(filter).sort(sort).skip(skip).limit(limit);
+
+    if (select) {
+        query = query.select(select);
+    }
 
     if (populate) {
         query = query.populate(populate);
     }
 
-    const [items, total] = await Promise.all([
-        query.exec(),
-        Model.countDocuments(filter)
-    ]);
+    const [items, total] = await Promise.all([query.exec(), Model.countDocuments(filter)]);
 
     return createPaginatedResponse(items, total, page, limit);
 };

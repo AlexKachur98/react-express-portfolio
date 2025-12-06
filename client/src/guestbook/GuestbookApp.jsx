@@ -4,10 +4,16 @@
  * @since 2025-11-22
  * @purpose Orchestrates the guest book experience and guards it behind authentication.
  */
+
+// Local Components
 import GuestbookLayout from './GuestbookLayout.jsx';
 import GuestbookBoard from './GuestbookBoard.jsx';
+
+// Components
+import SecretSigninForm from '../components/common/SecretSigninForm.jsx';
+
+// Context
 import { useAuth } from '../context/AuthContext.jsx';
-import SecretSigninForm from '../components/SecretSigninForm.jsx';
 
 export default function GuestbookApp() {
     const { isAuthenticated, initializing } = useAuth();
@@ -29,7 +35,9 @@ export default function GuestbookApp() {
                 <div className="contact-grid__card">
                     <div className="section__eyebrow">Sign in</div>
                     <h3 style={{ marginTop: 0 }}>Secret guest access</h3>
-                    <p style={{ marginTop: 4, marginBottom: 12 }}>Use the secret form below to sign the guest book.</p>
+                    <p style={{ marginTop: 4, marginBottom: 12 }}>
+                        Use the secret form below to sign the guest book.
+                    </p>
                     <SecretSigninForm />
                 </div>
             </GuestbookLayout>
@@ -42,9 +50,5 @@ export default function GuestbookApp() {
         );
     }
 
-    return (
-        <div className="admin-shell">
-            {content}
-        </div>
-    );
+    return <div className="admin-shell">{content}</div>;
 }

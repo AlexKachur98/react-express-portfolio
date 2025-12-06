@@ -1,0 +1,55 @@
+/**
+ * @file _utilities.css
+ * @purpose Utility classes for accessibility and common patterns
+ */
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
+
+.skip-link {
+    position: absolute;
+    top: -100px;
+    left: 16px;
+    z-index: 1000;
+    padding: 12px 24px;
+    background: #3b82f6;
+    color: #fff;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: top 0.2s ease;
+}
+
+.skip-link:focus {
+    top: 16px;
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+}
+
+/* Enhanced focus indicators */
+:focus-visible {
+    outline: 2px solid rgba(59, 130, 246, 0.8);
+    outline-offset: 2px;
+}
+
+.btn:focus-visible,
+.floating-nav__link:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.4);
+}
+
+/* Spinner animation */
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}

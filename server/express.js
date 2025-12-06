@@ -3,20 +3,28 @@
  * @author Alex Kachur
  * @since 2025-10-27
  * @purpose Configures and exports the main Express application instance.
- * Sets up all necessary middleware, mounts API routes, and serves the
- * static React frontend for production.
+ * Sets up middleware, mounts API routes, and serves the static React frontend.
  */
 
+// Node built-ins
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+// External packages
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import compress from 'compression';
 import cors from 'cors';
 import helmet from 'helmet';
-import path from 'path';
-import { fileURLToPath } from 'url';
+
+// Local config
 import config from '../config/config.js';
 
-// --- Import All API Routes ---
+// Middlewares
+import { csrfTokenSetter, csrfValidator } from './middlewares/csrf.js';
+import { sanitizeBody } from './middlewares/sanitize.js';
+
+// Routes
 import userRoutes from './routes/user.routes.js';
 import projectRoutes from './routes/project.routes.js';
 import contactRoutes from './routes/contact.routes.js';
@@ -38,12 +46,35 @@ app.set('trust proxy', 1);
 // --- Middleware Pipeline (as seen in course examples) ---
 app.use(express.json({ limit: '6mb' })); // Built-in JSON parser (6MB allows 5MB images + overhead)
 app.use(express.urlencoded({ extended: true, limit: '6mb' })); // Built-in URL-encoded parser
-app.use(cookieParser());   // Parse Cookie header
-app.use(compress());       // Compress response bodies
-app.use(helmet({
-    crossOriginResourcePolicy: { policy: 'same-origin' },
-    referrerPolicy: { policy: 'strict-origin-when-cross-origin' }
-}));         // Set security HTTP headers
+app.use(cookieParser()); // Parse Cookie header
+app.use(compress()); // Compress response bodies
+app.use(
+    helmet({
+        crossOriginResourcePolicy: { policy: 'same-origin' },
+        referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
+        contentSecurityPolicy: {
+            directives: {
+                defaultSrc: ["'self'"],
+                scriptSrc: ["'self'", "'unsafe-inline'", 'cdn.jsdelivr.net'], // Vanta.js CDN
+                styleSrc: ["'self'", "'unsafe-inline'", 'fonts.googleapis.com'],
+                fontSrc: ["'self'", 'fonts.gstatic.com'],
+                imgSrc: ["'self'", 'data:', 'blob:', 'https:'], // data: for base64 gallery images
+                connectSrc: ["'self'", 'https://api.thecatapi.com'],
+                frameAncestors: ["'none'"],
+                objectSrc: ["'none'"],
+                upgradeInsecureRequests: []
+            }
+        },
+        hsts: {
+            maxAge: 31536000, // 1 year
+            includeSubDomains: true,
+            preload: true
+        }
+    })
+); // Set security HTTP headers
+
+// Sanitize request body to prevent XSS
+app.use(sanitizeBody);
 
 const corsOptions = {
     origin: (origin, callback) => {
@@ -54,8 +85,13 @@ const corsOptions = {
     },
     credentials: true
 };
-app.use(cors(corsOptions));           // Enable Cross-Origin Resource Sharing (tighten allowed origins + cookie flags in production)
+app.use(cors(corsOptions)); // Enable Cross-Origin Resource Sharing (tighten allowed origins + cookie flags in production)
 app.options('*', cors(corsOptions));
+
+// --- CSRF Protection ---
+// Set CSRF token on GET requests, validate on state-changing requests
+app.use('/api', csrfTokenSetter);
+app.use('/api', csrfValidator);
 
 // --- Mount API Routes ---
 // All API routes are mounted under the '/api' prefix
@@ -81,29 +117,33 @@ app.use('/api', (req, res) => {
 // --- Static File Serving (for Production) ---
 // Serve static files (JS, CSS, images) from the React build folder with long-lived caching for assets.
 const ONE_YEAR_MS = 1000 * 60 * 60 * 24 * 365;
-app.use(express.static(clientBuildPath, {
-    maxAge: ONE_YEAR_MS,
-    immutable: true,
-    setHeaders: (res, resourcePath) => {
-        // Prevent aggressive caching of the entry HTML while keeping assets cached for a year.
-        if (resourcePath.endsWith('.html')) {
-            res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate');
-        } else {
-            res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+app.use(
+    express.static(clientBuildPath, {
+        maxAge: ONE_YEAR_MS,
+        immutable: true,
+        setHeaders: (res, resourcePath) => {
+            // Prevent aggressive caching of the entry HTML while keeping assets cached for a year.
+            if (resourcePath.endsWith('.html')) {
+                res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate');
+            } else {
+                res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+            }
+            res.setHeader('X-Content-Type-Options', 'nosniff');
+            res.removeHeader('Expires');
         }
-        res.setHeader('X-Content-Type-Options', 'nosniff');
-        res.removeHeader('Expires');
-    }
-}));
+    })
+);
 
 // --- SPA Fallback Route (for Production) ---
 // For any non-API GET request that doesn't match a static file,
 // send the client's index.html file. This allows React Router to handle routing.
-app.get(/^\/(?!api|assets).*/, (req, res) => {
+app.get(/^\/(?!api|assets|vendor).*/, (req, res) => {
     res.sendFile(path.join(clientBuildPath, 'index.html'), (err) => {
         if (err) {
             if (err.status === 404) {
-                res.status(404).send('Client application not found. Run `npm run build:client` to build the frontend.');
+                res.status(404).send(
+                    'Client application not found. Run `npm run build:client` to build the frontend.'
+                );
             } else {
                 res.status(500).send('An error occurred while serving the application.');
             }
@@ -125,7 +165,10 @@ app.use((err, req, res, next) => {
         console.error('[Server Error]', err.stack);
         // Only expose stack traces in development to prevent information leakage
         return res.status(err.status || 500).json({
-            error: config.env === 'production' ? 'Internal server error' : (err.message || 'An error occurred.'),
+            error:
+                config.env === 'production'
+                    ? 'Internal server error'
+                    : err.message || 'An error occurred.',
             ...(config.env !== 'production' && { stack: err.stack })
         });
     }

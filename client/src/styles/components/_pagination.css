@@ -1,0 +1,102 @@
+/**
+ * @file _pagination.css
+ * @author Alex Kachur
+ * @since 2025-12-05
+ * @purpose Pagination component styles
+ */
+
+.pagination {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border-subtle);
+}
+
+.pagination__info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    font-size: 0.875rem;
+    color: rgba(148, 163, 184, 0.9);
+}
+
+.pagination__page-info {
+    white-space: nowrap;
+}
+
+.pagination__per-page {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.pagination__select {
+    padding: 6px 12px;
+    background: rgba(15, 23, 42, 0.45);
+    color: #f8fafc;
+    border: 1px solid rgba(148, 163, 184, 0.35);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.875rem;
+}
+
+.pagination__select:focus {
+    outline: none;
+    border-color: rgba(59, 130, 246, 0.5);
+}
+
+.pagination__controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.pagination__pages {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.pagination__btn {
+    padding: 8px 16px;
+    font-size: 0.875rem;
+}
+
+.pagination__btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+.pagination__page {
+    padding: 8px 14px;
+    min-width: 40px;
+    font-size: 0.875rem;
+}
+
+.pagination__ellipsis {
+    padding: 8px 4px;
+    color: rgba(148, 163, 184, 0.7);
+}
+
+@media (max-width: 600px) {
+    .pagination__info {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .pagination__controls {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .pagination__pages {
+        display: none;
+    }
+}

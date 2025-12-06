@@ -1,0 +1,63 @@
+/**
+ * @file _buttons.css
+ * @purpose Button component styles
+ */
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    padding: 12px 28px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+.btn--with-icon {
+    gap: 10px;
+}
+
+.btn__icon {
+    width: 1.1rem;
+    height: 1.1rem;
+}
+
+.btn__label {
+    display: inline-flex;
+    align-items: center;
+}
+
+.btn--primary {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.95), rgba(129, 140, 248, 0.95));
+    color: #f8fafc;
+    border: 1px solid rgba(148, 163, 184, 0.35);
+    box-shadow: 0 20px 38px rgba(59, 130, 246, 0.35);
+}
+
+.btn--secondary {
+    background: rgba(59, 130, 246, 0.25);
+    color: #f8fafc;
+    border: 1px solid rgba(148, 163, 184, 0.35);
+}
+
+.btn--ghost {
+    background: rgba(15, 23, 42, 0.45);
+    color: #f8fafc;
+    border: 1px solid rgba(148, 163, 184, 0.35);
+}
+
+.btn--ghost-active {
+    background: rgba(59, 130, 246, 0.45);
+}
+
+.btn:hover,
+.btn:focus-visible {
+    transform: translateY(-2px);
+    box-shadow: 0 24px 44px rgba(59, 130, 246, 0.4);
+    outline: none;
+}

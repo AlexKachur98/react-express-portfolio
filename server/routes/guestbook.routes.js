@@ -6,20 +6,21 @@
  */
 import express from 'express';
 import guestbookCtrl from '../controllers/guestbook.controller.js';
-import { requireSignin, requireAdmin } from '../middlewares/auth.js';
+import { requireSignin, requireAdmin, requireDevOnly } from '../middlewares/auth.js';
 
 const router = express.Router();
 
-router.route('/guestbook')
+router
+    .route('/guestbook')
     .get(requireSignin, guestbookCtrl.list)
     .post(requireSignin, guestbookCtrl.sign)
     .delete(requireSignin, guestbookCtrl.removeMine);
 
-router.route('/guestbook/all')
-    .delete(requireSignin, requireAdmin, guestbookCtrl.removeAll);
+router
+    .route('/guestbook/all')
+    .delete(requireSignin, requireAdmin, requireDevOnly, guestbookCtrl.removeAll); // Dev only
 
-router.route('/guestbook/:entryId')
-    .delete(requireSignin, requireAdmin, guestbookCtrl.remove);
+router.route('/guestbook/:entryId').delete(requireSignin, requireAdmin, guestbookCtrl.remove);
 
 router.param('entryId', guestbookCtrl.entryByID);
 

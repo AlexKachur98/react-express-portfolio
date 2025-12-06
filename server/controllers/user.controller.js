@@ -14,7 +14,7 @@ import { parsePaginationParams } from '../helpers/pagination.js';
 const normalizeUserPayload = (body = {}) => ({
     name: typeof body.name === 'string' ? body.name.trim() : '',
     email: typeof body.email === 'string' ? body.email.trim().toLowerCase() : '',
-    password: typeof body.password === 'string' ? body.password : '',
+    password: typeof body.password === 'string' ? body.password : ''
 });
 
 // --- Authentication Controllers ---
@@ -27,7 +27,7 @@ const signin = async (req, res) => {
     try {
         const { email, password } = normalizeUserPayload(req.body);
         if (!email || !password) {
-            return res.status(400).json({ error: "Email and password are required." });
+            return res.status(400).json({ error: 'Email and password are required.' });
         }
 
         // Find the user by their email address
@@ -35,7 +35,7 @@ const signin = async (req, res) => {
 
         // If user not found, or password doesn't match, return 401
         if (!user || !user.authenticate(password)) {
-            return res.status(401).json({ error: "Email and password do not match." });
+            return res.status(401).json({ error: 'Email and password do not match.' });
         }
 
         // If authentication is successful, generate a JWT with id + role
@@ -61,10 +61,40 @@ const signin = async (req, res) => {
                 role: user.role
             }
         });
-
     } catch (err) {
-        console.error("[Auth Error] Signin failed:", err);
-        return res.status(500).json({ error: "Could not sign in" });
+        console.error('[Auth Error] Signin failed:', err);
+        return res.status(500).json({ error: 'Could not sign in' });
+    }
+};
+
+/**
+ * @purpose Validates the current session and returns user info if valid.
+ * @route GET /api/auth/session
+ */
+const session = async (req, res) => {
+    try {
+        // req.auth is set by requireSignin middleware if token is valid
+        const userId = req.auth?._id;
+        if (!userId) {
+            return res.status(401).json({ error: 'Not authenticated' });
+        }
+
+        const user = await User.findById(userId).select('name email role');
+        if (!user) {
+            return res.status(401).json({ error: 'User not found' });
+        }
+
+        return res.json({
+            user: {
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                role: user.role
+            }
+        });
+    } catch (err) {
+        console.error('[Auth Error] Session validation failed:', err);
+        return res.status(401).json({ error: 'Session invalid' });
     }
 };
 
@@ -75,13 +105,13 @@ const signin = async (req, res) => {
 const signout = (req, res) => {
     // Clear the cookie named 't'
     const useSecureCookies = config.enableSecureCookies;
-    res.clearCookie("t", {
+    res.clearCookie('t', {
         httpOnly: true,
         secure: useSecureCookies,
         sameSite: useSecureCookies ? 'none' : 'lax'
     });
     return res.status(200).json({
-        message: "Signed out successfully"
+        message: 'Signed out successfully'
     });
 };
 
@@ -94,7 +124,7 @@ const signout = (req, res) => {
 const create = async (req, res) => {
     const payload = normalizeUserPayload(req.body);
     if (!payload.name || !payload.email || !payload.password) {
-        return res.status(400).json({ error: "Name, email, and password are required." });
+        return res.status(400).json({ error: 'Name, email, and password are required.' });
     }
 
     const user = new User({
@@ -106,7 +136,7 @@ const create = async (req, res) => {
     try {
         // The password gets hashed automatically by the 'virtual' field in the model
         await user.save();
-        return res.status(200).json({ message: "Successfully signed up!" });
+        return res.status(200).json({ message: 'Successfully signed up!' });
     } catch (err) {
         // Handle errors (e.g., validation, duplicate email)
         return res.status(400).json({ error: errorHandler.getErrorMessage(err) });
@@ -211,11 +241,13 @@ const remove = async (req, res) => {
 const removeAll = async (req, res) => {
     try {
         if (config.env !== 'development') {
-            return res.status(403).json({ error: "Deleting all users is only allowed in development." });
+            return res
+                .status(403)
+                .json({ error: 'Deleting all users is only allowed in development.' });
         }
         await User.deleteMany({}); // Empty filter deletes all documents
         return res.status(200).json({
-            message: "All users have been deleted."
+            message: 'All users have been deleted.'
         });
     } catch (err) {
         return res.status(400).json({
@@ -233,7 +265,7 @@ const removeAll = async (req, res) => {
 const userByID = async (req, res, next, id) => {
     // Validate ObjectId format before querying
     if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(400).json({ error: "Invalid user ID format" });
+        return res.status(400).json({ error: 'Invalid user ID format' });
     }
 
     try {
@@ -241,16 +273,26 @@ const userByID = async (req, res, next, id) => {
         let user = await User.findById(id);
         if (!user) {
             // If no user is found, send a 400 error response
-            return res.status(400).json({ error: "User not found" });
+            return res.status(400).json({ error: 'User not found' });
         }
         // Attach user object to the request for later use
         req.profile = user;
         next(); // Proceed to the next handler
     } catch (err) {
         console.error('[userByID] Database error:', err.message);
-        return res.status(400).json({ error: "Could not retrieve user" });
+        return res.status(400).json({ error: 'Could not retrieve user' });
     }
 };
 
-
-export default { create, userByID, read, list, remove, update, signin, signout, removeAll };
+export default {
+    create,
+    userByID,
+    read,
+    list,
+    remove,
+    update,
+    signin,
+    signout,
+    session,
+    removeAll
+};

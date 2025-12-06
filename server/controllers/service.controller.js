@@ -3,104 +3,45 @@
  * @author Alex Kachur
  * @since 2025-11-22
  * @purpose Controller functions for Service CRUD logic.
+ * @refactored 2025-12-05 - Now uses crudFactory for standard CRUD operations
  */
 import Service from '../models/service.model.js';
-import errorHandler from '../helpers/dbErrorHandler.js';
-import config from '../../config/config.js';
+import { createCrudController } from '../helpers/crudFactory.js';
 
+/**
+ * Build service payload with proper type coercion.
+ * @param {Object} body - Request body
+ * @returns {Object} Normalized payload
+ */
 const buildServicePayload = (body = {}) => ({
     title: typeof body.title === 'string' ? body.title.trim() : '',
     description: typeof body.description === 'string' ? body.description.trim() : '',
-    highlight: typeof body.highlight === 'boolean'
-        ? body.highlight
-        : typeof body.highlight === 'string'
-            ? ['true', '1', 'yes', 'on'].includes(body.highlight.toLowerCase())
-            : undefined,
+    highlight:
+        typeof body.highlight === 'boolean'
+            ? body.highlight
+            : typeof body.highlight === 'string'
+              ? ['true', '1', 'yes', 'on'].includes(body.highlight.toLowerCase())
+              : false,
     icon: typeof body.icon === 'string' ? body.icon.trim() : '',
     iconLabel: typeof body.iconLabel === 'string' ? body.iconLabel.trim() : ''
 });
 
-const create = async (req, res) => {
-    const payload = buildServicePayload(req.body);
-    const service = new Service({
-        title: payload.title,
-        description: payload.description,
-        highlight: payload.highlight ?? false,
-        icon: payload.icon,
-        iconLabel: payload.iconLabel
-    });
-    try {
-        await service.save();
-        return res.status(200).json(service);
-    } catch (err) {
-        return res.status(400).json({ error: errorHandler.getErrorMessage(err) });
-    }
-};
+// Create controller using factory
+const controller = createCrudController(Service, {
+    entityName: 'Service',
+    paramName: 'service',
+    buildPayload: buildServicePayload,
+    selectFields: 'title description highlight icon iconLabel createdAt',
+    sortField: '-createdAt'
+});
 
-const list = async (req, res) => {
-    try {
-        const services = await Service.find().sort('-createdAt');
-        return res.json(services);
-    } catch (err) {
-        return res.status(400).json({ error: errorHandler.getErrorMessage(err) });
-    }
+// Export with consistent naming for routes
+export default {
+    create: controller.create,
+    list: controller.list,
+    read: controller.read,
+    update: controller.update,
+    remove: controller.remove,
+    removeAll: controller.removeAll,
+    serviceByID: controller.byId
 };
-
-const read = (req, res) => {
-    return res.json(req.service);
-};
-
-const update = async (req, res) => {
-    try {
-        const payload = buildServicePayload(req.body);
-        const service = req.service;
-        service.title = payload.title || service.title;
-        service.description = payload.description || service.description;
-        if (payload.highlight !== undefined) {
-            service.highlight = payload.highlight;
-        }
-        service.icon = payload.icon || service.icon;
-        service.iconLabel = payload.iconLabel || service.iconLabel;
-        await service.save();
-        return res.json(service);
-    } catch (err) {
-        return res.status(400).json({ error: errorHandler.getErrorMessage(err) });
-    }
-};
-
-const remove = async (req, res) => {
-    try {
-        const service = req.service;
-        await service.deleteOne();
-        return res.json(service);
-    } catch (err) {
-        return res.status(400).json({ error: errorHandler.getErrorMessage(err) });
-    }
-};
-
-const removeAll = async (req, res) => {
-    try {
-        if (config.env !== 'development') {
-            return res.status(403).json({ error: "Deleting all services is only allowed in development." });
-        }
-        await Service.deleteMany({});
-        return res.status(200).json({ message: "All services have been deleted." });
-    } catch (err) {
-        return res.status(400).json({ error: errorHandler.getErrorMessage(err) });
-    }
-};
-
-const serviceByID = async (req, res, next, id) => {
-    try {
-        const service = await Service.findById(id);
-        if (!service) {
-            return res.status(400).json({ error: "Service not found" });
-        }
-        req.service = service;
-        next();
-    } catch (_err) {
-        return res.status(400).json({ error: "Could not retrieve service" });
-    }
-};
-
-export default { create, list, read, update, remove, removeAll, serviceByID };

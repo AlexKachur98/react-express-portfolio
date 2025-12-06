@@ -6,10 +6,16 @@
  */
 import rateLimit from 'express-rate-limit';
 
+// Rate limit configuration constants
+const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000; // 15 minutes
+const CONTACT_MAX_REQUESTS = 20; // Max contact form submissions per window
+const AUTH_MAX_ATTEMPTS = 5; // Max login/signup attempts per window
+const SESSION_MAX_REQUESTS = 60; // Max session validation requests per window
+
 // Limit contact form submissions to mitigate spam
 const contactLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 20, // 20 requests per IP per window
+    windowMs: RATE_LIMIT_WINDOW_MS,
+    max: CONTACT_MAX_REQUESTS,
     standardHeaders: true,
     legacyHeaders: false,
     handler: (req, res) => {
@@ -21,8 +27,8 @@ const contactLimiter = rateLimit({
 
 // Limit authentication attempts to prevent brute force attacks
 const authLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 5, // 5 login attempts per IP per window
+    windowMs: RATE_LIMIT_WINDOW_MS,
+    max: AUTH_MAX_ATTEMPTS,
     standardHeaders: true,
     legacyHeaders: false,
     skipSuccessfulRequests: true, // Don't count successful logins
@@ -33,4 +39,17 @@ const authLimiter = rateLimit({
     }
 });
 
-export { contactLimiter, authLimiter };
+// Limit session validation requests to prevent enumeration attacks
+const sessionLimiter = rateLimit({
+    windowMs: RATE_LIMIT_WINDOW_MS,
+    max: SESSION_MAX_REQUESTS,
+    standardHeaders: true,
+    legacyHeaders: false,
+    handler: (req, res) => {
+        return res.status(429).json({
+            error: 'Too many session validation requests. Please try again later.'
+        });
+    }
+});
+
+export { contactLimiter, authLimiter, sessionLimiter };

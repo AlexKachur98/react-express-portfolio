@@ -1,0 +1,182 @@
+/**
+ * @file _forms.css
+ * @purpose Form component styles
+ */
+
+.contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.contact-form__row {
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+}
+
+.contact-form label {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 0.95rem;
+    color: #f8fafc;
+}
+
+.contact-form input,
+.contact-form textarea {
+    border-radius: 14px;
+    border: 1px solid rgba(148, 163, 184, 0.35);
+    background: rgba(15, 23, 42, 0.68);
+    padding: 12px 16px;
+    color: #e2e8f0;
+    font: inherit;
+    transition:
+        border 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus {
+    outline: none;
+    border-color: rgba(59, 130, 246, 0.75);
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.25);
+}
+
+.contact-form textarea {
+    resize: vertical;
+    min-height: 140px;
+}
+
+.contact-form__error {
+    margin: 0;
+    color: #fca5a5;
+    font-size: 0.9rem;
+}
+
+.contact-form__submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 48px;
+}
+
+.contact-form__submit[disabled] {
+    cursor: not-allowed;
+    opacity: 0.8;
+}
+
+.contact-form__spinner {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 3px solid rgba(248, 250, 252, 0.35);
+    border-top-color: #f8fafc;
+    animation: contact-form-spin 0.75s linear infinite;
+}
+
+@keyframes contact-form-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Contact grid layout */
+.contact-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 320px) minmax(0, 1fr);
+    gap: 32px;
+    align-items: start;
+}
+
+.contact-grid__info {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    color: rgba(226, 232, 240, 0.82);
+}
+
+.contact-grid__card {
+    border-radius: 22px;
+    background: var(--surface-bg);
+    border: 1px solid var(--border-subtle);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.contact-grid__form {
+    border-radius: 26px;
+    background: var(--surface-bg);
+    border: 1px solid var(--border-subtle);
+    padding: 28px;
+    box-shadow: 0 28px 56px rgba(2, 6, 23, 0.45);
+}
+
+.contact__success {
+    text-align: center;
+    padding: 48px 24px;
+    color: rgba(226, 232, 240, 0.82);
+}
+
+.contact__success h3 {
+    margin: 0 0 12px;
+    color: #f8fafc;
+}
+
+/* Secret login form */
+.secret-login {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.secret-login__header {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.secret-login__title {
+    margin: 0;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #f8fafc;
+}
+
+.secret-login__hint {
+    margin: 0;
+    font-size: 0.95rem;
+    color: rgba(226, 232, 240, 0.8);
+}
+
+.secret-login__toggle {
+    display: inline-flex;
+    gap: 10px;
+    padding: 6px;
+    border-radius: 999px;
+    background: rgba(15, 23, 42, 0.7);
+    border: 1px solid var(--border-subtle);
+    box-shadow: 0 16px 28px rgba(2, 6, 23, 0.4);
+    width: fit-content;
+}
+
+.secret-login__chip {
+    border: none;
+    background: transparent;
+    color: rgba(226, 232, 240, 0.9);
+    padding: 8px 16px;
+    border-radius: 999px;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+        background 0.2s ease,
+        color 0.2s ease;
+}
+
+.secret-login__chip--active {
+    background: rgba(59, 130, 246, 0.65);
+    color: #f8fafc;
+}

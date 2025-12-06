@@ -31,13 +31,23 @@ function ProjectsSection({ projects = [] }) {
                                     ))}
                                 </div>
                                 <div className="project-card__links">
-                                    <a className="btn btn--ghost btn--with-icon" href={project.github} target="_blank" rel="noopener noreferrer">
+                                    <a
+                                        className="btn btn--ghost btn--with-icon"
+                                        href={project.github}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
                                         <ExternalLinkIcon className="btn__icon" />
                                         <span className="btn__label">GitHub</span>
                                     </a>
                                     {/* Only render the live CTA when we have a hosted URL to avoid dead links. */}
                                     {project.live && (
-                                        <a className="btn btn--primary btn--with-icon" href={project.live} target="_blank" rel="noopener noreferrer">
+                                        <a
+                                            className="btn btn--primary btn--with-icon"
+                                            href={project.live}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >
                                             <ExternalLinkIcon className="btn__icon" />
                                             <span className="btn__label">Live</span>
                                         </a>

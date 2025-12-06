@@ -6,23 +6,26 @@
  */
 import mongoose from 'mongoose';
 
-const GalleryItemSchema = new mongoose.Schema({
-    title: {
-        type: String,
-        trim: true,
-        required: 'Title is required'
+const GalleryItemSchema = new mongoose.Schema(
+    {
+        title: {
+            type: String,
+            trim: true,
+            required: 'Title is required'
+        },
+        imageData: {
+            type: String,
+            required: 'Image data (base64) is required'
+        },
+        tags: {
+            type: [String],
+            default: []
+        }
     },
-    imageData: {
-        type: String,
-        required: 'Image data (base64) is required'
-    },
-    tags: {
-        type: [String],
-        default: []
+    {
+        timestamps: true
     }
-}, {
-    timestamps: true
-});
+);
 
 // Indexes for common query patterns
 GalleryItemSchema.index({ createdAt: -1 }); // For listing by date

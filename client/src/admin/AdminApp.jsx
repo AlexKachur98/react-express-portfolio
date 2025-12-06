@@ -4,8 +4,14 @@
  * @since 2025-11-22
  * @purpose Wires up the admin routes and gates access based on authentication state.
  */
+
+// React
 import { Routes, Route } from 'react-router-dom';
+
+// Context
 import { useAuth } from '../context/AuthContext.jsx';
+
+// Admin Pages
 import AdminLogin from './AdminLogin.jsx';
 import AdminLayout from './AdminLayout.jsx';
 import AdminOverview from './AdminOverview.jsx';
@@ -49,9 +55,5 @@ export default function AdminApp() {
         );
     }
 
-    return (
-        <div className="admin-shell">
-            {content}
-        </div>
-    );
+    return <div className="admin-shell">{content}</div>;
 }

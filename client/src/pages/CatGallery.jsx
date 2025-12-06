@@ -4,8 +4,17 @@
  * @since 2025-10-29
  * @purpose Curated gallery experience for cat photos with filtering, favourites, and modal viewing.
  */
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+
+// React
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+
+// Hooks
+import useFocusTrap from '../hooks/useFocusTrap.js';
+
+// Utils
 import { getGalleryItems } from '../utils/api.js';
+import { filterByTag } from '../utils/helpers.js';
+import { getId } from '../utils/getId.js';
 
 const COOKIE_KEY = 'cat_gallery_favourites';
 
@@ -13,11 +22,8 @@ const TAG_OPTIONS = [
     { value: 'all', label: 'All cats' },
     { value: 'simba', label: 'Simba' },
     { value: 'moura', label: 'Moura' },
-    { value: 'together', label: 'Together' },
+    { value: 'together', label: 'Together' }
 ];
-
-// Shared tag filter keeps business rules centralised for list + modal sequences.
-const filterByTag = (images, tag) => (tag === 'all' ? images : images.filter((image) => image.tags.includes(tag)));
 
 const favouriteCookie = {
     // Gracefully handle missing or malformed cookie values.
@@ -57,11 +63,18 @@ export default function CatGallery() {
     const carouselRef = useRef(null);
     const lastFocusedElementRef = useRef(null);
     const modalCloseButtonRef = useRef(null);
+    const modalFocusTrapRef = useFocusTrap(isFullscreen);
 
     const favouriteSet = useMemo(() => new Set(favoriteIds), [favoriteIds]);
-    const favouriteSequence = useMemo(() => images.filter((image) => favouriteSet.has(image.id || image._id)), [favouriteSet, images]);
+    const favouriteSequence = useMemo(
+        () => images.filter((image) => favouriteSet.has(getId(image))),
+        [favouriteSet, images]
+    );
     const tagFiltered = useMemo(() => filterByTag(images, activeTag), [activeTag, images]);
-    const favouriteTagSequence = useMemo(() => filterByTag(favouriteSequence, activeTag), [favouriteSequence, activeTag]);
+    const favouriteTagSequence = useMemo(
+        () => filterByTag(favouriteSequence, activeTag),
+        [favouriteSequence, activeTag]
+    );
     const visibleImages = showFavouritesOnly ? favouriteTagSequence : tagFiltered;
     // Modal leverages either favourites or the full list, filtered by the active tag.
     const modalSequence = useMemo(() => {
@@ -71,15 +84,18 @@ export default function CatGallery() {
     const modalLength = modalSequence.length;
     const modalImage = modalSequence[modalIndex];
 
-    const handleModalShift = useCallback((delta) => {
-        setModalIndex((prev) => {
-            const next = prev + delta;
-            if (next < 0 || next >= modalLength) {
-                return prev;
-            }
-            return next;
-        });
-    }, [modalLength]);
+    const handleModalShift = useCallback(
+        (delta) => {
+            setModalIndex((prev) => {
+                const next = prev + delta;
+                if (next < 0 || next >= modalLength) {
+                    return prev;
+                }
+                return next;
+            });
+        },
+        [modalLength]
+    );
 
     useEffect(() => {
         const loadImages = async () => {
@@ -87,7 +103,7 @@ export default function CatGallery() {
             if (!res?.error && Array.isArray(res)) {
                 const normalized = res.map((item) => ({
                     ...item,
-                    id: item._id || item.id,
+                    id: getId(item),
                     src: item.imageData || item.src,
                     alt: item.title || 'Cat photo',
                     tags: Array.isArray(item.tags) ? item.tags : []
@@ -184,7 +200,7 @@ export default function CatGallery() {
         const source = showFavouritesOnly ? 'favourites' : 'all';
         const tag = activeTag;
         const sequence = showFavouritesOnly ? favouriteTagSequence : tagFiltered;
-        const index = sequence.findIndex((image) => (image.id || image._id) === imageId);
+        const index = sequence.findIndex((image) => getId(image) === imageId);
         if (index === -1) {
             return;
         }
@@ -201,11 +217,15 @@ export default function CatGallery() {
     };
 
     return (
-        <div className={`cat-gallery ${introComplete ? 'cat-gallery--ready' : ''} ${isFiltering ? 'cat-gallery--filtering' : ''}`}>
+        <div
+            className={`cat-gallery ${introComplete ? 'cat-gallery--ready' : ''} ${isFiltering ? 'cat-gallery--filtering' : ''}`}
+        >
             <div className="cat-gallery__bg" aria-hidden="true"></div>
             <div className="cat-gallery__paws" aria-hidden="true">
                 {Array.from({ length: 8 }).map((_, index) => (
-                    <span key={index} className={`cat-gallery__paw cat-gallery__paw--${index}`}>🐾</span>
+                    <span key={index} className={`cat-gallery__paw cat-gallery__paw--${index}`}>
+                        🐾
+                    </span>
                 ))}
             </div>
             {!introComplete && (
@@ -213,14 +233,20 @@ export default function CatGallery() {
                     <div className="cat-gallery__intro-track">
                         <div className="cat-gallery__intro-lane cat-gallery__intro-lane--left">
                             {Array.from({ length: 5 }).map((_, index) => (
-                                <span key={`left-${index}`} className={`cat-gallery__intro-paw cat-gallery__intro-paw--${index}`}>
+                                <span
+                                    key={`left-${index}`}
+                                    className={`cat-gallery__intro-paw cat-gallery__intro-paw--${index}`}
+                                >
                                     🐾
                                 </span>
                             ))}
                         </div>
                         <div className="cat-gallery__intro-lane cat-gallery__intro-lane--right">
                             {Array.from({ length: 5 }).map((_, index) => (
-                                <span key={`right-${index}`} className={`cat-gallery__intro-paw cat-gallery__intro-paw--${index}`}>
+                                <span
+                                    key={`right-${index}`}
+                                    className={`cat-gallery__intro-paw cat-gallery__intro-paw--${index}`}
+                                >
                                     🐾
                                 </span>
                             ))}
@@ -229,12 +255,15 @@ export default function CatGallery() {
                 </div>
             )}
 
-            <section className={`cat-gallery__content ${introComplete ? 'cat-gallery__content--show' : ''}`}>
+            <section
+                className={`cat-gallery__content ${introComplete ? 'cat-gallery__content--show' : ''}`}
+            >
                 <header className="cat-gallery__header">
                     <span className="cat-gallery__eyebrow">Cat Gallery</span>
                     <h1 className="cat-gallery__title">Meet the fluffy roommates</h1>
                     <p className="cat-gallery__subtitle">
-                        Swipe through their favourite snapshots, mark the ones you adore, and relive every whiskered adventure.
+                        Swipe through their favourite snapshots, mark the ones you adore, and relive
+                        every whiskered adventure.
                     </p>
                     <div className="cat-gallery__actions">
                         <button
@@ -249,12 +278,20 @@ export default function CatGallery() {
                             className={`cat-gallery__action ${showFavouritesOnly ? 'cat-gallery__action--active' : ''}`}
                             onClick={() => setShowFavouritesOnly(true)}
                             disabled={favouriteSequence.length === 0}
-                            title={favouriteSequence.length === 0 ? 'Add favourites to unlock this view' : undefined}
+                            title={
+                                favouriteSequence.length === 0
+                                    ? 'Add favourites to unlock this view'
+                                    : undefined
+                            }
                         >
                             Favourites ({favouriteSequence.length})
                         </button>
                     </div>
-                    <div className="cat-gallery__filters" role="group" aria-label="Filter photos by cat">
+                    <div
+                        className="cat-gallery__filters"
+                        role="group"
+                        aria-label="Filter photos by cat"
+                    >
                         {TAG_OPTIONS.map((option) => (
                             <button
                                 key={option.value}
@@ -282,12 +319,16 @@ export default function CatGallery() {
                     <div className="cat-gallery__carousel" ref={carouselRef}>
                         {visibleImages.length === 0 ? (
                             <div className="cat-gallery__empty">
-                                <p>{images.length === 0 ? 'No photos yet. Check back soon!' : 'No favourites yet. Tap the little hearts to save your favourite poses!'}</p>
+                                <p>
+                                    {images.length === 0
+                                        ? 'No photos yet. Check back soon!'
+                                        : 'No favourites yet. Tap the little hearts to save your favourite poses!'}
+                                </p>
                                 {loadError && <p className="contact-form__error">{loadError}</p>}
                             </div>
                         ) : (
                             visibleImages.map((image, index) => {
-                                const imageId = image.id || image._id;
+                                const imageId = getId(image);
                                 const isFavourite = favouriteSet.has(imageId);
                                 return (
                                     <figure
@@ -296,7 +337,11 @@ export default function CatGallery() {
                                         onClick={() => openFullscreen(imageId)}
                                         style={{ '--card-delay': `${Math.min(index, 8) * 60}ms` }}
                                     >
-                                        <img src={image.src || image.imageData} alt={image.alt} loading="lazy" />
+                                        <img
+                                            src={image.src || image.imageData}
+                                            alt={image.alt}
+                                            loading="lazy"
+                                        />
                                         <button
                                             type="button"
                                             className="cat-card__favourite"
@@ -305,7 +350,11 @@ export default function CatGallery() {
                                                 toggleFavourite(imageId);
                                             }}
                                             aria-pressed={isFavourite}
-                                            aria-label={isFavourite ? 'Remove from favourites' : 'Add to favourites'}
+                                            aria-label={
+                                                isFavourite
+                                                    ? 'Remove from favourites'
+                                                    : 'Add to favourites'
+                                            }
                                         >
                                             {isFavourite ? '♥' : '♡'}
                                         </button>
@@ -327,9 +376,14 @@ export default function CatGallery() {
             </section>
 
             {isFullscreen && modalImage && (
-                <div className="cat-gallery__modal" role="dialog" aria-modal="true" aria-label="Cat photo full screen view">
+                <div
+                    className="cat-gallery__modal"
+                    role="dialog"
+                    aria-modal="true"
+                    aria-label="Cat photo full screen view"
+                >
                     <div className="cat-gallery__modal-backdrop" onClick={handleCloseModal}></div>
-                    <div className="cat-gallery__modal-content">
+                    <div className="cat-gallery__modal-content" ref={modalFocusTrapRef}>
                         <button
                             type="button"
                             className="cat-gallery__modal-close"
@@ -349,7 +403,10 @@ export default function CatGallery() {
                             >
                                 ‹
                             </button>
-                            <img src={modalImage.src || modalImage.imageData} alt={modalImage.alt} />
+                            <img
+                                src={modalImage.src || modalImage.imageData}
+                                alt={modalImage.alt}
+                            />
                             <button
                                 type="button"
                                 className="cat-gallery__modal-nav"
@@ -364,10 +421,12 @@ export default function CatGallery() {
                             <button
                                 type="button"
                                 className="cat-gallery__modal-favourite"
-                                onClick={() => toggleFavourite(modalImage.id || modalImage._id)}
-                                aria-pressed={favouriteSet.has(modalImage.id || modalImage._id)}
+                                onClick={() => toggleFavourite(getId(modalImage))}
+                                aria-pressed={favouriteSet.has(getId(modalImage))}
                             >
-                                {favouriteSet.has(modalImage.id || modalImage._id) ? '♥ Favourite' : '♡ Add to favourites'}
+                                {favouriteSet.has(getId(modalImage))
+                                    ? '♥ Favourite'
+                                    : '♡ Add to favourites'}
                             </button>
                         </div>
                     </div>

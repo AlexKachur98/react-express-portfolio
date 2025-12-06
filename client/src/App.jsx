@@ -7,9 +7,7 @@
 import MainRouter from './MainRouter.jsx';
 
 function App() {
-  return (
-    <MainRouter />
-  );
+    return <MainRouter />;
 }
 
 export default App;

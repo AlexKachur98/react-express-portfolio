@@ -4,8 +4,12 @@
  * @since 2025-11-22
  * @purpose Handles the admin authentication flow and redirects to the dashboard.
  */
+
+// React
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+
+// Context
 import { useAuth } from '../context/AuthContext.jsx';
 
 export default function AdminLogin() {
@@ -52,8 +56,15 @@ export default function AdminLogin() {
             <h2 className="section__heading">Sign in to continue</h2>
             {showNonAdminWarning && (
                 <>
-                    <p className="contact-form__error">Admin access required. Please sign in with an admin account.</p>
-                    <button type="button" className="btn btn--ghost" onClick={signout} style={{ marginBottom: '12px' }}>
+                    <p className="contact-form__error">
+                        Admin access required. Please sign in with an admin account.
+                    </p>
+                    <button
+                        type="button"
+                        className="btn btn--ghost"
+                        onClick={signout}
+                        style={{ marginBottom: '12px' }}
+                    >
                         Sign out current session
                     </button>
                 </>

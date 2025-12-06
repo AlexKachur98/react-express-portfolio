@@ -4,7 +4,6 @@
  * @since 2025-10-28
  * @purpose Contact CTA with success state and a reusable form driven by container props.
  */
-import React from 'react';
 
 export default function ContactSection({ values, isSubmitted, isSubmitting, onChange, onSubmit }) {
     return (
@@ -14,23 +13,37 @@ export default function ContactSection({ values, isSubmitted, isSubmitting, onCh
             <div className="contact-grid">
                 <div className="contact-grid__info">
                     <p>
-                        Whether you’re looking to collaborate, discuss a project, or just say hi — feel free to reach out!
+                        Whether you’re looking to collaborate, discuss a project, or just say hi —
+                        feel free to reach out!
                     </p>
                     <div className="contact-grid__card">
-                        <p><strong>Email:</strong> akachur@my.centennialcollege.ca</p>
-                        <p><strong>Phone:</strong> 647-510-5343</p>
-                        <p><strong>Location:</strong> Toronto • Canada</p>
+                        <p>
+                            <strong>Email:</strong> akachur@my.centennialcollege.ca
+                        </p>
+                        <p>
+                            <strong>Phone:</strong> 647-510-5343
+                        </p>
+                        <p>
+                            <strong>Location:</strong> Toronto • Canada
+                        </p>
                     </div>
                 </div>
 
                 <div className="contact-grid__form">
                     {isSubmitted ? (
-                        <div className="contact__success">
+                        <div className="contact__success" role="status" aria-live="polite">
                             <h3>Thank you!</h3>
-                            <p>Your message has been sent successfully. I&apos;ll get back to you shortly.</p>
+                            <p>
+                                Your message has been sent successfully. I&apos;ll get back to you
+                                shortly.
+                            </p>
                         </div>
                     ) : (
-                        <form className="contact-form" onSubmit={onSubmit} aria-label="Contact form">
+                        <form
+                            className="contact-form"
+                            onSubmit={onSubmit}
+                            aria-label="Contact form"
+                        >
                             <div className="contact-form__row">
                                 <label htmlFor="firstName">
                                     First Name
@@ -80,7 +93,15 @@ export default function ContactSection({ values, isSubmitted, isSubmitting, onCh
                             </label>
 
                             {/* Surface backend validation errors inline so the user knows what went wrong. */}
-                            {values.error && (<p className="contact-form__error">{values.error}</p>)}
+                            {values.error && (
+                                <p
+                                    className="contact-form__error"
+                                    role="alert"
+                                    aria-live="assertive"
+                                >
+                                    {values.error}
+                                </p>
+                            )}
 
                             <button
                                 type="submit"
@@ -90,8 +111,13 @@ export default function ContactSection({ values, isSubmitted, isSubmitting, onCh
                             >
                                 {isSubmitting ? (
                                     <>
-                                        <span className="contact-form__spinner" aria-hidden="true"></span>
-                                        <span className="visually-hidden" role="status">Sending...</span>
+                                        <span
+                                            className="contact-form__spinner"
+                                            aria-hidden="true"
+                                        ></span>
+                                        <span className="visually-hidden" role="status">
+                                            Sending...
+                                        </span>
                                     </>
                                 ) : (
                                     'Send Message'

@@ -6,8 +6,13 @@
  */
 import express from 'express';
 import userCtrl from '../controllers/user.controller.js';
-import { requireSignin, hasAuthorization, requireAdmin } from '../middlewares/auth.js';
-import { authLimiter } from '../middlewares/rateLimit.js';
+import {
+    requireSignin,
+    hasAuthorization,
+    requireAdmin,
+    requireDevOnly
+} from '../middlewares/auth.js';
+import { authLimiter, sessionLimiter } from '../middlewares/rateLimit.js';
 
 const router = express.Router();
 
@@ -18,18 +23,21 @@ router.route('/signin').post(authLimiter, userCtrl.signin); // POST /api/signin
 router.route('/signout').get(userCtrl.signout); // GET /api/signout
 router.route('/auth/signin').post(authLimiter, userCtrl.signin); // Alias POST /api/auth/signin
 router.route('/auth/signout').get(userCtrl.signout); // Alias GET /api/auth/signout
+router.route('/auth/session').get(sessionLimiter, requireSignin, userCtrl.session); // GET /api/auth/session (validate session)
 
 // --- User CRUD Routes ---
-router.route('/users')
-    .get(requireSignin, requireAdmin, userCtrl.list)     // GET /api/users (List all users - admin only)
-    .post(userCtrl.create)  // POST /api/users (Register new user - public)
-    // DELETE /api/users (Remove all users - protected)
+router
+    .route('/users')
+    .get(requireSignin, requireAdmin, userCtrl.list) // GET /api/users (List all users - admin only)
+    .post(authLimiter, userCtrl.create) // POST /api/users (Register new user - public, rate limited)
+    // DELETE /api/users (Remove all users - dev only)
     // As per Assignment 2 PDF, this route is required.
-    .delete(requireSignin, requireAdmin, userCtrl.removeAll);
+    .delete(requireSignin, requireAdmin, requireDevOnly, userCtrl.removeAll);
 
 // --- Protected User Routes ---
 // These routes handle operations for a specific user, identified by :userId
-router.route('/users/:userId')
+router
+    .route('/users/:userId')
     // GET /api/users/:userId (Read a specific user's profile)
     // Protected: User must be signed in AND authorized to view their own profile
     .get(requireSignin, hasAuthorization, userCtrl.read)

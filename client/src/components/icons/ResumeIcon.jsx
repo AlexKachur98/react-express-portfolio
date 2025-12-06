@@ -1,5 +1,9 @@
-import React from 'react';
-
+/**
+ * @file ResumeIcon.jsx
+ * @author Alex Kachur
+ * @since 2025-10-28
+ * @purpose SVG icon component for resume/document indicators.
+ */
 export default function ResumeIcon({ className = '', ...props }) {
     return (
         <svg

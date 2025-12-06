@@ -6,19 +6,21 @@
  */
 import express from 'express';
 import contactCtrl from '../controllers/contact.controller.js';
-import { requireSignin, requireAdmin } from '../middlewares/auth.js';
+import { requireSignin, requireAdmin, requireDevOnly } from '../middlewares/auth.js';
 import { contactLimiter } from '../middlewares/rateLimit.js';
 
 const router = express.Router();
 
 // Collection routes
-router.route('/contacts')
+router
+    .route('/contacts')
     .get(requireSignin, requireAdmin, contactCtrl.list) // Admin protected: List all contacts
     .post(contactLimiter, contactCtrl.create) // Public with rate limit: Anyone can send a message
-    .delete(requireSignin, requireAdmin, contactCtrl.removeAll); // Admin protected: Delete all contacts
+    .delete(requireSignin, requireAdmin, requireDevOnly, contactCtrl.removeAll); // Dev only: Delete all contacts
 
 // Document routes for a specific contact message
-router.route('/contacts/:contactId')
+router
+    .route('/contacts/:contactId')
     .get(requireSignin, requireAdmin, contactCtrl.read) // Admin protected
     .put(requireSignin, requireAdmin, contactCtrl.update) // Admin protected
     .delete(requireSignin, requireAdmin, contactCtrl.remove); // Admin protected

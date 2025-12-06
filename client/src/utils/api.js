@@ -1,5 +1,36 @@
+/**
+ * @file api.js
+ * @author Alex Kachur
+ * @since 2025-10-16
+ * @purpose Centralized API client with CSRF protection, timeout handling, and type safety.
+ *
+ * TODO: [TypeScript Migration] Convert this file to TypeScript for full type safety.
+ * Priority: HIGH - Security-critical code handling authentication and CSRF tokens.
+ * See: client/src/types/api.d.ts for type definitions.
+ *
+ * @typedef {import('../types/api').ApiError} ApiError
+ * @typedef {import('../types/api').User} User
+ * @typedef {import('../types/api').SessionResponse} SessionResponse
+ */
+
 const API_BASE_URL = (import.meta.env.VITE_API_URL || '/api').replace(/\/$/, '');
 const DEFAULT_TIMEOUT = 30000; // 30 seconds
+const CSRF_COOKIE_NAME = 'csrf_token';
+const CSRF_HEADER_NAME = 'x-csrf-token';
+
+// Retry configuration
+const MAX_RETRIES = 3;
+const RETRY_DELAY_MS = 1000;
+const RETRYABLE_STATUS_CODES = [408, 429, 500, 502, 503, 504];
+
+/**
+ * Reads the CSRF token from the cookie
+ */
+function getCsrfToken() {
+    if (typeof document === 'undefined') return null;
+    const match = document.cookie.split('; ').find((row) => row.startsWith(`${CSRF_COOKIE_NAME}=`));
+    return match ? match.split('=')[1] : null;
+}
 
 async function request(endpoint, options = {}) {
     const normalizedEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
@@ -9,6 +40,10 @@ async function request(endpoint, options = {}) {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), options.timeout || DEFAULT_TIMEOUT);
 
+    // Get CSRF token for state-changing requests
+    const csrfToken = getCsrfToken();
+    const csrfHeader = csrfToken ? { [CSRF_HEADER_NAME]: csrfToken } : {};
+
     try {
         response = await fetch(`${API_BASE_URL}${normalizedEndpoint}`, {
             credentials: 'include', // send cookies (httpOnly JWT)
@@ -17,6 +52,7 @@ async function request(endpoint, options = {}) {
             headers: {
                 Accept: 'application/json',
                 'Content-Type': 'application/json',
+                ...csrfHeader,
                 ...(options.headers || {})
             }
         });
@@ -45,6 +81,37 @@ async function request(endpoint, options = {}) {
     return data ?? {};
 }
 
+/**
+ * Executes a request with automatic retry for transient failures.
+ * Uses exponential backoff between retries.
+ *
+ * @param {string} endpoint - API endpoint
+ * @param {Object} options - Fetch options
+ * @param {number} [retryCount=0] - Current retry attempt
+ * @returns {Promise<Object>} API response or error object
+ */
+async function requestWithRetry(endpoint, options = {}, retryCount = 0) {
+    const result = await request(endpoint, options);
+
+    // Don't retry if request succeeded
+    if (!result.error) {
+        return result;
+    }
+
+    // Check if we should retry
+    const shouldRetry = RETRYABLE_STATUS_CODES.includes(result.status) || result.status === 0; // Network errors
+
+    if (!shouldRetry || retryCount >= MAX_RETRIES) {
+        return result;
+    }
+
+    // Exponential backoff: 1s, 2s, 4s
+    const delay = RETRY_DELAY_MS * Math.pow(2, retryCount);
+    await new Promise((resolve) => setTimeout(resolve, delay));
+
+    return requestWithRetry(endpoint, options, retryCount + 1);
+}
+
 // --- Auth ---
 export async function signup(user) {
     return request('/users', { method: 'POST', body: JSON.stringify(user) });
@@ -58,13 +125,17 @@ export async function signout() {
     return request('/signout', { method: 'GET' });
 }
 
+export async function validateSession() {
+    return requestWithRetry('/auth/session', { method: 'GET' });
+}
+
 // --- Contact (public + admin) ---
 export async function postContact(contact) {
     return request('/contacts', { method: 'POST', body: JSON.stringify(contact) });
 }
 
 export async function getContacts() {
-    return request('/contacts', { method: 'GET' });
+    return requestWithRetry('/contacts', { method: 'GET' });
 }
 
 export async function deleteContact(contactId) {
@@ -77,7 +148,7 @@ export async function deleteAllContacts() {
 
 // --- Education / Qualifications ---
 export async function getQualifications() {
-    return request('/qualifications', { method: 'GET' });
+    return requestWithRetry('/qualifications', { method: 'GET' });
 }
 
 export async function createQualification(data) {
@@ -98,7 +169,7 @@ export async function deleteAllQualifications() {
 
 // --- Projects ---
 export async function getProjects() {
-    return request('/projects', { method: 'GET' });
+    return requestWithRetry('/projects', { method: 'GET' });
 }
 
 export async function createProject(data) {
@@ -119,7 +190,7 @@ export async function deleteAllProjects() {
 
 // --- Services ---
 export async function getServices() {
-    return request('/services', { method: 'GET' });
+    return requestWithRetry('/services', { method: 'GET' });
 }
 
 export async function createService(data) {
@@ -140,7 +211,7 @@ export async function deleteAllServices() {
 
 // --- Gallery ---
 export async function getGalleryItems() {
-    return request('/gallery', { method: 'GET' });
+    return requestWithRetry('/gallery', { method: 'GET' });
 }
 
 // Temporary alias to avoid breaking existing imports (CatGallery/admin until updated)
@@ -164,7 +235,7 @@ export async function deleteAllGalleryItems() {
 
 // --- Guest Book (authenticated users) ---
 export async function getGuestbookEntries() {
-    return request('/guestbook', { method: 'GET' });
+    return requestWithRetry('/guestbook', { method: 'GET' });
 }
 
 export async function signGuestbook(entry) {
@@ -186,7 +257,7 @@ export async function deleteAllGuestbookEntries() {
 
 // --- Users (admin) ---
 export async function getUsers() {
-    return request('/users', { method: 'GET' });
+    return requestWithRetry('/users', { method: 'GET' });
 }
 
 export async function deleteUser(userId) {

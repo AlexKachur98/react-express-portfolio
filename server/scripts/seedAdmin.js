@@ -13,7 +13,9 @@ import User from '../models/user.model.js';
 const { ADMIN_NAME, ADMIN_EMAIL, ADMIN_PASSWORD } = process.env;
 
 if (!ADMIN_NAME || !ADMIN_EMAIL || !ADMIN_PASSWORD) {
-    console.error('[Seed] ADMIN_NAME, ADMIN_EMAIL, and ADMIN_PASSWORD must be set in the environment.');
+    console.error(
+        '[Seed] ADMIN_NAME, ADMIN_EMAIL, and ADMIN_PASSWORD must be set in the environment.'
+    );
     process.exit(1);
 }
 

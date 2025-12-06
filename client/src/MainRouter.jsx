@@ -2,15 +2,20 @@
  * @file MainRouter.jsx
  * @author Alex Kachur
  * @since 2025-10-16
- * @purpose This component defines the application's routing structure, mapping URL paths
- * to their corresponding page components. Uses code splitting for better performance.
+ * @purpose Application routing structure with code splitting for performance.
  */
+
+// React
 import { lazy, Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
-import Layout from './components/Layout.jsx';
+
+// Components
+import Layout from './components/layout/Layout.jsx';
+
+// Pages (eager load home for fast initial render)
 import Home from './pages/Home.jsx';
 
-// Lazy load routes that aren't needed immediately
+// Lazy-loaded routes
 const CatGallery = lazy(() => import('./pages/CatGallery.jsx'));
 const SignIn = lazy(() => import('./pages/SignIn.jsx'));
 const SignUp = lazy(() => import('./pages/SignUp.jsx'));
@@ -19,13 +24,16 @@ const GuestbookApp = lazy(() => import('./guestbook/GuestbookApp.jsx'));
 
 // Loading fallback component for lazy-loaded routes
 const PageLoader = () => (
-    <div className="page-loader" style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        minHeight: '50vh',
-        color: 'rgba(148, 163, 184, 0.9)'
-    }}>
+    <div
+        className="page-loader"
+        style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            minHeight: '50vh',
+            color: 'rgba(148, 163, 184, 0.9)'
+        }}
+    >
         Loading...
     </div>
 );

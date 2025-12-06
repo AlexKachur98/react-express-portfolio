@@ -3,6 +3,12 @@
  * @author Alex Kachur
  * @since 2025-10-27
  * @purpose Helper utility for creating JSON Web Tokens (JWT).
+ *
+ * TODO: [TypeScript Migration] Convert this file to TypeScript for full type safety.
+ * Priority: HIGH - Security-critical JWT token generation.
+ * Key types to define:
+ * - JWTPayload: { _id: string, email: string, role: 'admin' | 'user' }
+ * - TokenOptions: { expiresIn: string }
  */
 import jwt from 'jsonwebtoken';
 import config from '../../config/config.js'; // Import the secret key

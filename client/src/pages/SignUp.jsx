@@ -2,77 +2,151 @@
  * @file SignUp.jsx
  * @author Alex Kachur
  * @since 2025-11-22
- * @purpose Account creation form that provisions a basic user profile.
+ * @purpose Account creation form with client-side validation.
  */
-import { useState } from 'react';
+
+// React
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+
+// Context & Hooks
 import { useAuth } from '../context/AuthContext.jsx';
+import useForm, { validators, createValidator } from '../hooks/useForm.js';
+
+// Client-side validation rules
+const validate = createValidator({
+    name: [validators.required, validators.minLength(2)],
+    email: [validators.required, validators.email],
+    password: [validators.required, validators.minLength(8)]
+});
 
 export default function SignUp() {
     const { signup } = useAuth();
     const navigate = useNavigate();
-    const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
+    const [serverError, setServerError] = useState('');
     const [loading, setLoading] = useState(false);
     const [successMsg, setSuccessMsg] = useState('');
+    const [revealed, setRevealed] = useState(false);
+
+    useEffect(() => {
+        setRevealed(true);
+    }, []);
+
+    const { values, handleChange, handleBlur, getFieldError, validateForm, reset } = useForm(
+        { name: '', email: '', password: '' },
+        validate
+    );
 
     const onSubmit = async (event) => {
         event.preventDefault();
-        setError('');
+        setServerError('');
         setSuccessMsg('');
+
+        // Validate before submitting
+        if (!validateForm()) {
+            return;
+        }
+
         setLoading(true);
 
-        const res = await signup({ name, email, password });
+        const res = await signup({
+            name: values.name,
+            email: values.email,
+            password: values.password
+        });
+
         if (res?.error) {
-            setError(res.error);
+            setServerError(res.error);
             setLoading(false);
             return;
         }
 
         setSuccessMsg('Sign up successful. You can now sign in.');
         setLoading(false);
+        reset();
         navigate('/signin');
     };
 
+    const nameError = getFieldError('name');
+    const emailError = getFieldError('email');
+    const passwordError = getFieldError('password');
+
     return (
-        <div className="section section--glass">
+        <div className={`section section--glass ${revealed ? 'reveal-active' : ''}`}>
             <div className="section__eyebrow">Account</div>
             <h2 className="section__heading">Create Account</h2>
-            <form className="contact-form" onSubmit={onSubmit}>
+            <form className="contact-form" onSubmit={onSubmit} noValidate>
                 <label>
                     Name
                     <input
                         type="text"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        required
+                        name="name"
+                        value={values.name}
+                        onChange={handleChange('name')}
+                        onBlur={handleBlur('name')}
+                        aria-invalid={!!nameError}
+                        aria-describedby={nameError ? 'name-error' : undefined}
                     />
+                    {nameError && (
+                        <span id="name-error" className="contact-form__field-error" role="alert">
+                            {nameError}
+                        </span>
+                    )}
                 </label>
                 <label>
                     Email
                     <input
                         type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
+                        name="email"
+                        value={values.email}
+                        onChange={handleChange('email')}
+                        onBlur={handleBlur('email')}
+                        aria-invalid={!!emailError}
+                        aria-describedby={emailError ? 'email-error' : undefined}
                     />
+                    {emailError && (
+                        <span id="email-error" className="contact-form__field-error" role="alert">
+                            {emailError}
+                        </span>
+                    )}
                 </label>
                 <label>
                     Password
                     <input
                         type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
+                        name="password"
+                        value={values.password}
+                        onChange={handleChange('password')}
+                        onBlur={handleBlur('password')}
+                        aria-invalid={!!passwordError}
+                        aria-describedby={passwordError ? 'password-error' : undefined}
                     />
+                    {passwordError && (
+                        <span
+                            id="password-error"
+                            className="contact-form__field-error"
+                            role="alert"
+                        >
+                            {passwordError}
+                        </span>
+                    )}
                 </label>
-                {error && <p className="contact-form__error">{error}</p>}
-                {successMsg && <p className="contact__success">{successMsg}</p>}
+                {serverError && (
+                    <p className="contact-form__error" role="alert">
+                        {serverError}
+                    </p>
+                )}
+                {successMsg && (
+                    <p className="contact__success" role="status">
+                        {successMsg}
+                    </p>
+                )}
                 <button className="btn contact-form__submit" type="submit" disabled={loading}>
                     {loading ? 'Signing up...' : 'Sign Up'}
                 </button>
+                <p style={{ marginTop: '1rem', textAlign: 'center' }}>
+                    Already have an account? <a href="/signin">Sign in</a>
+                </p>
             </form>
         </div>
     );

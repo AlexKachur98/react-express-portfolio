@@ -15,7 +15,8 @@ const getUniqueErrorMessage = (err) => {
     try {
         // Attempt to extract the field name using regex or string parsing
         // This looks for the text between 'index: ' and '_1'
-        let fieldName = err.message.match(/index: (.*)_1/)[1] ||
+        let fieldName =
+            err.message.match(/index: (.*)_1/)[1] ||
             err.message.substring(err.message.lastIndexOf('.$') + 2, err.message.lastIndexOf('_1'));
         output = fieldName.charAt(0).toUpperCase() + fieldName.slice(1) + ' already exists';
     } catch (_ex) {
@@ -42,7 +43,8 @@ const getErrorMessage = (err) => {
             default:
                 message = 'Database error occurred.';
         }
-    } else if (err.errors) { // Handle Mongoose validation errors
+    } else if (err.errors) {
+        // Handle Mongoose validation errors
         for (let errName in err.errors) {
             if (err.errors[errName].message) {
                 message = err.errors[errName].message;
@@ -51,7 +53,8 @@ const getErrorMessage = (err) => {
         }
         // Fallback if no specific message found in errors object
         if (!message) message = 'Validation error occurred.';
-    } else if (err.message) { // Handle other generic errors
+    } else if (err.message) {
+        // Handle other generic errors
         message = err.message;
     } else {
         message = 'Unknown server error.'; // Fallback

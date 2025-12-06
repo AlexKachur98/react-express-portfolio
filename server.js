@@ -8,7 +8,7 @@
 import 'dotenv/config'; // Ensure environment variables are loaded
 import mongoose from 'mongoose';
 import config from './config/config.js'; // Import application configuration
-import app from './server/express.js';   // Import the configured Express app
+import app from './server/express.js'; // Import the configured Express app
 import { ensureAdminUser } from './server/utils/adminSeeder.js';
 
 // --- Database Connection ---
@@ -16,47 +16,50 @@ mongoose.Promise = global.Promise; // Use native ES6 Promises
 console.log(`[Server] Attempting to connect to MongoDB at ${config.mongoUri}...`);
 
 // Use Mongoose to connect to the database
-mongoose.connect(config.mongoUri)
-  .then(async () => {
-    // This block runs if the connection is successful
-    console.log(`[Database] Successfully connected to MongoDB.`);
+mongoose
+    .connect(config.mongoUri)
+    .then(async () => {
+        // This block runs if the connection is successful
+        console.log(`[Database] Successfully connected to MongoDB.`);
 
-    // Ensure default admin user exists before starting the server
-    await ensureAdminUser();
+        // Ensure default admin user exists before starting the server
+        await ensureAdminUser();
 
-    // --- Start Express Server ---
-    // We only start the server *after* the database connection is established
-    app.listen(config.port, (err) => {
-      if (err) {
-        console.error("[Server Error] Failed to start server:", err);
-      } else {
-        // Log a success message
-        console.info(`[Server] Started successfully on http://localhost:${config.port} in ${config.env} mode.`);
-      }
+        // --- Start Express Server ---
+        // We only start the server *after* the database connection is established
+        app.listen(config.port, (err) => {
+            if (err) {
+                console.error('[Server Error] Failed to start server:', err);
+            } else {
+                // Log a success message
+                console.info(
+                    `[Server] Started successfully on http://localhost:${config.port} in ${config.env} mode.`
+                );
+            }
+        });
+    })
+    .catch((err) => {
+        // This block catches errors from the initial connection attempt
+        console.error(`[Database Error] Could not connect to MongoDB. Exiting...`, err);
+        process.exit(1); // Exit if DB connection fails
     });
-  })
-  .catch(err => {
-    // This block catches errors from the initial connection attempt
-    console.error(`[Database Error] Could not connect to MongoDB. Exiting...`, err);
-    process.exit(1); // Exit if DB connection fails
-  });
 
 // Listen for connection errors after the initial attempt
 mongoose.connection.on('error', (err) => {
-  console.error(`[Database Error] A connection error occurred: ${err}`);
+    console.error(`[Database Error] A connection error occurred: ${err}`);
 });
 
 // --- Graceful Shutdown ---
 const gracefulShutdown = async (signal) => {
-  console.log(`\n[Server] Received ${signal}. Shutting down gracefully...`);
-  try {
-    await mongoose.connection.close();
-    console.log('[Database] MongoDB connection closed.');
-    process.exit(0);
-  } catch (err) {
-    console.error('[Server] Error during shutdown:', err);
-    process.exit(1);
-  }
+    console.log(`\n[Server] Received ${signal}. Shutting down gracefully...`);
+    try {
+        await mongoose.connection.close();
+        console.log('[Database] MongoDB connection closed.');
+        process.exit(0);
+    } catch (err) {
+        console.error('[Server] Error during shutdown:', err);
+        process.exit(1);
+    }
 };
 
 process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));

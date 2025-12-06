@@ -1,0 +1,85 @@
+/**
+ * @file _accordion.css
+ * @purpose Accordion component styles
+ */
+
+.accordion {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.accordion__item {
+    border-radius: 24px;
+    border: 1px solid rgba(148, 163, 184, 0.25);
+    background: rgba(15, 23, 42, 0.58);
+    overflow: hidden;
+    transition:
+        border 0.2s ease,
+        transform 0.2s ease;
+}
+
+.accordion__item--open {
+    border-color: rgba(59, 130, 246, 0.65);
+    transform: translateY(-2px);
+}
+
+.accordion__trigger {
+    width: 100%;
+    border: none;
+    background: transparent;
+    color: inherit;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 26px 28px;
+    text-align: left;
+    cursor: pointer;
+    font: inherit;
+}
+
+.accordion__trigger h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #f8fafc;
+}
+
+.accordion__trigger p {
+    margin: 8px 0 0;
+    font-size: 0.95rem;
+    color: rgba(148, 163, 184, 0.88);
+}
+
+.accordion__icon {
+    font-size: 1.8rem;
+    color: rgba(148, 163, 184, 0.85);
+}
+
+.accordion__content {
+    max-height: 0;
+    overflow: hidden;
+    padding: 0 28px;
+    transition:
+        max-height 0.35s ease,
+        padding 0.35s ease;
+}
+
+.accordion__item--open .accordion__content {
+    max-height: 520px;
+    padding-bottom: 24px;
+}
+
+.accordion__content ul {
+    margin: 0;
+    padding-left: 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    color: rgba(226, 232, 240, 0.82);
+}
+
+.accordion__meta {
+    margin-top: 14px;
+    color: rgba(147, 197, 253, 0.9);
+    font-size: 0.9rem;
+}

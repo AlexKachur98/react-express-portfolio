@@ -1,0 +1,21 @@
+# Dependencies
+node_modules/
+client/node_modules/
+
+# Build outputs
+dist/
+client/dist/
+coverage/
+
+# Vendor files (minified third-party code)
+client/public/vendor/
+
+# Package lock files
+package-lock.json
+
+# IDE/Editor configs
+.idea/
+.vscode/
+
+# Logs
+*.log

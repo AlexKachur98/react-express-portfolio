@@ -1,0 +1,324 @@
+/**
+ * @file _responsive.css
+ * @purpose Responsive breakpoint styles
+ */
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+
+    .typewriter__cursor {
+        animation: none !important;
+    }
+
+    .cat-gallery__intro,
+    .cat-gallery__paws {
+        display: none !important;
+    }
+}
+
+@media (max-width: 900px) {
+    .floating-nav {
+        width: 100%;
+        left: 0;
+        transform: none;
+        top: 24px;
+        padding: 0 12px;
+    }
+
+    .floating-nav__inner {
+        padding: 0;
+        gap: 0;
+        flex-direction: row;
+        background: transparent;
+        border: none;
+        box-shadow: none;
+        -webkit-backdrop-filter: none;
+        backdrop-filter: none;
+        justify-content: space-between;
+        border-radius: 0;
+        align-items: center;
+    }
+
+    .floating-nav--scrolled .floating-nav__inner {
+        background: transparent;
+        border: none;
+        box-shadow: none;
+    }
+
+    .floating-nav__toggle {
+        display: inline-flex;
+        border: none;
+        background: transparent;
+        padding: 4px 8px;
+        color: #f8fafc;
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        border-radius: 10px;
+        transition: color 0.2s ease;
+    }
+
+    .floating-nav__toggle--open {
+        background: transparent;
+        color: rgba(147, 197, 253, 0.9);
+    }
+
+    .floating-nav__links {
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+        max-height: 0;
+        overflow: hidden;
+        opacity: 0;
+        pointer-events: none;
+        margin-top: 0;
+        transform: translateY(-8px);
+    }
+
+    .floating-nav__link {
+        width: 100%;
+        padding: 12px 14px;
+        border-radius: 10px;
+        background: transparent;
+        text-align: left;
+        font-size: 0.95rem;
+        border: none;
+    }
+
+    .floating-nav__links--open {
+        max-height: 420px;
+        opacity: 1;
+        pointer-events: auto;
+        margin-top: 10px;
+        background: rgba(15, 23, 42, 0.92);
+        border-radius: 16px;
+        border: 1px solid rgba(148, 163, 184, 0.2);
+        padding: 10px;
+        box-shadow: 0 18px 36px rgba(2, 6, 23, 0.45);
+        transform: translateY(0);
+    }
+
+    .section--glass {
+        padding: 48px 32px;
+    }
+
+    .contact-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .section--glass {
+        padding: 40px 24px;
+    }
+
+    .section {
+        gap: 24px;
+    }
+
+    .hero__title {
+        font-size: clamp(2.6rem, 8vw, 3.4rem);
+    }
+
+    .hero__subtitle {
+        font-size: 1rem;
+    }
+
+    .hero__actions {
+        flex-direction: column;
+        gap: 12px;
+        width: 100%;
+    }
+
+    .hero__actions .btn {
+        width: 100%;
+    }
+
+    .about__card img {
+        width: clamp(220px, 65vw, 280px);
+    }
+
+    .accordion__trigger {
+        padding: 22px 20px;
+    }
+
+    .accordion__item--open .accordion__content {
+        max-height: 900px;
+    }
+
+    .project-card__body {
+        padding: 20px;
+    }
+
+    .contact-grid__form {
+        padding: 24px;
+    }
+
+    .contact-form__row {
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    .footer {
+        padding: 40px 0 18px;
+    }
+}
+
+@media (max-width: 480px) {
+    .floating-nav {
+        top: 20px;
+    }
+
+    .floating-nav__links {
+        gap: 6px;
+    }
+
+    .floating-nav__link {
+        padding: 10px 14px;
+        font-size: 0.9rem;
+    }
+
+    .floating-nav__links--open {
+        max-height: 360px;
+        padding: 8px;
+        border-radius: 14px;
+    }
+
+    .section--glass {
+        padding: 32px 20px;
+        border-radius: 22px;
+    }
+
+    .section {
+        gap: 20px;
+    }
+
+    .section__heading {
+        font-size: clamp(1.8rem, 7vw, 2.4rem);
+    }
+
+    .project-card {
+        border-radius: 20px;
+    }
+
+    .project-card__media img {
+        height: 160px;
+    }
+
+    .project-card__links {
+        gap: 8px;
+    }
+
+    .project-card__links .btn {
+        width: 100%;
+    }
+
+    .cat-gallery {
+        padding: 100px 0 60px;
+        min-height: auto;
+    }
+
+    .cat-gallery__back {
+        top: 16px;
+        left: 12px;
+    }
+
+    .cat-gallery__back button {
+        padding: 8px 16px;
+        font-size: 0.9rem;
+    }
+
+    .cat-gallery__carousel {
+        grid-auto-columns: minmax(220px, 70vw);
+    }
+
+    .cat-gallery__carousel-wrap {
+        gap: 12px;
+    }
+
+    .cat-gallery__scroll {
+        display: none;
+    }
+
+    .cat-gallery__modal-content {
+        padding: 24px;
+    }
+
+    .cat-gallery__modal-body {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .cat-gallery__modal-nav {
+        display: none;
+    }
+
+    .cat-gallery__actions {
+        width: 100%;
+        justify-content: space-between;
+        gap: 8px;
+    }
+
+    .cat-gallery__filters {
+        width: 100%;
+        gap: 8px;
+    }
+
+    .cat-gallery__filter {
+        flex: 1 1 calc(50% - 8px);
+    }
+
+    .service-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .service-card {
+        padding: 20px;
+        border-radius: 18px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .service-card__content {
+        gap: 8px;
+    }
+
+    .service-card__icon {
+        width: 42px;
+        height: 42px;
+    }
+
+    .contact-grid__card {
+        padding: 18px;
+    }
+
+    .contact-grid__form {
+        padding: 22px;
+        border-radius: 20px;
+    }
+
+    .contact-form label {
+        font-size: 0.9rem;
+    }
+
+    .contact-form input,
+    .contact-form textarea {
+        padding: 11px 14px;
+    }
+
+    .footer {
+        padding: 36px 0 16px;
+        font-size: 0.85rem;
+    }
+}

@@ -1,0 +1,17 @@
+{
+    "admin": {
+        "name": "Test Admin",
+        "email": "admin@test.com",
+        "password": "TestAdmin123"
+    },
+    "user": {
+        "name": "Test User",
+        "email": "user@test.com",
+        "password": "TestUser123"
+    },
+    "newUser": {
+        "name": "New Test User",
+        "email": "newuser@test.com",
+        "password": "NewUser123"
+    }
+}

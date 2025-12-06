@@ -1,5 +1,9 @@
-import React from 'react';
-
+/**
+ * @file GithubIcon.jsx
+ * @author Alex Kachur
+ * @since 2025-10-28
+ * @purpose SVG icon component for GitHub branding.
+ */
 export default function GithubIcon({ className = '', ...props }) {
     return (
         <svg

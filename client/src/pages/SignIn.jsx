@@ -4,8 +4,12 @@
  * @since 2025-11-22
  * @purpose Sign-in screen that routes admins to the dashboard and guests to the guest book.
  */
+
+// React
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+
+// Context
 import { useAuth } from '../context/AuthContext.jsx';
 
 export default function SignIn({ onSignedIn } = {}) {
@@ -50,6 +54,7 @@ export default function SignIn({ onSignedIn } = {}) {
                     Email
                     <input
                         type="email"
+                        name="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
@@ -59,6 +64,7 @@ export default function SignIn({ onSignedIn } = {}) {
                     Password
                     <input
                         type="password"
+                        name="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
@@ -68,6 +74,9 @@ export default function SignIn({ onSignedIn } = {}) {
                 <button className="btn contact-form__submit" type="submit" disabled={loading}>
                     {loading ? 'Signing in...' : 'Sign In'}
                 </button>
+                <p style={{ marginTop: '1rem', textAlign: 'center' }}>
+                    Don&apos;t have an account? <a href="/signup">Sign up</a>
+                </p>
             </form>
         </div>
     );

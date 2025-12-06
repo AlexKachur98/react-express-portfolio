@@ -1,5 +1,9 @@
-import React from 'react';
-
+/**
+ * @file ExternalLinkIcon.jsx
+ * @author Alex Kachur
+ * @since 2025-10-28
+ * @purpose SVG icon component for external link indicators.
+ */
 export default function ExternalLinkIcon({ className = '', ...props }) {
     return (
         <svg

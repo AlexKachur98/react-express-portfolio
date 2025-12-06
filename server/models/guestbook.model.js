@@ -6,24 +6,29 @@
  */
 import mongoose from 'mongoose';
 
-const GuestbookEntrySchema = new mongoose.Schema({
-    displayName: {
-        type: String,
-        trim: true,
-        required: 'Name is required'
+const GuestbookEntrySchema = new mongoose.Schema(
+    {
+        displayName: {
+            type: String,
+            trim: true,
+            required: 'Name is required',
+            maxlength: [100, 'Display name cannot exceed 100 characters']
+        },
+        message: {
+            type: String,
+            trim: true,
+            required: 'Message is required',
+            maxlength: [2000, 'Message cannot exceed 2000 characters']
+        },
+        user: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+            unique: true,
+            required: true
+        }
     },
-    message: {
-        type: String,
-        trim: true,
-        required: 'Message is required'
-    },
-    user: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        unique: true,
-        required: true
-    }
-}, { timestamps: true });
+    { timestamps: true }
+);
 
 // Index for sorting by update time (most common query pattern)
 GuestbookEntrySchema.index({ updatedAt: -1 });

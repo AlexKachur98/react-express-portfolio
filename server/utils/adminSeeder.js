@@ -13,14 +13,20 @@ const ensureAdminUser = async () => {
 
     // Security: Require explicit environment variables - no hardcoded defaults
     if (!adminEmail || !adminPassword) {
-        console.warn('[Admin Seeder] ADMIN_EMAIL and ADMIN_PASSWORD env vars not set. Skipping admin seeding.');
-        console.warn('[Admin Seeder] To create an admin user, set these environment variables and restart.');
+        console.warn(
+            '[Admin Seeder] ADMIN_EMAIL and ADMIN_PASSWORD env vars not set. Skipping admin seeding.'
+        );
+        console.warn(
+            '[Admin Seeder] To create an admin user, set these environment variables and restart.'
+        );
         return;
     }
 
-    // Validate password meets minimum requirements
-    if (adminPassword.length < 6) {
-        console.error('[Admin Seeder] ADMIN_PASSWORD must be at least 6 characters. Skipping admin seeding.');
+    // Validate password meets minimum requirements (consistent with user.model.js)
+    if (adminPassword.length < 8) {
+        console.error(
+            '[Admin Seeder] ADMIN_PASSWORD must be at least 8 characters. Skipping admin seeding.'
+        );
         return;
     }
 

@@ -4,9 +4,15 @@
  * @since 2025-11-22
  * @purpose Admin view to audit users and perform deletions when necessary.
  */
+
+// React
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+
+// Context
 import { useAuth } from '../context/AuthContext.jsx';
+
+// Utils
 import { deleteAllUsers, deleteUser, getUsers } from '../utils/api.js';
 import { formatDate, extractPaginatedData } from '../utils/helpers.js';
 
@@ -69,25 +75,57 @@ export default function AdminUsers() {
             <div className="section__eyebrow">Admin</div>
             <h2 className="section__heading">Users</h2>
             {error && <p className="contact-form__error">{error}</p>}
-            <div style={{ display: 'flex', gap: '10px', alignItems: 'center', marginBottom: '12px' }}>
-                <button type="button" className="btn btn--ghost" onClick={handleDeleteAll} disabled={loading}>
+            <div
+                style={{ display: 'flex', gap: '10px', alignItems: 'center', marginBottom: '12px' }}
+            >
+                <button
+                    type="button"
+                    className="btn btn--ghost"
+                    onClick={handleDeleteAll}
+                    disabled={loading}
+                >
                     Delete all
                 </button>
             </div>
             <div className="contact-grid__card">
                 {users.length === 0 && <p>No users found.</p>}
                 {users.map((u) => (
-                    <div key={u._id} style={{ borderBottom: '1px solid rgba(148,163,184,0.2)', padding: '10px 0' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', gap: '8px', flexWrap: 'wrap' }}>
+                    <div
+                        key={u._id}
+                        style={{
+                            borderBottom: '1px solid rgba(148,163,184,0.2)',
+                            padding: '10px 0'
+                        }}
+                    >
+                        <div
+                            style={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                gap: '8px',
+                                flexWrap: 'wrap'
+                            }}
+                        >
                             <div>
                                 <strong>{u.name || 'No name'}</strong> — {u.email}
-                                <span style={{ marginLeft: '8px', color: 'rgba(148,163,184,0.9)' }}>({u.role || 'user'})</span>
+                                <span style={{ marginLeft: '8px', color: 'rgba(148,163,184,0.9)' }}>
+                                    ({u.role || 'user'})
+                                </span>
                             </div>
-                            <button type="button" className="btn btn--ghost" onClick={() => handleDelete(u._id)}>
+                            <button
+                                type="button"
+                                className="btn btn--ghost"
+                                onClick={() => handleDelete(u._id)}
+                            >
                                 Delete
                             </button>
                         </div>
-                        <div style={{ fontSize: '0.85rem', color: 'rgba(148,163,184,0.9)', marginTop: '4px' }}>
+                        <div
+                            style={{
+                                fontSize: '0.85rem',
+                                color: 'rgba(148,163,184,0.9)',
+                                marginTop: '4px'
+                            }}
+                        >
                             {u.createdAt ? `Created ${formatDate(u.createdAt)}` : ''}
                             {u.updatedAt ? ` • Updated ${formatDate(u.updatedAt)}` : ''}
                         </div>

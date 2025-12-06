@@ -1,5 +1,9 @@
-import React from 'react';
-
+/**
+ * @file LinkedInIcon.jsx
+ * @author Alex Kachur
+ * @since 2025-10-28
+ * @purpose SVG icon component for LinkedIn branding.
+ */
 export default function LinkedInIcon({ className = '', ...props }) {
     return (
         <svg

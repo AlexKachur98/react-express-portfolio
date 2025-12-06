@@ -3,9 +3,26 @@
  * @author Alex Kachur
  * @since 2025-11-22
  * @purpose Provides auth state and helpers to the React app, persisting sessions locally.
+ *
+ * TODO: [TypeScript Migration] Convert this file to TypeScript for full type safety.
+ * Priority: HIGH - Security-critical authentication context.
+ * Key types to define:
+ * - AuthContextValue: { user, isAuthenticated, isAdmin, signin, signout, signup }
+ * - User: { _id, name, email, role }
+ * - SigninCredentials: { email, password }
+ * - SignupData: { name, email, password }
  */
+
+// React
 import { createContext, useContext, useEffect, useState } from 'react';
-import { signin as signinApi, signout as signoutApi, signup as signupApi } from '../utils/api.js';
+
+// API
+import {
+    signin as signinApi,
+    signout as signoutApi,
+    signup as signupApi,
+    validateSession
+} from '../utils/api.js';
 
 /* eslint-disable react-refresh/only-export-components */
 const AuthContext = createContext(null);
@@ -16,20 +33,41 @@ export function AuthProvider({ children }) {
     const [initializing, setInitializing] = useState(true);
 
     useEffect(() => {
-        // Restore user info from localStorage so we can show admin UI without a fresh signin
-        try {
-            const stored = localStorage.getItem(STORAGE_KEY);
-            if (stored) {
-                const parsed = JSON.parse(stored);
-                if (parsed) {
-                    setUser(parsed);
+        // Restore user info from localStorage and validate with server
+        const initializeAuth = async () => {
+            try {
+                const stored = localStorage.getItem(STORAGE_KEY);
+                if (!stored) {
+                    setInitializing(false);
+                    return;
                 }
+
+                const parsed = JSON.parse(stored);
+                if (!parsed) {
+                    setInitializing(false);
+                    return;
+                }
+
+                // Validate session with server to ensure JWT cookie is still valid
+                const res = await validateSession();
+                if (res?.user) {
+                    // Session is valid - use fresh user data from server
+                    persistUser(res.user);
+                } else {
+                    // Session expired or invalid - clear stale localStorage
+                    localStorage.removeItem(STORAGE_KEY);
+                    setUser(null);
+                }
+            } catch {
+                // On error, clear potentially stale session
+                localStorage.removeItem(STORAGE_KEY);
+                setUser(null);
+            } finally {
+                setInitializing(false);
             }
-        } catch {
-            // Ignore corrupted storage entries
-        } finally {
-            setInitializing(false);
-        }
+        };
+
+        initializeAuth();
     }, []);
 
     const persistUser = (nextUser) => {
@@ -76,11 +114,7 @@ export function AuthProvider({ children }) {
         signup
     };
 
-    return (
-        <AuthContext.Provider value={value}>
-            {children}
-        </AuthContext.Provider>
-    );
+    return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {

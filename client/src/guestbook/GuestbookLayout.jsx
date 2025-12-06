@@ -4,7 +4,11 @@
  * @since 2025-11-22
  * @purpose Shared layout for guest book pages, handling shell chrome and signout.
  */
+
+// React
 import { useNavigate } from 'react-router-dom';
+
+// Context
 import { useAuth } from '../context/AuthContext.jsx';
 
 export default function GuestbookLayout({ children, showSignout = true }) {
@@ -17,7 +21,10 @@ export default function GuestbookLayout({ children, showSignout = true }) {
     };
 
     return (
-        <div className="section section--glass" style={{ minHeight: '80vh', width: 'min(1200px, 95vw)' }}>
+        <div
+            className="section section--glass"
+            style={{ minHeight: '80vh', width: 'min(1200px, 95vw)' }}
+        >
             <div className="cat-gallery__back">
                 <button type="button" onClick={() => navigate('/')} aria-label="Back to portfolio">
                     <span aria-hidden="true">←</span>
@@ -25,9 +32,20 @@ export default function GuestbookLayout({ children, showSignout = true }) {
                 </button>
             </div>
 
-            <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', marginBottom: '20px', flexWrap: 'wrap' }}>
+            <header
+                style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: '12px',
+                    marginBottom: '20px',
+                    flexWrap: 'wrap'
+                }}
+            >
                 <div>
-                    <h2 className="section__heading" style={{ marginBottom: 0 }}>Guest Book</h2>
+                    <h2 className="section__heading" style={{ marginBottom: 0 }}>
+                        Guest Book
+                    </h2>
                     {user?.name && (
                         <p style={{ margin: '6px 0 0', color: 'rgba(148,163,184,0.9)' }}>
                             Signed in as {user.name}
@@ -41,9 +59,7 @@ export default function GuestbookLayout({ children, showSignout = true }) {
                 )}
             </header>
 
-            <div style={{ marginTop: '12px' }}>
-                {children}
-            </div>
+            <div style={{ marginTop: '12px' }}>{children}</div>
         </div>
     );
 }

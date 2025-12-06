@@ -43,7 +43,17 @@ const entryByID = async (req, res, next, id) => {
 const list = async (req, res) => {
     try {
         const { page, limit } = parsePaginationParams(req.query);
-        const result = await paginatedQuery(GuestbookEntry, {}, { page, limit, sort: '-updatedAt' });
+        // Select only fields needed for display to improve query performance
+        const result = await paginatedQuery(
+            GuestbookEntry,
+            {},
+            {
+                page,
+                limit,
+                sort: '-updatedAt',
+                select: 'displayName message user createdAt updatedAt'
+            }
+        );
         return res.json(result);
     } catch (err) {
         return res.status(400).json({ error: errorHandler.getErrorMessage(err) });
@@ -68,16 +78,12 @@ const sign = async (req, res) => {
     };
 
     try {
-        const entry = await GuestbookEntry.findOneAndUpdate(
-            { user: req.auth._id },
-            entryData,
-            {
-                upsert: true,
-                new: true,
-                runValidators: true,
-                setDefaultsOnInsert: true
-            }
-        );
+        const entry = await GuestbookEntry.findOneAndUpdate({ user: req.auth._id }, entryData, {
+            upsert: true,
+            new: true,
+            runValidators: true,
+            setDefaultsOnInsert: true
+        });
         return res.json(entry);
     } catch (err) {
         return res.status(400).json({ error: errorHandler.getErrorMessage(err) });
@@ -124,10 +130,12 @@ const remove = async (req, res) => {
 const removeAll = async (_req, res) => {
     try {
         if (config.env !== 'development') {
-            return res.status(403).json({ error: "Deleting all guest book entries is only allowed in development." });
+            return res
+                .status(403)
+                .json({ error: 'Deleting all guest book entries is only allowed in development.' });
         }
         await GuestbookEntry.deleteMany({});
-        return res.status(200).json({ message: "All guest book entries have been deleted." });
+        return res.status(200).json({ message: 'All guest book entries have been deleted.' });
     } catch (err) {
         return res.status(400).json({ error: errorHandler.getErrorMessage(err) });
     }

@@ -26,13 +26,15 @@ const sanitizeContactPayload = (payload = {}) => ({
 const create = async (req, res) => {
     const payload = sanitizeContactPayload(req.body);
     if (!payload.firstName || !payload.lastName || !payload.email || !payload.message) {
-        return res.status(400).json({ error: 'First name, last name, email, and message are required.' });
+        return res
+            .status(400)
+            .json({ error: 'First name, last name, email, and message are required.' });
     }
 
     const contact = new Contact(payload);
     try {
         await contact.save();
-        return res.status(200).json({ message: "Contact message received successfully!" });
+        return res.status(200).json({ message: 'Contact message received successfully!' });
     } catch (err) {
         return res.status(400).json({ error: errorHandler.getErrorMessage(err) });
     }
@@ -46,7 +48,17 @@ const create = async (req, res) => {
 const list = async (req, res) => {
     try {
         const { page, limit } = parsePaginationParams(req.query);
-        const result = await paginatedQuery(Contact, {}, { page, limit, sort: '-createdAt' });
+        // Select only fields needed for display to improve query performance
+        const result = await paginatedQuery(
+            Contact,
+            {},
+            {
+                page,
+                limit,
+                sort: '-createdAt',
+                select: 'firstName lastName email message createdAt'
+            }
+        );
         res.json(result);
     } catch (err) {
         return res.status(400).json({ error: errorHandler.getErrorMessage(err) });
@@ -105,11 +117,13 @@ const remove = async (req, res) => {
 const removeAll = async (req, res) => {
     try {
         if (config.env !== 'development') {
-            return res.status(403).json({ error: "Deleting all contacts is only allowed in development." });
+            return res
+                .status(403)
+                .json({ error: 'Deleting all contacts is only allowed in development.' });
         }
         await Contact.deleteMany({});
         return res.status(200).json({
-            message: "All contacts have been deleted."
+            message: 'All contacts have been deleted.'
         });
     } catch (err) {
         return res.status(400).json({
@@ -125,17 +139,17 @@ const removeAll = async (req, res) => {
 const contactByID = async (req, res, next, id) => {
     // Validate ObjectId format before querying
     if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(400).json({ error: "Invalid contact ID format" });
+        return res.status(400).json({ error: 'Invalid contact ID format' });
     }
 
     try {
         let contact = await Contact.findById(id);
-        if (!contact) return res.status(400).json({ error: "Contact message not found" });
+        if (!contact) return res.status(400).json({ error: 'Contact message not found' });
         req.contact = contact;
         next();
     } catch (err) {
         console.error('[contactByID] Database error:', err.message);
-        return res.status(400).json({ error: "Could not retrieve contact message" });
+        return res.status(400).json({ error: 'Could not retrieve contact message' });
     }
 };
 
